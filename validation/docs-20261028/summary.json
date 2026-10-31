@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-28",
+  "change_type": "documentation_only",
+  "core": "0.10.0rc2",
+  "plugin": "0.5.1",
+  "latest_feature_tests": {
+    "count": 213,
+    "evidence": "../reader-0.10.0rc2/tests-all.log",
+    "rerun_for_documentation_only": false
+  },
+  "candidate_source": "C:/Users/USER\\Documents\\Codex\\2026-10-26\\bv1v1ha6regb-bilibili\\documentation-20261028\\video-reader-0.10.0rc2-docs1",
+  "candidate_archive": "C:/Users/USER\\Documents\\Codex\\2026-10-26\\bv1v1ha6regb-bilibili\\documentation-20261028\\video-reader-0.10.0rc2-docs1-source.zip",
+  "candidate_sha256": "6d89707a009429cf3c565133ba9cee5bd49f31c7a5320d3e820f35b941573186",
+  "candidate_changed_files": [
+    "README.md",
+    "docs/scroll-batch.md"
+  ],
+  "candidate_runtime_identical_to_tested_rc2": true,
+  "roadmap": "../../planning/roadmap-20261021-source.md",
+  "implemented_contract_history": "../../planning/roadmap-20261028-implemented.md",
+  "daily_status": "daily-status.json",
+  "scope": "Updated current docs and future recommendations; no new development, scheduler, message or publication.",
+  "checked_updated_document_links": true
+}

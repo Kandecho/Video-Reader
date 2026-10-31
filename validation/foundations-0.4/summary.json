@@ -1,0 +1,110 @@
+{
+  "version": "0.4.0",
+  "installed_root": "D:\\IA\\apps\\video-reader",
+  "regression_tests": {
+    "passed": 48,
+    "failed": 0
+  },
+  "full_asr": [
+    {
+      "bvid": "BV1Xt4y1P7BH",
+      "session_id": "v_a3366514875c8d04f48b163f",
+      "elapsed_seconds": 467.51,
+      "source_duration_seconds": 626.07898,
+      "coverage": {
+        "kind": "source_processed",
+        "requested_range": [
+          0.0,
+          626.07898
+        ],
+        "complete": true,
+        "missing_ranges": []
+      },
+      "total_segments": 153,
+      "status": "passed",
+      "cloud_used": false
+    },
+    {
+      "bvid": "BV1TdSxByEVA",
+      "session_id": "v_609fc8631aa1e190edce5748",
+      "elapsed_seconds": 274.915,
+      "source_duration_seconds": 308.778667,
+      "coverage": {
+        "kind": "source_processed",
+        "requested_range": [
+          0.0,
+          308.778667
+        ],
+        "complete": true,
+        "missing_ranges": []
+      },
+      "total_segments": 143,
+      "status": "passed",
+      "cloud_used": false
+    }
+  ],
+  "full_reading": {
+    "session_id": "v_a3366514875c8d04f48b163f",
+    "speech_source": "local_faster_whisper",
+    "speech_coverage": {
+      "kind": "source_processed",
+      "requested_range": [
+        0.0,
+        626.07898
+      ],
+      "complete": true,
+      "missing_ranges": []
+    },
+    "transcript_pages": 3,
+    "transcript_segments": 153,
+    "verification_counts": {
+      "matched": 12,
+      "not_corroborated": 123,
+      "difference_detected": 15,
+      "possible_screen_difference": 3
+    },
+    "screen_verification_seconds": 3.492,
+    "visual_frames": 63,
+    "visual_pages": 11,
+    "contact_sheets": [
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-1.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-2.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-3.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-4.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-5.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-6.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-7.jpg",
+      "D:\\IA\\apps\\video-reader\\validation\\foundations-0.4\\chronological-8.jpg"
+    ],
+    "elapsed_seconds": 4.333,
+    "continuous_video_coverage": false,
+    "cold_screen_verification_seconds": 234.543,
+    "cold_reading_seconds": 290.65,
+    "host_has_read_all_outputs": true,
+    "host_has_viewed_all_contact_sheet_frames": true,
+    "additional_tail_frames_viewed": [
+      623,
+      625
+    ],
+    "host_speech_pages_read": 3,
+    "actual_visual_frames_viewed": 65,
+    "raw_source_preserved_for_all_153_segments": true,
+    "local_animation_examples_verified": [
+      "SEM 1 nm",
+      "TEM 50 pm",
+      "F=qVxB"
+    ],
+    "checked_at_utc": "2026-10-20T18:53:07.024888+00:00"
+  },
+  "gemini_used": false,
+  "cloud_asr_used": false,
+  "ocr_never_overwrites_source": true,
+  "general_animation_detection": "not_implemented",
+  "known_gaps": [
+    "Chinese technical homophones",
+    "long sentence / visual line alignment",
+    "AI caption random/self-select disagreement needs host visual verification",
+    "MCP client long task timeout/cancellation not live-tested"
+  ],
+  "evidence_status": "functional acceptance, not an accuracy benchmark"
+}

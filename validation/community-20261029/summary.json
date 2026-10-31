@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-29",
+  "core_version": "0.10.0rc3",
+  "plugin_version": "0.5.2",
+  "new_tools": ["video_comments", "video_danmaku"],
+  "regression": {"tests": 224, "status": "passed", "seconds": 28.988},
+  "mcp": {"tools": 18, "new_process_smoke": "passed", "snapshot_replay": "passed"},
+  "hosts": {"codex": "0.5.2", "claude": "0.5.2"},
+  "independent_review": {"issues": 1, "resolution": "Frozen danmaku replay now reads saved metadata and material without online verification; covered by regression."},
+  "baseline_live_sample": {"source": "BV1ptnb6uEES", "top_level_comments": 39, "thread_replies": 12, "reported_comments": 51, "danmaku": 26, "reported_danmaku": 26, "segments": 3},
+  "user_evaluation_sample": {"source": "BV1zBHt6iE4U", "top_level_comments": 91, "thread_replies": 180, "reported_comments": 271, "threads": 57, "danmaku": 9, "reported_danmaku": 9, "segments": 2},
+  "limits": ["Bilibili only", "Current account-visible comments and current segmented danmaku pool", "No hidden/deleted/history guarantee", "BAS/special packs and interactive overlays excluded"],
+  "installation": "D:/IA/apps/video-reader",
+  "backup": "D:/IA/apps/video-reader/validation/community-20261029/backup-20261029-215452"
+}

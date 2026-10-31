@@ -1,0 +1,38 @@
+{
+  "default_reader": "local",
+  "cache_dir": "data/cache",
+  "overview_frames": 24,
+  "frame_width": 1280,
+  "page_frames": 8,
+  "page_transcript_segments": 60,
+  "delivery": {"text_bytes": 24000, "image_bytes": 8388608},
+  "vision": {"enabled": true, "lookahead_seconds": 10},
+  "bilibili_auth": {"enabled": true, "directory": "auth/bilibili", "check_interval_seconds": 86400},
+  "preview": {
+    "directory": "data/preview",
+    "recommendation_ttl_seconds": 600,
+    "material_ttl_seconds": 86400,
+    "network": {"daily_requests": 120, "min_gap_seconds": 2, "timeout_seconds": 20, "max_response_bytes": 8000000}
+  },
+  "agent": {
+    "directory": "data/agent",
+    "candidate_count": 10,
+    "preview_count": 3,
+    "max_recommendations": 2,
+    "max_caption_chars": 20000,
+    "reconsider_hours": 24,
+    "deep_read": {"enabled": true, "max_videos": 1, "max_duration_seconds": 300},
+    "delivery": {"enabled": false, "recipient_uid": null},
+    "daily": {"enabled": false, "time": "20:00", "timezone": "+08:00"},
+    "wake": {"enabled": false, "mode": "range", "interval_seconds": null, "min_seconds": null, "max_seconds": null, "timezone": "local", "windows": []},
+    "host": {"executable": null, "model": null, "timeout_seconds": 300}
+  },
+  "asr": {"model_path": "models/faster-whisper-medium", "device": "cpu", "compute_type": "int8", "language": null, "chunk_seconds": 120},
+  "qwen": {"model_path": "models/Qwen3-ASR-0.6B", "aligner_path": "models/Qwen3-ForcedAligner-0.6B", "runtime_dir": "runtimes/qwen", "timeout_seconds": 300},
+  "platforms": {
+    "bilibili": {"height": 720, "subtitle_language": "auto", "cookies_file": null},
+    "youtube": {"height": 720, "subtitle_language": "auto", "cookies_file": null},
+    "generic": {"height": 720, "subtitle_language": "auto", "cookies_file": null}
+  },
+  "gemini": {"enabled": false, "model": "gemini-3.7-flash", "processing": "static", "api_key_env": "GEMINI_API_KEY"}
+}

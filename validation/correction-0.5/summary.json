@@ -1,0 +1,342 @@
+{
+  "version": "0.5.0",
+  "installation": "D:\\IA\\apps\\video-reader",
+  "local_only": true,
+  "new_runtime_dependencies": [],
+  "tests": {
+    "passed": 61,
+    "failed": 0,
+    "installed_package_and_real_MCP_tested": true
+  },
+  "full_asr_cases": [
+    {
+      "bvid": "BV1Xt4y1P7BH",
+      "session_id": "v_a3366514875c8d04f48b163f",
+      "elapsed_seconds": 598.816,
+      "source_duration_seconds": 626.07898,
+      "coverage": {
+        "kind": "source_processed",
+        "requested_range": [
+          0.0,
+          626.07898
+        ],
+        "complete": true,
+        "missing_ranges": []
+      },
+      "total_segments": 153,
+      "status": "passed",
+      "cloud_used": false,
+      "word_records": 2704,
+      "old_raw_speech_records_preserved": true,
+      "baseline_text_and_segment_times_identical": true,
+      "word_time_range_checks_passed": true
+    },
+    {
+      "bvid": "BV1TdSxByEVA",
+      "session_id": "v_609fc8631aa1e190edce5748",
+      "elapsed_seconds": 484.302,
+      "source_duration_seconds": 308.778667,
+      "coverage": {
+        "kind": "source_processed",
+        "requested_range": [
+          0.0,
+          308.778667
+        ],
+        "complete": true,
+        "missing_ranges": []
+      },
+      "total_segments": 143,
+      "status": "passed",
+      "cloud_used": false,
+      "word_records": 1383,
+      "old_raw_speech_records_preserved": true,
+      "baseline_text_and_segment_times_identical": true,
+      "word_time_range_checks_passed": true
+    }
+  ],
+  "mbti": {
+    "session_id": "v_a3366514875c8d04f48b163f",
+    "review": {
+      "snapshot_id": "a76d5661a604daafe07d470d",
+      "revision": 6,
+      "reviewed_segments": 153,
+      "total_segments": 153,
+      "complete": true,
+      "corrected_segments": 48,
+      "unresolved_segments": 1,
+      "author": "host_agent",
+      "exactness_guaranteed": false
+    },
+    "pages_reviewed": 3,
+    "word_records": 2704,
+    "segments_preserved": true,
+    "segment_times_preserved": true,
+    "raw_and_words_preserved": true,
+    "reading_bytes": 41254,
+    "evidence_bytes": 319861,
+    "payload_reduction_percent": 87.1,
+    "commit_and_read_seconds": 0.774,
+    "independent_audio_CER_measured": false,
+    "host_reviewed_whole_text_and_actual_frames": true
+  },
+  "vtuber": [
+    {
+      "session_id": "v_609fc8631aa1e190edce5748",
+      "source": "asr",
+      "review": {
+        "snapshot_id": "6c66d4f55875104f70bed323",
+        "revision": 3,
+        "reviewed_segments": 143,
+        "total_segments": 143,
+        "complete": true,
+        "corrected_segments": 17,
+        "unresolved_segments": 0,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      },
+      "pages_reviewed": 3,
+      "word_records": 1383,
+      "raw_and_words_preserved": true,
+      "segment_times_preserved": true,
+      "reading_bytes": 34980,
+      "evidence_bytes": 180364,
+      "payload_reduction_percent": 80.61,
+      "commit_and_read_seconds": 0.214,
+      "independent_audio_CER_measured": false,
+      "host_reviewed_whole_text_and_actual_frames": true
+    },
+    {
+      "session_id": "v_609fc8631aa1e190edce5748",
+      "source": "captions",
+      "review": {
+        "snapshot_id": "ae911dd9b2516b55fc832c14",
+        "revision": 3,
+        "reviewed_segments": 141,
+        "total_segments": 141,
+        "complete": true,
+        "corrected_segments": 7,
+        "unresolved_segments": 1,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      },
+      "pages_reviewed": 3,
+      "word_records": 0,
+      "raw_and_words_preserved": true,
+      "segment_times_preserved": true,
+      "reading_bytes": 32926,
+      "evidence_bytes": 38179,
+      "payload_reduction_percent": 13.76,
+      "commit_and_read_seconds": 0.128,
+      "independent_audio_CER_measured": false,
+      "host_reviewed_whole_text_and_actual_frames": true
+    }
+  ],
+  "negative_controls": [
+    {
+      "case": "trotter",
+      "session_id": "v_0a2c92d2649039d67069b0ad",
+      "source": "captions",
+      "target_word": "猪蹄",
+      "tested_segments": 9,
+      "occurrences_preserved": 9,
+      "false_target_edits": 0,
+      "scope": "target word preservation only; not a whole-video proofreading accuracy evaluation",
+      "examples": [
+        {
+          "start": 3.94,
+          "end": 5.26,
+          "text": "红烧猪蹄"
+        },
+        {
+          "start": 57.81,
+          "end": 60.57,
+          "text": "然后将剁好的猪蹄冷水下锅焯水两遍"
+        },
+        {
+          "start": 60.57,
+          "end": 64.099,
+          "text": "这一步的目的是去除猪蹄内部的血水和腥味"
+        },
+        {
+          "start": 84.06,
+          "end": 86.399,
+          "text": "加入处理好的猪蹄翻炒至上色"
+        },
+        {
+          "start": 98.39,
+          "end": 102.539,
+          "text": "同学们切记清水的量最好能够没过猪蹄2cm"
+        },
+        {
+          "start": 139.44,
+          "end": 143.9,
+          "text": "一道软糯脱骨的红烧猪蹄就制作完成"
+        },
+        {
+          "start": 150.94,
+          "end": 153.32,
+          "text": "第一猪蹄一般选用前提"
+        },
+        {
+          "start": 160.34,
+          "end": 162.7,
+          "text": "如果糖色炒好之后直接下入猪蹄"
+        },
+        {
+          "start": 176.37,
+          "end": 178.98,
+          "text": "家常版红烧猪蹄的技术总结完毕"
+        }
+      ],
+      "review": {
+        "snapshot_id": "2033bc266b32d68c6cccebd0",
+        "revision": 1,
+        "reviewed_segments": 9,
+        "total_segments": 83,
+        "complete": false,
+        "corrected_segments": 0,
+        "unresolved_segments": 0,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      }
+    },
+    {
+      "case": "epidemic",
+      "session_id": "v_0c2559ba97da1880e113fc1d",
+      "source": "asr",
+      "target_word": "疫情",
+      "tested_segments": 1,
+      "occurrences_preserved": 1,
+      "false_target_edits": 0,
+      "scope": "target word preservation only; not a whole-video proofreading accuracy evaluation",
+      "examples": [
+        {
+          "start": 21.2,
+          "end": 24.38,
+          "text": "面对疫情,面临着巨大的心理压力"
+        }
+      ],
+      "review": {
+        "snapshot_id": "8bd8d222fcf28fd7e5574332",
+        "revision": 1,
+        "reviewed_segments": 1,
+        "total_segments": 33,
+        "complete": false,
+        "corrected_segments": 0,
+        "unresolved_segments": 0,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      }
+    }
+  ],
+  "relisten_without_title": [
+    {
+      "name": "transference",
+      "job_id": "808a596edb4c4ce486506dd0",
+      "status": "completed",
+      "elapsed_seconds": 18.016,
+      "segments": [
+        {
+          "start": 233.0,
+          "end": 236.0,
+          "text": "符号学系统的效力,彻底撕毁的情感。"
+        },
+        {
+          "start": 236.0,
+          "end": 239.0,
+          "text": "在这里,MBTI恰恰只是那典型的"
+        },
+        {
+          "start": 239.0,
+          "end": 242.0,
+          "text": "有待于被疫情所粉碎的符号学装置。"
+        },
+        {
+          "start": 242.0,
+          "end": 245.0,
+          "text": "在消解了它对猪蹄的凝视和归训之后,"
+        }
+      ]
+    },
+    {
+      "name": "project",
+      "job_id": "c1f4595984ca4223a1700047",
+      "status": "completed",
+      "elapsed_seconds": 14.797,
+      "segments": [
+        {
+          "start": 16.0,
+          "end": 17.0,
+          "text": "越发觉得"
+        },
+        {
+          "start": 17.0,
+          "end": 19.0,
+          "text": "其实有一个问题"
+        },
+        {
+          "start": 19.0,
+          "end": 20.0,
+          "text": "更加紧迫"
+        },
+        {
+          "start": 20.0,
+          "end": 21.0,
+          "text": "那就是项目意识"
+        },
+        {
+          "start": 21.0,
+          "end": 22.0,
+          "text": "没错"
+        },
+        {
+          "start": 22.0,
+          "end": 23.0,
+          "text": "虚拟感不足"
+        },
+        {
+          "start": 23.0,
+          "end": 24.0,
+          "text": "其实一定程度上"
+        },
+        {
+          "start": 24.0,
+          "end": 26.0,
+          "text": "和项目意识不足有关"
+        },
+        {
+          "start": 26.0,
+          "end": 28.0,
+          "text": "我举个简单的例子"
+        },
+        {
+          "start": 28.0,
+          "end": 29.0,
+          "text": "当一个"
+        }
+      ]
+    }
+  ],
+  "installed_relisten": {
+    "status": "completed",
+    "job_id": "7f97c7a4f2314287991610f0",
+    "elapsed_seconds": 15.016,
+    "quality": {
+      "status": "unverified_candidate",
+      "flags": [],
+      "exactness_guaranteed": false
+    },
+    "cache_reused": false,
+    "baseline_modified": false
+  },
+  "accuracy_limits": [
+    "No independent audio CER benchmark",
+    "Host review is fallible",
+    "Corrected text retains raw segment times; words align raw text only",
+    "Two unresolved wording differences retained",
+    "Negative controls evaluate target homophones, not whole-video correction accuracy"
+  ],
+  "timing_limits": "Full ASR times include concurrent local probes; commit/read durations exclude semantic review time.",
+  "new_engines_installed": false,
+  "gemini_used": false
+}

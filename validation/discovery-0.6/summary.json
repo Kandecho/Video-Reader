@@ -1,0 +1,104 @@
+{
+  "version": "0.6.0",
+  "features": [
+    "bilibili_search",
+    "popular_discovery",
+    "pagination",
+    "duration_filter",
+    "exclude_cached_bv"
+  ],
+  "tests": {
+    "full_suite_passed": 68,
+    "full_suite_seconds": 10.243,
+    "final_changed_subset_passed": 7,
+    "final_subset_seconds": 0.161,
+    "real_mcp_protocol": true,
+    "live_mcp_search_and_discover": true
+  },
+  "live_api": {
+    "search": {
+      "returned_count": 11,
+      "next_page": 2,
+      "elapsed_seconds": 0.816,
+      "authentication": {
+        "platform": "bilibili",
+        "status": "authenticated",
+        "authenticated": true,
+        "requires_login": false,
+        "account_marker": "ACCOUNT_SCOPE",
+        "refresh_capable": true,
+        "verified_at": 1792576413.3189268,
+        "last_refreshed_at": null,
+        "renewal": "not_due"
+      }
+    },
+    "popular": {
+      "returned_count": 11,
+      "next_page": 2,
+      "elapsed_seconds": 0.231,
+      "authentication": {
+        "platform": "bilibili",
+        "status": "authenticated",
+        "authenticated": true,
+        "requires_login": false,
+        "account_marker": "ACCOUNT_SCOPE",
+        "refresh_capable": true,
+        "verified_at": 1792576414.116297,
+        "last_refreshed_at": null,
+        "renewal": "not_due"
+      }
+    },
+    "search-page-2": {
+      "returned_count": 12,
+      "next_page": 3,
+      "elapsed_seconds": 0.688,
+      "authentication": {
+        "platform": "bilibili",
+        "status": "authenticated",
+        "authenticated": true,
+        "requires_login": false,
+        "account_marker": "ACCOUNT_SCOPE",
+        "refresh_capable": true,
+        "verified_at": 1792576414.3317838,
+        "last_refreshed_at": null,
+        "renewal": "not_due"
+      }
+    }
+  },
+  "unfamiliar": {
+    "bvid": "BV1rr4y1F7bF",
+    "session": "v_818021bee807eaa6a7aabae0",
+    "duration_seconds": 291.583833,
+    "discovered_by_component": true,
+    "native_captions_available": false,
+    "full_local_asr_processed": true,
+    "speech_pages_read": 2,
+    "sampled_frames_viewed": {
+      "overview": 24,
+      "dense": 72,
+      "focus": 8,
+      "dialogue": 2
+    },
+    "review": {
+      "snapshot_id": "4351d54108466e0c6e587f23",
+      "revision": 1,
+      "reviewed_segments": 114,
+      "total_segments": 114,
+      "complete": true,
+      "corrected_segments": 7,
+      "unresolved_segments": 1,
+      "author": "host_agent",
+      "exactness_guaranteed": false
+    },
+    "raw_text_and_segment_times_unchanged": true,
+    "new_process_followup_uses_saved_corrections": true,
+    "followup_cases": 3,
+    "relisten_job": "e388c59841584eb6aee2f6e9",
+    "relisten_seconds": 13.828,
+    "scope": "Whole workflow on one unfamiliar source; sampled frames, speech text and reviewed coverage, not continuous AV or independent accuracy."
+  },
+  "asr_experiment": "../../research/asr-engine-20261021/summary.json",
+  "default_asr_changed": false,
+  "cloud_used": false,
+  "personal_preferences_implemented": false
+}

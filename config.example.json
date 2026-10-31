@@ -1,0 +1,20 @@
+{
+  "default_reader": "local",
+  "cache_dir": "data/cache",
+  "overview_frames": 24,
+  "frame_width": 1280,
+  "page_frames": 8,
+  "page_transcript_segments": 60,
+  "agent": {
+    "delivery": {"enabled": false, "recipient_uid": null},
+    "daily": {"enabled": false, "time": "20:00", "timezone": "+08:00"},
+    "wake": {"enabled": false, "mode": "range", "interval_seconds": null, "min_seconds": null, "max_seconds": null, "timezone": "local", "windows": []}
+  },
+  "asr": {"model_path": "models/faster-whisper-medium", "device": "cpu", "compute_type": "int8", "language": null},
+  "platforms": {
+    "bilibili": {"height": 720, "subtitle_language": "auto", "cookies_file": null},
+    "youtube": {"height": 720, "subtitle_language": "auto", "cookies_file": null},
+    "generic": {"height": 720, "subtitle_language": "auto", "cookies_file": null}
+  },
+  "gemini": {"enabled": false, "model": "gemini-3.7-flash", "processing": "static", "api_key_env": "GEMINI_API_KEY"}
+}

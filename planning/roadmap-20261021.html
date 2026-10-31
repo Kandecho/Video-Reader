@@ -1,0 +1,1955 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="paper" data-mode="auto" data-style="off">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.14">
+<title>Video Reader：当前能力与下一步讨论</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[data-theme="paper"], html[data-theme="paper"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif;
+  --radius: 2px;
+  --shadow: none;
+  --bw: 1px;
+  --head-font: var(--font-serif);
+  --bg: #f5f2ea;
+  --paper: #fdfbf6;
+  --ink: #1f1c17;
+  --ink-2: #57514a;
+  --ink-3: #8c867b;
+  --line: #cbc3b4;
+  --line-2: #e5dfd3;
+  --fill: #f3eee4;
+  --accent: #8c2f1e;
+  --accent-bg: #f5e5df;
+  --ok: #2e6a3b;
+  --ok-bg: #e4efe5;
+  --err: #a3251b;
+  --err-bg: #f7e3e0;
+  --warn: #7f5300;
+  --warn-bg: #f6ecd6;
+  --head-bg: #1f1c17;
+  --head-fg: #fdfbf6;
+}
+html[data-theme="paper"][data-mode="dark"] {
+  --bg: #15130f;
+  --paper: #1c1a15;
+  --ink: #ebe5d8;
+  --ink-2: #b5ad9e;
+  --ink-3: #7b7467;
+  --line: #4a443a;
+  --line-2: #2d2a24;
+  --fill: #242119;
+  --accent: #e59a7d;
+  --accent-bg: #3a2219;
+  --ok: #8cc79a;
+  --ok-bg: #1c3122;
+  --err: #f0928a;
+  --err-bg: #3a1d1a;
+  --warn: #e3b866;
+  --warn-bg: #352a13;
+  --head-bg: #ebe5d8;
+  --head-fg: #15130f;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="paper"][data-mode="auto"] {
+  --bg: #15130f;
+  --paper: #1c1a15;
+  --ink: #ebe5d8;
+  --ink-2: #b5ad9e;
+  --ink-3: #7b7467;
+  --line: #4a443a;
+  --line-2: #2d2a24;
+  --fill: #242119;
+  --accent: #e59a7d;
+  --accent-bg: #3a2219;
+  --ok: #8cc79a;
+  --ok-bg: #1c3122;
+  --err: #f0928a;
+  --err-bg: #3a1d1a;
+  --warn: #e3b866;
+  --warn-bg: #352a13;
+  --head-bg: #ebe5d8;
+  --head-fg: #15130f;
+}
+}
+
+html:lang(zh-Hant)[data-theme][data-mode], html:lang(zh-TW)[data-theme][data-mode], html:lang(zh-HK)[data-theme][data-mode], html:lang(zh-MO)[data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Heiti TC", "Microsoft JhengHei", "Noto Sans CJK TC", "Noto Sans TC", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html:lang(ja)[data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens and decorations: themes/<name>.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Theme and mode lists: a label and a native select inside one button-like box */
+.am-pick {
+  display: flex; align-items: center; gap: 6px; font: 12px/1 var(--font-sans); color: var(--ink-2); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 0 4px 0 10px;
+}
+.am-pick:hover { border-color: var(--ink-3); }
+.am-pick:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.am-pick select {
+  font: inherit; color: var(--ink); background: transparent; border: 0; padding: 6px 2px; cursor: pointer; outline: none;
+}
+.am-pick option { color: var(--ink); background: var(--paper); }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 300px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+/* Images scale down to the panel and never past 70% of the window height, keeping their shape. */
+.am-md img { max-width: 100%; max-height: 70vh; height: auto; }
+.am-figure { margin: 0; text-align: center; }
+.am-figure img { display: block; margin: 0 auto; border: 1px solid var(--line-2); border-radius: var(--radius); }
+.am-figure figcaption { margin-top: 6px; font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+/* Ask: a decision the reader makes; the suggested option starts selected */
+.am-ask { margin: 10px 0; padding: 10px 12px 8px; border: 1px solid var(--line-2); border-radius: var(--radius); background: var(--fill); min-width: 0; }
+/* The question floats inside the box, so a long question wraps like text instead of riding on the border */
+.am-ask-q { float: left; width: 100%; padding: 0; margin-bottom: 4px; font-weight: 600; }
+/* Two columns: the control, then the label, tag and note, which wrap under the label and never under the control */
+.am-ask-opt { clear: both; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 8px; align-items: baseline; padding: 5px 2px; cursor: pointer; }
+.am-ask-opt input { margin: 0; accent-color: var(--accent); position: relative; top: 2px; }
+.am-ask-tag { display: inline-block; font-size: 11px; line-height: 1.5; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 0 6px; white-space: nowrap; }
+.am-ask-note { display: block; color: var(--ink-2); }
+/* Comment box under each panel, and the Reply sheet */
+.am-comment-btn {
+  display: flex; flex-shrink: 0; align-self: center; margin: 0 6px 0 auto; color: var(--ink-3); background: transparent;
+  border: 1px solid transparent; border-radius: var(--radius); padding: 3px; cursor: pointer;
+}
+.am-panel-meta + .am-comment-btn { margin-left: 0; }
+.am-panel:hover .am-comment-btn, .am-comment-btn:focus-visible, .am-comment-btn[aria-expanded="true"] { border-color: var(--line-2); color: var(--ink-2); }
+.am-panel .am-comment-btn.am-comment-btn--on { color: var(--accent); border-color: var(--accent); }
+.am-panel--bare { position: relative; }
+.am-panel--bare > .am-comment-btn { position: absolute; top: 4px; right: 0; }
+.am-comment { padding: 0 14px 12px; }
+.am-comment textarea, .am-reply textarea {
+  width: 100%; font: 13px/1.5 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 8px 10px; resize: vertical;
+}
+.am-comment textarea:focus-visible, .am-reply textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.am-btn--reply { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+.am-btn--reply:hover { opacity: .88; }
+.am-reply {
+  width: min(640px, calc(100vw - 32px)); padding: 16px; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+.am-reply::backdrop { background: rgba(0,0,0,.35); }
+.am-reply-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 10px; }
+.am-reply-head span { color: var(--ink-2); font-size: 13px; }
+.am-reply textarea { font-family: var(--font-mono); font-size: 12.5px; }
+.am-reply-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.am-reply .am-btn:disabled { opacity: .5; cursor: default; }
+/* Code block: a header (title or path:lines, language, copy), then one span per line; numbered blocks show the line number in a gutter */
+.am-codeblock { margin: 10px 0; min-width: 0; }
+.am-codeblock .am-code { border-top-left-radius: 0; border-top-right-radius: 0; padding: 10px 0; }
+.am-code-head {
+  display: flex; align-items: center; gap: 8px; padding: 5px 6px 5px 12px; font: 12px/1.3 var(--font-sans); color: var(--ink-2);
+  background: var(--paper); border: 1px solid var(--line-2); border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0;
+}
+.am-code-title { font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.am-code-lang { margin-left: auto; color: var(--ink-3); text-transform: lowercase; }
+.am-code-copy { font: 12px/1 var(--font-sans); color: var(--ink-2); background: transparent; border: 1px solid var(--line-2); border-radius: var(--radius); padding: 4px 8px; cursor: pointer; margin-left: auto; }
+.am-code-lang + .am-code-copy { margin-left: 0; }
+.am-code-copy:hover { border-color: var(--ink-3); color: var(--ink); }
+.am-code-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.am-code code { display: block; min-width: max-content; }
+.am-ln { display: block; padding: 0 14px; min-height: 1.5em; white-space: pre; }
+.am-ln--hl { background: var(--accent-bg); box-shadow: inset 3px 0 0 var(--accent); }
+.am-code--num .am-ln::before {
+  content: attr(data-n); display: inline-block; width: 3.5ch; margin-right: 12px; text-align: right; color: var(--ink-3);
+  user-select: none; -webkit-user-select: none;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+.am-diagram-expand {
+  /* In flow and sticky: it sits at the right edge and stays in view when the diagram scrolls sideways.
+     It takes its own row above the drawing, so it never covers a node at the top-right corner of the drawing. */
+  position: sticky; left: calc(100% - 36px); z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; padding: 0; margin: 0 8px 4px auto;
+  color: var(--ink-2); background: var(--paper);
+  border: var(--bw, 1px) solid var(--line-2); border-radius: var(--radius);
+  cursor: pointer; opacity: 0.72;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
+}
+.am-diagram:hover .am-diagram-expand,
+.am-diagram-expand:focus-visible { opacity: 1; }
+.am-diagram-expand:hover {
+  opacity: 1; color: var(--ink); border-color: var(--accent); background: var(--fill);
+}
+.am-diagram-expand:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ── Diagram Lightbox and Pan-Zoom Viewer ─────────── */
+.am-lightbox {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; flex-direction: column;
+  touch-action: none;
+}
+.am-lightbox[hidden] { display: none !important; }
+
+.am-lightbox-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.am-lightbox-header {
+  position: absolute; top: 12px; left: 24px; right: 24px; height: 36px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 10; pointer-events: none;
+}
+.am-lightbox-title {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: rgba(255, 255, 255, 0.92);
+  font: 13px/1 var(--font-sans, sans-serif); font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw;
+}
+.am-lightbox-title svg { stroke: rgba(255, 255, 255, 0.85); flex-shrink: 0; }
+.am-lightbox-actions {
+  display: flex; align-items: center; gap: 8px; pointer-events: auto;
+}
+.am-lightbox-close {
+  width: 32px; height: 32px;
+  background: var(--paper);
+  border: var(--bw, 1px) solid var(--line-2);
+  border-radius: 50%;
+  color: var(--ink);
+  font-size: 15px; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: background 0.15s, color 0.15s, transform 0.15s, border-color 0.15s;
+}
+.am-lightbox-close:hover {
+  color: var(--accent); border-color: var(--accent); background: var(--fill); transform: scale(1.05);
+}
+.am-lightbox-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.am-lightbox-stage {
+  position: absolute;
+  top: 54px; bottom: 20px; left: 24px; right: 24px;
+  background: var(--paper);
+  border: var(--bw, 1px) solid var(--line-2);
+  border-radius: max(var(--radius), 14px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.am-lightbox-stage.am-panning { cursor: grabbing; }
+
+.am-lightbox-canvas {
+  position: absolute; left: 0; top: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  pointer-events: none;
+}
+.am-lightbox-canvas svg {
+  max-width: none !important;
+  max-height: none !important;
+  display: block;
+  font-family: var(--font-sans, sans-serif);
+}
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+  .am-lightbox-header { top: 8px; left: 12px; right: 12px; }
+  .am-lightbox-stage { top: 46px; bottom: 12px; left: 12px; right: 12px; border-radius: max(var(--radius), 10px); }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+.am-colophon a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+@media print {
+  .am-toolbar, .am-diagram-expand, .am-lightbox, .am-code-copy, .am-comment-btn, .am-comment, .am-reply { display: none !important; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+.ink-snapshot-dark { display:none; }
+html[data-mode="dark"] .ink-snapshot-dark { display:block; }
+html[data-mode="dark"] .ink-snapshot-light { display:none; }
+@media (prefers-color-scheme:dark) {
+  html[data-mode="auto"] .ink-snapshot-dark { display:block; }
+  html[data-mode="auto"] .ink-snapshot-light { display:none; }
+}
+.ink-mermaid { margin:24px 0 28px; }
+.ink-mermaid-diagram { padding:8px 0; }
+.ink-mermaid-diagram > svg { max-width:none; height:auto; }
+.ink-mermaid-source { margin-top:12px; color:var(--ink-2); font-size:13px; }
+.ink-mermaid-source summary { cursor:pointer; padding:6px 0; }
+.ink-mermaid-source pre { padding:12px 16px; background:var(--fill); white-space:pre-wrap; overflow-wrap:anywhere; color:var(--ink); font:12px/1.7 var(--font-mono); }
+.ink-media-actions { display:flex; justify-content:flex-end; margin:6px 0 0; }
+.ink-media-action { position:relative; min-height:28px; padding:3px 8px; border:1px solid transparent; border-radius:3px; background:transparent; color:var(--ink-2); font:12px/1.4 var(--font-sans); cursor:pointer; }
+.ink-media-action:hover { color:var(--accent); background:var(--fill); }
+.ink-media-action:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.am-diagram-expand.ink-media-action { position:sticky; left:calc(100% - 90px); width:auto; height:28px; padding:3px 8px; margin:0 0 8px auto; opacity:1; }
+.am-figure img.ink-portrait { width:280px; max-width:100%; max-height:none; height:auto; }
+.am-figure figcaption .ink-source { display:block; margin-top:4px; font-size:12px; color:var(--ink-2); }
+.ink-image-viewer { width:min(96vw,1600px); height:92vh; max-width:none; max-height:none; padding:0; border:1px solid var(--line-2); border-radius:6px; color:var(--ink); background:var(--paper); }
+.ink-image-viewer::backdrop { background:rgba(0,0,0,.65); }
+.ink-image-toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:12px 16px; border-bottom:1px solid var(--line-2); }
+.ink-image-toolbar strong { flex:1; min-width:120px; font:600 14px/1.4 var(--font-sans); }
+.ink-image-toolbar button { min-width:32px; min-height:32px; }
+.ink-image-stage { height:calc(100% - 82px); overflow:auto; padding:24px; }
+.ink-image-stage img { display:block; max-width:none; height:auto; margin:0 auto; filter:none; }
+@media (pointer:coarse) { .ink-media-action { min-height:36px; padding:6px 10px; } }
+@media (max-width:600px) { .ink-image-stage { padding:12px; } .ink-image-toolbar { padding:8px; } }
+@media print {
+  .ink-media-actions,.ink-mermaid-source,.ink-image-viewer { display:none; }
+  html[data-mode] .ink-snapshot-dark { display:none; }
+  html[data-mode] .ink-snapshot-light { display:block; }
+  .ink-mermaid-diagram > svg { width:100%; max-width:100%; }
+}
+
+
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+@media (max-width: 760px) {
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+}
+
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+html[data-theme="paper"]:lang(zh-Hant)[data-mode], html[data-theme="paper"]:lang(zh-TW)[data-mode], html[data-theme="paper"]:lang(zh-HK)[data-mode], html[data-theme="paper"]:lang(zh-MO)[data-mode] { --font-serif: "Iowan Old Style", Palatino, Georgia, "Songti TC", "PMingLiU", "MingLiU", "Noto Serif CJK TC", "Noto Serif TC", "Source Han Serif TC", "Songti SC", serif; }
+html[data-theme="paper"]:lang(ja)[data-mode] { --font-serif: "Iowan Old Style", Palatino, Georgia, "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif; }
+html[data-theme="paper"] .am-head h1, html[data-theme="paper"] .am-panel-head h2, html[data-theme="paper"] .am-md, html[data-theme="paper"] .am-intro, html[data-theme="paper"] .am-callout { font-family: var(--font-serif); }
+html[data-theme="paper"] .am-head h1 { font-weight: 600; letter-spacing: 0; }
+html[data-theme="paper"] .am-md p, html[data-theme="paper"] .am-md li, html[data-theme="paper"] .am-md blockquote, html[data-theme="paper"] .am-intro { font-size: 15.5px; line-height: 1.75; }
+html[data-theme="paper"] .am-md p { margin-bottom: 12px; }
+html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
+</style>
+</head>
+<body>
+<div class="am-toolbar" data-am-root-lang="zh-CN" data-am-root-theme="paper" data-am-root-mode="auto" data-am-root-style="off">
+<label class="am-pick">主题<select data-am="theme"><option value="blueprint">图纸</option><option value="shadcn">卡片</option><option value="paper" selected>纸张</option></select></label>
+<label class="am-pick">明暗<select data-am="mode"><option value="auto" selected>跟随系统</option><option value="light">亮</option><option value="dark">暗</option></select></label>
+<button class="am-btn am-btn--reply" type="button" data-am="reply" data-ui="{&quot;button&quot;:&quot;回复&quot;,&quot;comment&quot;:&quot;评论&quot;,&quot;commentHint&quot;:&quot;对这个面板的意见&quot;,&quot;title&quot;:&quot;你的回复&quot;,&quot;hint&quot;:&quot;复制后粘贴到对话里。&quot;,&quot;copy&quot;:&quot;复制回复&quot;,&quot;close&quot;:&quot;关闭&quot;,&quot;suggested&quot;:&quot;建议&quot;,&quot;empty&quot;:&quot;先选择选项，或在面板上写评论。&quot;,&quot;decisions&quot;:&quot;决定&quot;,&quot;comments&quot;:&quot;评论&quot;,&quot;confirmed&quot;:&quot;确认了建议&quot;,&quot;untouched&quot;:&quot;未作答，保留建议&quot;,&quot;was&quot;:&quot;原为&quot;,&quot;typed&quot;:&quot;以 \&quot;&gt;\&quot; 开头的行是读者输入的文字。&quot;,&quot;done&quot;:&quot;已复制 ✓&quot;}">回复</button>
+<button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>Video Reader：当前能力与下一步讨论</h1><p class="am-sub">2026-10-30 · 目的与响应体验已澄清 · 独立初校待验证</p><div class="am-intro am-md"><div class="am-md"><p>身份：当前状态、缺口和后续方向的主维护源，同名 HTML 为派生阅读版。重要取舍及授权见 <a href="../docs/decisions.md">决定记录</a>。旧逐轮状态见 <a href="../docs/history/roadmap-through-20261028.md">整理前快照</a>，已完成实施契约仍可回查。</p>
+</div></div></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 最终要得到什么</a><a href="#panel-B">B · 当前职责与目标差距</a><a href="#panel-C">C · 当前完成到哪一步</a><a href="#panel-D">D · 实现与使用证据在哪里</a><a href="#panel-E">E · 哪些还不能算完成</a><a href="#panel-F">F · 后续按什么顺序推进</a><a href="#panel-G">G · 查阅入口</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>最终要得到什么</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>让现有 Agent 像读图片、文字一样使用视频。用户给链接、BV、本地文件或主题，可以先看再聊，也可以带着问题深入。笔记是可选产物，Reader 提供通用、可继续读取、可回查的材料。</p>
+<p>完整性、准确性、响应速度与成本共同服务于这个体验。已足以回答与全部内容已核查可以分开。优先复用已有材料，主动核查影响当前答案的疑点，及时回答并保留其余未核查内容。不截断必要正文、不降低必要清晰度，不把未核查内容写成定论。</p>
+<p>Reader / Scroll 分工、默认本地及公开准备边界继续保留。当前先讨论初校机制应承担到什么程度，不因旧路线有待办就继续扩展功能。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>当前职责与目标差距</h2></header>
+<div class="am-panel-body"><figure class="am-diagram am-flow"><svg viewBox="0 0 828 342" width="828" height="342" role="img" aria-label="流程图：用户需求或开放阅读、宿主Agent、Reader、可复用材料、用户、Scroll个人工作流" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M370.9,49 L370.9,60.5 Q370.9,72 370.9,83.5 L370.9,95" marker-end="url(#am1-arrow)"/></g><g data-step="1"><path class="am-edge" d="M415.3,121.4 L517.3,141.7 Q619.3,162 592.1,178 L565,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="551" y="153" width="136.5" height="18" rx="3"/><text x="619.3" y="162" text-anchor="middle" dominant-baseline="central">获取、定位、续读与补证</text></g></g><g data-step="2"><path class="am-edge" d="M500.3,206.9 L327.8,184.5 Q155.3,162 240.9,142.3 L326.5,122.7" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="75.5" y="153" width="159.5" height="18" rx="3"/><text x="155.3" y="162" text-anchor="middle" dominant-baseline="central">图像、语音文字、差异和来源</text></g></g><g data-step="3"><path class="am-edge" d="M404.7,130 L435.6,146 Q466.5,162 488.7,178 L511,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="404" y="153" width="125" height="18" rx="3"/><text x="466.5" y="162" text-anchor="middle" dominant-baseline="central">语义修正与未解决疑点</text></g></g><g data-step="4"><path class="am-edge" d="M535.3,229 L535.3,245 Q535.3,261 455.6,280.2 L375.8,299.3" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="467.1" y="252" width="136.5" height="18" rx="3"/><text x="535.3" y="261" text-anchor="middle" dominant-baseline="central">原文、校对、证据和修订</text></g></g><g data-step="5"><path class="am-edge" d="M282.8,302.1 L168.7,281.6 Q54.5,261 54.5,236.3 Q54.5,211.5 54.5,186.8 Q54.5,162 190.5,140.7 L326.5,119.4" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="15" y="202.5" width="79" height="18" rx="3"/><text x="54.5" y="211.5" text-anchor="middle" dominant-baseline="central">后续直接读取</text></g></g><g data-step="6"><path class="am-edge" d="M352.7,130 L336.1,146 Q319.5,162 317.1,178 L314.6,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="257" y="153" width="125" height="18" rx="3"/><text x="319.5" y="162" text-anchor="middle" dominant-baseline="central">理解、讨论与所需产物</text></g></g><g data-step="7"><path class="am-edge" d="M749,130 L749,146 Q749,162 659.7,182.7 L570.4,203.4" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="709.5" y="153" width="79" height="18" rx="3"/><text x="749" y="162" text-anchor="middle" dominant-baseline="central">复用同一组件</text></g></g></g><g><g class="am-node am-node--rect" data-key="用户需求或开放阅读" data-step="0"><rect class="am-node-shape" x="298.4" y="14" width="145" height="35" rx="3"/><text x="370.9" y="31.5" text-anchor="middle" dominant-baseline="central">用户需求或开放阅读</text></g><g class="am-node am-node--rect" data-key="宿主Agent" data-step="0"><rect class="am-node-shape" x="326.5" y="95" width="88.8" height="35" rx="3"/><text x="370.9" y="112.5" text-anchor="middle" dominant-baseline="central">宿主Agent</text></g><g class="am-node am-node--rect" data-key="Reader" data-step="1"><rect class="am-node-shape" x="500.3" y="194" width="70.1" height="35" rx="3"/><text x="535.3" y="211.5" text-anchor="middle" dominant-baseline="central">Reader</text></g><g class="am-node am-node--rect" data-key="可复用材料" data-step="4"><rect class="am-node-shape" x="282.8" y="293" width="93" height="35" rx="3"/><text x="329.3" y="310.5" text-anchor="middle" dominant-baseline="central">可复用材料</text></g><g class="am-node am-node--rect" data-key="用户" data-step="6"><rect class="am-node-shape" x="279.9" y="194" width="64" height="35" rx="3"/><text x="311.9" y="211.5" text-anchor="middle" dominant-baseline="central">用户</text></g><g class="am-node am-node--rect" data-key="Scroll个人工作流" data-step="7"><rect class="am-node-shape" x="684.6" y="95" width="128.9" height="35" rx="3"/><text x="749" y="112.5" text-anchor="middle" dominant-baseline="central">Scroll个人工作流</text></g></g></svg></figure>
+<div class="am-md"><p>Reader 已承担平台适配、登录、字幕/ASR、取帧、OCR 差异、局部复听、缓存、分页与导出。语义校对仍由宿主负责；复听和 OCR 返回候选，不自动覆盖原文。<code>review</code> 负责准备材料和保存提交，并不另跑校对语言模型。</p>
+<p>已有校对稿可直接复用；首次读取没有自动生成语义初校稿。现有 Skill/MCP 仍要求相应范围的逐段校对，尚未按“足以回答便及时回答”同步行为。Reader 独立初校是待验证方向，不能把材料整理或疑点检测写成校对已经完成。</p>
+<p>adaptive 利用字幕时间、场景变化与时间线检查选初始帧。任务文字由宿主解释，组件自身不按问题语义找齐证据；后续定位、补帧和裁切由宿主选择。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>当前完成到哪一步</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>核心 0.10.0rc4，薄插件 0.5.3；Reader 18 工具、Scroll 3 工具。2026-10-29 新增评论/楼中楼分页、按分 P 分段弹幕及同段冻结续读，沿用组件登录与限流；不承诺隐藏/删除或历史全量内容，特殊弹幕专包和互动弹幕未纳入。此前文档整理与阅读机制讨论仍按原范围保留。</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>能力</th>
+<th>当前状态与边界</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>获取与平台</td>
+<td>B 站、YouTube、本地及中英文有真实读取记录；BV/分 P、字幕优先和缓存保留来源</td>
+</tr>
+<tr>
+<td>登录</td>
+<td>B 站组件独立扫码和续期机制已接入；YouTube 使用短期手动 Cookie，长期维持暂缺</td>
+</tr>
+<tr>
+<td>文字与图像</td>
+<td>可选 Whisper/Qwen、增量转写与局部复听；初始取样、密集分镜、精确帧、原像素裁切和局部 OCR</td>
+</tr>
+<tr>
+<td>校对</td>
+<td>宿主提交全片或已处理区间的修正、原文、证据和疑点；补读保留旧审阅；不是 Reader 独立语义校对</td>
+</tr>
+<tr>
+<td>无损交付与复用</td>
+<td>按实际返回大小分页，游标绑定来源/修订，跨进程冻结页重放，显式版本导出及相对图像资源</td>
+</tr>
+<tr>
+<td>已修复真实缺陷</td>
+<td>rc2 去掉新 Whisper 隐式标题提示，修复该例漏句；已处理区间可以独立保存校对</td>
+</tr>
+<tr>
+<td>列表与预览</td>
+<td>UP 主作品有界分页；单条轻预览默认 5 帧，可选密集和 1–10 条批量拼图；原生时间可为近似</td>
+</tr>
+<tr>
+<td>Scroll</td>
+<td>显式批量队列、确认重放和一次两片实质比较；SQLite/FTS5 记忆与现有首页首条日试用</td>
+</tr>
+<tr>
+<td>接入与候选</td>
+<td>Codex/Claude 薄插件共用核心；Windows 同机隔离路径基础安装已验；本地源码候选未发布</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>实现与使用证据在哪里</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>证据</th>
+<th>说明的范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="../validation/task-reading-20261028/report-source.md">2026-10-28 真实阅读</a>及<a href="../validation/task-reading-20261028/resume-check.md">接续材料</a></td>
+<td>数学、软件小字/短状态、32 分钟英文访谈与两片比较；人工复核和独立聊天理解仍待体验</td>
+</tr>
+<tr>
+<td><a href="../validation/reader-0.10.0rc2/report-source.md">rc2 修复验收</a></td>
+<td>213 项回归、真实漏句原因与区间校对、旧数据保全和两端插件参数</td>
+</tr>
+<tr>
+<td><a href="../validation/reader-0.10.0rc1/report-source.md">rc1 整轮验收</a></td>
+<td>无损交付、精读、平台/宿主与源码候选；51 页旧批次只证明交付连续</td>
+</tr>
+<tr>
+<td><a href="../validation/docs-20261029/summary.json">文档整理记录</a></td>
+<td>本次文档改动、历史归档、链接与一致性检查；不充当新功能测试</td>
+</tr>
+<tr>
+<td><a href="../docs/history-index.md">研究与历史索引</a></td>
+<td>其他版本、账号/校对/参考项目与真实缺陷的按需入口</td>
+</tr>
+</tbody></table></div>
+<p>现有实测发现：局部复听能恢复漏否定，但该疑点由宿主发现；术语提示曾改善部分词并引入新错字；OCR 稳定一致仍可能出错。材料处理完成不能证明内容无误，既有宿主修订也不是独立盲测真值。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-E">
+<header class="am-panel-head"><span class="am-panel-id">E</span><h2>哪些还不能算完成</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>缺口</th>
+<th>当前证据与影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>及时回答的默认流程</td>
+<td>用户已明确目的；Skill/MCP 及薄插件仍有旧校对要求。未测新的首次可用回答时间</td>
+</tr>
+<tr>
+<td>Reader 独立初校</td>
+<td>有识别、OCR 差异和复听基础，没有自动完成语义初校的流水线，也没有多数错误可自动修好的证据</td>
+</tr>
+<tr>
+<td>重复字幕的连续阅读</td>
+<td>长访谈 1903 条、约 10.4 万字符，含 950 条约 10ms 的过渡条目；Scroll 也有重复携带字幕。原文完整，但尚未减少重复展示</td>
+</tr>
+<tr>
+<td>漏句、关键否定与来源冲突</td>
+<td>已修复一个具体漏句触发原因；没有通用漏句/误识别检测保证，无警告不等于正确</td>
+</tr>
+<tr>
+<td>观察策略与宿主便利性</td>
+<td>真实任务能补看，但有限样本没有证明 adaptive 普遍更省、更完整，普通宿主接手理解仍待体验</td>
+</tr>
+<tr>
+<td>首次准备和模型开销</td>
+<td>首次识别、OCR、复听和校对成本需分开计时。Qwen 每窗 worker 有加载开销，没有常驻 GPU 服务</td>
+</tr>
+<tr>
+<td>连续视听与精确对齐</td>
+<td>抽样图和语音文字不等于连续动作、音乐/音效/语气理解；校对文本仍沿用原段时间，未自动重新逐词对齐</td>
+</tr>
+<tr>
+<td>安装和对外支持</td>
+<td>同机隔离基础路径已验；其他机器/系统、全新可选模型环境及 Claude 真实私人案例未完成验收</td>
+</tr>
+<tr>
+<td>长期登录和推荐收益</td>
+<td>YouTube 长期维持缺失；B 站真实凭据轮换尚未触发；日试用平台接受不代表实际收件或偏好收益</td>
+</tr>
+</tbody></table></div>
+<h3>2026-10-30 社区读取个案登记</h3>
+<p>BV1DtHF6zEPA 的具体观察及原始材料见 <a href="../validation/community-stress-20261030/report-source.md">社区压力测试记录</a>。本节维护问题状态，不在视频讨论材料中重复产品日志。</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>问题与影响</th>
+<th>状态及后续核查</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VR-COMMUNITY-20261030-01</td>
+<td>评论计数与分页结束信号不一致。第 30 页 17 条，第 31 页为空仍返回 next_page=32；报告总数不能直接当根评论数量，宿主难以判断继续或结束</td>
+<td>待定位。核对平台计数口径、实际根评尾页与续读/停止提示；当前保留 partial、retry_page 和覆盖缺口，不宣称全量</td>
+</tr>
+<tr>
+<td>VR-DANMAKU-20261030-02</td>
+<td>一次 MCP 组合读取返回笼统的 danmaku_unavailable，同一核心的授权进程重读成功；缺少可操作的错误原因</td>
+<td>待定位。保留失败与成功材料，比较运行环境、配置及锁/权限等差异；未确认根因，未修复</td>
+</tr>
+<tr>
+<td>VR-OUTPUT-20261030-03</td>
+<td>内容讨论材料混入本产品采集统计、内部字段与故障记录，削弱材料用途</td>
+<td>本个案已整理，持续遵循输出边界。产品问题与测试证据留在产品文档；讨论材料仅保留内容、来源与影响判断的必要限定</td>
+</tr>
+<tr>
+<td>VR-MCP-20261030-04</td>
+<td>首包前默认 OCR 核验重、正文与图片后置。独立冷处理 259.694 秒，两类 OCR 占约 98.2%；普通宿主取全材料需 50 次调用，首图片第 33 次返回</td>
+<td>运行状态由 06 修复；处理深度与分页未优化。46 页视觉链只附首批 60/195 段，剩余语音另续 3 页；详见 <a href="../validation/runtime-jobs-20261030/report-source.md">独立验证 C/D</a>。历史首次故障证据仍保留</td>
+</tr>
+<tr>
+<td>VR-RUNTIME-20261030-05</td>
+<td>另一项目沙箱运行 CLI，写 auth/bilibili/.lock 被拒；获批后成功</td>
+<td>已确认环境权限差异。提供所需状态目录权限与明确诊断，不删除锁或凭据；MCP 同案最终成功，不将其混为登录失败</td>
+</tr>
+<tr>
+<td>VR-JOB-20261030-06</td>
+<td>普通 open/read 曾完成后才返回，缺少跨 CLI/MCP 的运行任务状态与接续</td>
+<td>0.10.0rc5 / 薄插件 0.5.4 已修复：共享任务、短等待返回、阶段/心跳/真实进展/锁等待、查询与结果接续、同参数活跃任务复用。独立调用与原生宿主已验证；文案残留、启动未知与并发观察者竞态亦补修并复核，见 <a href="../validation/runtime-jobs-20261030/report-source.md">验收</a></td>
+</tr>
+<tr>
+<td>VR-HOST-20261030-07</td>
+<td>独立客户端在普通沙箱启动时无输出，持久 PTY 第二次输入无法继续；更换宿主客户端通路后可续同一 Reader job 并取全材料</td>
+<td>宿主接入边界待定位。保留原始记录，不把启动/终端等待计入 Reader 处理；没有将其根因与 05 权限错误或 MCP 协议失败合并，见 <a href="../validation/runtime-jobs-20261030/consumption/technical-report.md">消费报告</a></td>
+</tr>
+</tbody></table></div>
+<p>成功范围：597 条去重根评、71 楼的 1,162 条回复、当前池 28 条弹幕与 7 页无损组合交付；不是平台全量覆盖或泛化效果验收。本轮登记不自动启动修复。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-F">
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>后续按什么顺序推进</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>1. 先完成机制讨论</h3>
+<p>当前接续点是把初校职责和回答时机确定清楚。用户不需要重复确认已说明的目的；执行者应基于既有样本说明可行范围，再讨论会改变体验或责任的取舍。本次文档维护不授权启动新模型或自动初校开发。</p>
+<p>需确定的机制包括：Reader 独立承担哪些基础处理；首次材料未准备好时怎样及时给出有依据的回答；哪些疑点现在查、哪些保留；宿主何时需要提交校对。旧 Skill 的完整语境要求与 API 的处理范围约束应分清，不能只改话术就声称等待减少。</p>
+<h3>2. 已有改进方向合并进入验证</h3>
+<p>以下是讨论后的候选验证内容，不是本轮已开始实施的清单：</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>方向</th>
+<th>复用与判断依据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基础初校与疑点定位</td>
+<td>复用现有字幕、ASR/OCR 差异和局部复听；测正确修正、误改、关键漏报，保留原文和来源，不把一致性或无警告当正确性</td>
+</tr>
+<tr>
+<td>连续字幕阅读视图</td>
+<td>复用长访谈和 Scroll 重复样本；保留原始条目、时间、段 ID 和修订，不按长度删句。原先单列的优先项并入响应体验验证，避免先定实现次序</td>
+</tr>
+<tr>
+<td>回答时机与宿主流程</td>
+<td>比较首次准备、疑点补查、首个可用回答及后续追问时间；允许明确的未核查内容，不以固定秒数/帧数压低必要质量</td>
+</tr>
+<tr>
+<td>跨会话继续深入</td>
+<td>先用现有 session、来源/context、修订、游标和 issues 验证；只有真实接续缺口才增加状态，翻页不推定已观察</td>
+</tr>
+<tr>
+<td>必要视觉补看</td>
+<td>复用 uniform/adaptive/scene/dense、精确帧和裁切；保留字幕未提及的画面，不用全局降清晰度换速度</td>
+</tr>
+</tbody></table></div>
+<p>本地语言模型只是可能方案，尚无选型与收益对照；现有 Qwen ASR 不等于这类语义模型。对新流程的判断同时看准确性和响应速度，不能以宿主后来补救成功代替组件独立能力。</p>
+<h3>3. 保留的后续方向</h3>
+<ul>
+<li>对外复用仍需补无开发环境积累的 Windows 安装及可选模型依赖证据。优先路径、依赖、来源与许可；只声明已验范围。建仓、上传和原创代码许可证另行决定。</li>
+<li>Scroll 的轻量标签、二值反馈关联和有限主动探索仍后置。复用已有 SQLite/FTS5；不把 Agent 标签当用户偏好，不自动替换首页首条或新增投递。</li>
+<li>连续动作、原生声音语义、校对后逐词对齐及大规模准确率研究按实际阻碍再评估。YouTube 长期登录保持已知取舍，不自动启用浏览器服务。</li>
+</ul>
+<p>已完成批次的原阶段与保全契约见 <a href="roadmap-20261028-implemented.md">实施快照</a>。模型、账号、旧数据、默认本地和日推规则继续保留；不为检查重复发送或重做已完成阅读。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-G">
+<header class="am-panel-head"><span class="am-panel-id">G</span><h2>查阅入口</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>日常入口是 <a href="../README.md">README</a>，接续从 <a href="../docs/handoff.md">handoff</a> 开始；详细资料由 <a href="../docs/registry.md">registry</a> 按需定位。历史正文中的“当前”“下一步”仅适用于当时。</p>
+<p>源码候选见 <a href="../validation/docs-20261028/summary.json">10 月 28 日 docs1 记录</a>，不含本次文档修订。本轮未重打包或发布；未来出候选须同步当前主维护文档与经确认的宿主流程。</p>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<div class="am-lightbox" hidden aria-modal="true" role="dialog" aria-label="图表查看" data-expand="展开查看图表">
+<div class="am-lightbox-backdrop"></div>
+<div class="am-lightbox-header">
+<div class="am-lightbox-title">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+<span class="am-lightbox-title-text"></span>
+</div>
+<div class="am-lightbox-actions">
+<button class="am-lightbox-close" data-action="close" title="关闭" aria-label="关闭">✕</button>
+</div>
+</div>
+<div class="am-lightbox-stage">
+<div class="am-lightbox-canvas am-diagram"></div>
+</div>
+</div>
+<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-10-30 23:01</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+title: Video Reader：当前能力与下一步讨论
+subtitle: 2026-10-30 · 目的与响应体验已澄清 · 独立初校待验证
+template: doc
+theme: paper
+lang: zh
+---
+
+身份：当前状态、缺口和后续方向的主维护源，同名 HTML 为派生阅读版。重要取舍及授权见 [决定记录](../docs/decisions.md)。旧逐轮状态见 [整理前快照](../docs/history/roadmap-through-20261028.md)，已完成实施契约仍可回查。
+
+## A 最终要得到什么
+
+让现有 Agent 像读图片、文字一样使用视频。用户给链接、BV、本地文件或主题，可以先看再聊，也可以带着问题深入。笔记是可选产物，Reader 提供通用、可继续读取、可回查的材料。
+
+完整性、准确性、响应速度与成本共同服务于这个体验。已足以回答与全部内容已核查可以分开。优先复用已有材料，主动核查影响当前答案的疑点，及时回答并保留其余未核查内容。不截断必要正文、不降低必要清晰度，不把未核查内容写成定论。
+
+Reader / Scroll 分工、默认本地及公开准备边界继续保留。当前先讨论初校机制应承担到什么程度，不因旧路线有待办就继续扩展功能。
+
+## B 当前职责与目标差距
+
+```flow
+用户需求或开放阅读 -&gt; 宿主Agent
+宿主Agent -&gt; Reader: 获取、定位、续读与补证
+Reader -&gt; 宿主Agent: 图像、语音文字、差异和来源
+宿主Agent -&gt; Reader: 语义修正与未解决疑点
+Reader -&gt; 可复用材料: 原文、校对、证据和修订
+可复用材料 -&gt; 宿主Agent: 后续直接读取
+宿主Agent -&gt; 用户: 理解、讨论与所需产物
+Scroll个人工作流 -&gt; Reader: 复用同一组件
+```
+
+Reader 已承担平台适配、登录、字幕/ASR、取帧、OCR 差异、局部复听、缓存、分页与导出。语义校对仍由宿主负责；复听和 OCR 返回候选，不自动覆盖原文。`review` 负责准备材料和保存提交，并不另跑校对语言模型。
+
+已有校对稿可直接复用；首次读取没有自动生成语义初校稿。现有 Skill/MCP 仍要求相应范围的逐段校对，尚未按“足以回答便及时回答”同步行为。Reader 独立初校是待验证方向，不能把材料整理或疑点检测写成校对已经完成。
+
+adaptive 利用字幕时间、场景变化与时间线检查选初始帧。任务文字由宿主解释，组件自身不按问题语义找齐证据；后续定位、补帧和裁切由宿主选择。
+
+## C 当前完成到哪一步
+
+核心 0.10.0rc4，薄插件 0.5.3；Reader 18 工具、Scroll 3 工具。2026-10-29 新增评论/楼中楼分页、按分 P 分段弹幕及同段冻结续读，沿用组件登录与限流；不承诺隐藏/删除或历史全量内容，特殊弹幕专包和互动弹幕未纳入。此前文档整理与阅读机制讨论仍按原范围保留。
+
+| 能力 | 当前状态与边界 |
+|---|---|
+| 获取与平台 | B 站、YouTube、本地及中英文有真实读取记录；BV/分 P、字幕优先和缓存保留来源 |
+| 登录 | B 站组件独立扫码和续期机制已接入；YouTube 使用短期手动 Cookie，长期维持暂缺 |
+| 文字与图像 | 可选 Whisper/Qwen、增量转写与局部复听；初始取样、密集分镜、精确帧、原像素裁切和局部 OCR |
+| 校对 | 宿主提交全片或已处理区间的修正、原文、证据和疑点；补读保留旧审阅；不是 Reader 独立语义校对 |
+| 无损交付与复用 | 按实际返回大小分页，游标绑定来源/修订，跨进程冻结页重放，显式版本导出及相对图像资源 |
+| 已修复真实缺陷 | rc2 去掉新 Whisper 隐式标题提示，修复该例漏句；已处理区间可以独立保存校对 |
+| 列表与预览 | UP 主作品有界分页；单条轻预览默认 5 帧，可选密集和 1–10 条批量拼图；原生时间可为近似 |
+| Scroll | 显式批量队列、确认重放和一次两片实质比较；SQLite/FTS5 记忆与现有首页首条日试用 |
+| 接入与候选 | Codex/Claude 薄插件共用核心；Windows 同机隔离路径基础安装已验；本地源码候选未发布 |
+
+## D 实现与使用证据在哪里
+
+| 证据 | 说明的范围 |
+|---|---|
+| [2026-10-28 真实阅读](../validation/task-reading-20261028/report-source.md)及[接续材料](../validation/task-reading-20261028/resume-check.md) | 数学、软件小字/短状态、32 分钟英文访谈与两片比较；人工复核和独立聊天理解仍待体验 |
+| [rc2 修复验收](../validation/reader-0.10.0rc2/report-source.md) | 213 项回归、真实漏句原因与区间校对、旧数据保全和两端插件参数 |
+| [rc1 整轮验收](../validation/reader-0.10.0rc1/report-source.md) | 无损交付、精读、平台/宿主与源码候选；51 页旧批次只证明交付连续 |
+| [文档整理记录](../validation/docs-20261029/summary.json) | 本次文档改动、历史归档、链接与一致性检查；不充当新功能测试 |
+| [研究与历史索引](../docs/history-index.md) | 其他版本、账号/校对/参考项目与真实缺陷的按需入口 |
+
+现有实测发现：局部复听能恢复漏否定，但该疑点由宿主发现；术语提示曾改善部分词并引入新错字；OCR 稳定一致仍可能出错。材料处理完成不能证明内容无误，既有宿主修订也不是独立盲测真值。
+
+## E 哪些还不能算完成
+
+| 缺口 | 当前证据与影响 |
+|---|---|
+| 及时回答的默认流程 | 用户已明确目的；Skill/MCP 及薄插件仍有旧校对要求。未测新的首次可用回答时间 |
+| Reader 独立初校 | 有识别、OCR 差异和复听基础，没有自动完成语义初校的流水线，也没有多数错误可自动修好的证据 |
+| 重复字幕的连续阅读 | 长访谈 1903 条、约 10.4 万字符，含 950 条约 10ms 的过渡条目；Scroll 也有重复携带字幕。原文完整，但尚未减少重复展示 |
+| 漏句、关键否定与来源冲突 | 已修复一个具体漏句触发原因；没有通用漏句/误识别检测保证，无警告不等于正确 |
+| 观察策略与宿主便利性 | 真实任务能补看，但有限样本没有证明 adaptive 普遍更省、更完整，普通宿主接手理解仍待体验 |
+| 首次准备和模型开销 | 首次识别、OCR、复听和校对成本需分开计时。Qwen 每窗 worker 有加载开销，没有常驻 GPU 服务 |
+| 连续视听与精确对齐 | 抽样图和语音文字不等于连续动作、音乐/音效/语气理解；校对文本仍沿用原段时间，未自动重新逐词对齐 |
+| 安装和对外支持 | 同机隔离基础路径已验；其他机器/系统、全新可选模型环境及 Claude 真实私人案例未完成验收 |
+| 长期登录和推荐收益 | YouTube 长期维持缺失；B 站真实凭据轮换尚未触发；日试用平台接受不代表实际收件或偏好收益 |
+
+### 2026-10-30 社区读取个案登记
+
+BV1DtHF6zEPA 的具体观察及原始材料见 [社区压力测试记录](../validation/community-stress-20261030/report-source.md)。本节维护问题状态，不在视频讨论材料中重复产品日志。
+
+| 编号 | 问题与影响 | 状态及后续核查 |
+|---|---|---|
+| VR-COMMUNITY-20261030-01 | 评论计数与分页结束信号不一致。第 30 页 17 条，第 31 页为空仍返回 next_page=32；报告总数不能直接当根评论数量，宿主难以判断继续或结束 | 待定位。核对平台计数口径、实际根评尾页与续读/停止提示；当前保留 partial、retry_page 和覆盖缺口，不宣称全量 |
+| VR-DANMAKU-20261030-02 | 一次 MCP 组合读取返回笼统的 danmaku_unavailable，同一核心的授权进程重读成功；缺少可操作的错误原因 | 待定位。保留失败与成功材料，比较运行环境、配置及锁/权限等差异；未确认根因，未修复 |
+| VR-OUTPUT-20261030-03 | 内容讨论材料混入本产品采集统计、内部字段与故障记录，削弱材料用途 | 本个案已整理，持续遵循输出边界。产品问题与测试证据留在产品文档；讨论材料仅保留内容、来源与影响判断的必要限定 |
+| VR-MCP-20261030-04 | 首包前默认 OCR 核验重、正文与图片后置。独立冷处理 259.694 秒，两类 OCR 占约 98.2%；普通宿主取全材料需 50 次调用，首图片第 33 次返回 | 运行状态由 06 修复；处理深度与分页未优化。46 页视觉链只附首批 60/195 段，剩余语音另续 3 页；详见 [独立验证 C/D](../validation/runtime-jobs-20261030/report-source.md)。历史首次故障证据仍保留 |
+| VR-RUNTIME-20261030-05 | 另一项目沙箱运行 CLI，写 auth/bilibili/.lock 被拒；获批后成功 | 已确认环境权限差异。提供所需状态目录权限与明确诊断，不删除锁或凭据；MCP 同案最终成功，不将其混为登录失败 |
+| VR-JOB-20261030-06 | 普通 open/read 曾完成后才返回，缺少跨 CLI/MCP 的运行任务状态与接续 | 0.10.0rc5 / 薄插件 0.5.4 已修复：共享任务、短等待返回、阶段/心跳/真实进展/锁等待、查询与结果接续、同参数活跃任务复用。独立调用与原生宿主已验证；文案残留、启动未知与并发观察者竞态亦补修并复核，见 [验收](../validation/runtime-jobs-20261030/report-source.md) |
+| VR-HOST-20261030-07 | 独立客户端在普通沙箱启动时无输出，持久 PTY 第二次输入无法继续；更换宿主客户端通路后可续同一 Reader job 并取全材料 | 宿主接入边界待定位。保留原始记录，不把启动/终端等待计入 Reader 处理；没有将其根因与 05 权限错误或 MCP 协议失败合并，见 [消费报告](../validation/runtime-jobs-20261030/consumption/technical-report.md) |
+
+成功范围：597 条去重根评、71 楼的 1,162 条回复、当前池 28 条弹幕与 7 页无损组合交付；不是平台全量覆盖或泛化效果验收。本轮登记不自动启动修复。
+
+## F 后续按什么顺序推进
+
+### 1. 先完成机制讨论
+
+当前接续点是把初校职责和回答时机确定清楚。用户不需要重复确认已说明的目的；执行者应基于既有样本说明可行范围，再讨论会改变体验或责任的取舍。本次文档维护不授权启动新模型或自动初校开发。
+
+需确定的机制包括：Reader 独立承担哪些基础处理；首次材料未准备好时怎样及时给出有依据的回答；哪些疑点现在查、哪些保留；宿主何时需要提交校对。旧 Skill 的完整语境要求与 API 的处理范围约束应分清，不能只改话术就声称等待减少。
+
+### 2. 已有改进方向合并进入验证
+
+以下是讨论后的候选验证内容，不是本轮已开始实施的清单：
+
+| 方向 | 复用与判断依据 |
+|---|---|
+| 基础初校与疑点定位 | 复用现有字幕、ASR/OCR 差异和局部复听；测正确修正、误改、关键漏报，保留原文和来源，不把一致性或无警告当正确性 |
+| 连续字幕阅读视图 | 复用长访谈和 Scroll 重复样本；保留原始条目、时间、段 ID 和修订，不按长度删句。原先单列的优先项并入响应体验验证，避免先定实现次序 |
+| 回答时机与宿主流程 | 比较首次准备、疑点补查、首个可用回答及后续追问时间；允许明确的未核查内容，不以固定秒数/帧数压低必要质量 |
+| 跨会话继续深入 | 先用现有 session、来源/context、修订、游标和 issues 验证；只有真实接续缺口才增加状态，翻页不推定已观察 |
+| 必要视觉补看 | 复用 uniform/adaptive/scene/dense、精确帧和裁切；保留字幕未提及的画面，不用全局降清晰度换速度 |
+
+本地语言模型只是可能方案，尚无选型与收益对照；现有 Qwen ASR 不等于这类语义模型。对新流程的判断同时看准确性和响应速度，不能以宿主后来补救成功代替组件独立能力。
+
+### 3. 保留的后续方向
+
+- 对外复用仍需补无开发环境积累的 Windows 安装及可选模型依赖证据。优先路径、依赖、来源与许可；只声明已验范围。建仓、上传和原创代码许可证另行决定。
+- Scroll 的轻量标签、二值反馈关联和有限主动探索仍后置。复用已有 SQLite/FTS5；不把 Agent 标签当用户偏好，不自动替换首页首条或新增投递。
+- 连续动作、原生声音语义、校对后逐词对齐及大规模准确率研究按实际阻碍再评估。YouTube 长期登录保持已知取舍，不自动启用浏览器服务。
+
+已完成批次的原阶段与保全契约见 [实施快照](roadmap-20261028-implemented.md)。模型、账号、旧数据、默认本地和日推规则继续保留；不为检查重复发送或重做已完成阅读。
+
+## G 查阅入口
+
+日常入口是 [README](../README.md)，接续从 [handoff](../docs/handoff.md) 开始；详细资料由 [registry](../docs/registry.md) 按需定位。历史正文中的“当前”“下一步”仅适用于当时。
+
+源码候选见 [10 月 28 日 docs1 记录](../validation/docs-20261028/summary.json)，不含本次文档修订。本轮未重打包或发布；未来出候选须同步当前主维护文档与经确认的宿主流程。
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  // A host that serves this page inside its own document leaves the real root without the page's settings. The toolbar keeps a copy;
+  // set back what the root lacks, before anything below reads the root. A root's own value, even an empty one, is never replaced.
+  const carrier = document.querySelector('.am-toolbar');
+  for (const [attr, key] of [['lang', 'data-am-root-lang'], ['data-theme', 'data-am-root-theme'], ['data-mode', 'data-am-root-mode'], ['data-style', 'data-am-root-style']]) {
+    if (root.getAttribute(attr) === null && carrier?.getAttribute(key) != null) root.setAttribute(attr, carrier.getAttribute(key));
+  }
+  // Each toolbar list sets one root attribute; its options name the values, so the runtime names no theme or mode.
+  for (const [name, attr] of [['theme', 'data-theme'], ['mode', 'data-mode']]) {
+    const select = document.querySelector(`select[data-am="${name}"]`);
+    if (!select) continue;
+    select.value = root.getAttribute(attr);
+    select.addEventListener('change', () => root.setAttribute(attr, select.value));
+  }
+
+  const copyText = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+  };
+  // The button reads its label from data-done for a moment after a copy.
+  const flash = (btn) => {
+    const original = btn.textContent;
+    btn.textContent = btn.dataset.done;
+    setTimeout(() => { btn.textContent = original; }, 1400);
+  };
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    await copyText(nodes[nodes.length - 1]?.value ?? '');
+    flash(copyBtn);
+  });
+
+  // Each code block copies its own lines, without the line numbers.
+  for (const btn of document.querySelectorAll('[data-am="copy-code"]')) {
+    btn.addEventListener('click', async () => {
+      const lines = btn.closest('.am-codeblock')?.querySelectorAll('.am-ln') ?? [];
+      await copyText([...lines].map((l) => l.textContent).join('\n'));
+      flash(btn);
+    });
+  }
+
+  // ── Diagram Lightbox & Pan-Zoom Viewer ─────────────
+  const diagrams = document.querySelectorAll('.am-diagram:not(.am-lightbox-canvas)');
+  const lb = document.querySelector('.am-lightbox');
+  if (diagrams.length && lb) {
+    const backdrop = lb.querySelector('.am-lightbox-backdrop');
+    const titleText = lb.querySelector('.am-lightbox-title-text');
+    const stage = lb.querySelector('.am-lightbox-stage');
+    const canvas = lb.querySelector('.am-lightbox-canvas');
+    const closeBtn = lb.querySelector('.am-lightbox-close');
+    const expandLabel = lb.getAttribute('data-expand') || 'Expand diagram';
+
+    let scale = 1, x = 0, y = 0, fitScale = 1, curVw = 800, curVh = 600;
+    let isDragging = false, activePointerId = null, startX = 0, startY = 0, origX = 0, origY = 0;
+    let lastTrigger = null;
+
+    const apply = () => {
+      canvas.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
+    };
+
+    const zoomTo = (newScale, pivotX, pivotY) => {
+      newScale = Math.max(0.2, Math.min(6.0, newScale));
+      if (Math.abs(newScale - scale) < 0.0001) return;
+      const r = newScale / scale;
+      x = pivotX - (pivotX - x) * r;
+      y = pivotY - (pivotY - y) * r;
+      scale = newScale;
+      apply();
+    };
+
+    const open = (diag, trigger) => {
+      const svg = [...diag.children].find((el) => el.tagName.toLowerCase() === 'svg');
+      if (!svg) return;
+      lastTrigger = trigger;
+
+      const panel = diag.closest('.am-panel');
+      const panelTitle = panel?.querySelector('.am-panel-head h2')?.textContent?.trim() || panel?.querySelector('h2')?.textContent?.trim() || lb.getAttribute('aria-label') || 'Diagram viewer';
+      if (titleText) titleText.textContent = panelTitle;
+
+      const clone = svg.cloneNode(true);
+      const defElements = clone.querySelectorAll('[id]');
+      if (defElements.length) {
+        const idMap = new Map();
+        defElements.forEach((el, i) => {
+          const oldId = el.id;
+          const newId = `${oldId}-lb-${i}`;
+          idMap.set(oldId, newId);
+          el.id = newId;
+        });
+        const urlAttrs = ['marker-start', 'marker-mid', 'marker-end', 'fill', 'stroke', 'filter', 'clip-path', 'mask'];
+        clone.querySelectorAll('*').forEach((el) => {
+          for (const attr of urlAttrs) {
+            const val = el.getAttribute(attr);
+            if (val && val.startsWith('url(#')) {
+              const id = val.slice(5, -1);
+              if (idMap.has(id)) el.setAttribute(attr, `url(#${idMap.get(id)})`);
+            }
+          }
+          const href = el.getAttribute('href') || el.getAttribute('xlink:href');
+          if (href && href.startsWith('#')) {
+            const id = href.slice(1);
+            if (idMap.has(id)) {
+              if (el.hasAttribute('href')) el.setAttribute('href', `#${idMap.get(id)}`);
+              if (el.hasAttribute('xlink:href')) el.setAttribute('xlink:href', `#${idMap.get(id)}`);
+            }
+          }
+        });
+      }
+
+      const vb = svg.viewBox?.baseVal;
+      curVw = (vb && vb.width > 0) ? vb.width : (parseFloat(svg.getAttribute('width')) || svg.clientWidth || 800);
+      curVh = (vb && vb.height > 0) ? vb.height : (parseFloat(svg.getAttribute('height')) || svg.clientHeight || 600);
+      clone.style.width = `${curVw}px`;
+      clone.style.height = `${curVh}px`;
+      canvas.innerHTML = '';
+      canvas.append(clone);
+      lb.removeAttribute('hidden');
+      document.body.style.overflow = 'hidden';
+
+      const rect = stage.getBoundingClientRect();
+      const pad = 48;
+      const availW = Math.max(100, rect.width - pad * 2);
+      const availH = Math.max(100, rect.height - pad * 2);
+      fitScale = Math.min(availW / curVw, availH / curVh, 1.0);
+      scale = fitScale;
+      x = (rect.width - curVw * scale) / 2;
+      y = (rect.height - curVh * scale) / 2;
+      apply();
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      if (lb.hasAttribute('hidden')) return;
+      lb.setAttribute('hidden', '');
+      canvas.innerHTML = '';
+      document.body.style.overflow = '';
+      lastTrigger?.focus();
+    };
+
+    stage.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = stage.getBoundingClientRect();
+      const dy = e.deltaMode === 1 ? e.deltaY * 16 : (e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY);
+      const factor = Math.exp(-Math.max(-200, Math.min(200, dy)) * 0.0015);
+      zoomTo(scale * factor, e.clientX - rect.left, e.clientY - rect.top);
+    }, { passive: false });
+
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || isDragging) return;
+      isDragging = true;
+      activePointerId = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      origX = x;
+      origY = y;
+      stage.setPointerCapture(e.pointerId);
+      stage.classList.add('am-panning');
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      if (!isDragging || e.pointerId !== activePointerId) return;
+      x = origX + (e.clientX - startX);
+      y = origY + (e.clientY - startY);
+      apply();
+    });
+
+    const endDrag = (e) => {
+      if (!isDragging || e.pointerId !== activePointerId) return;
+      isDragging = false;
+      activePointerId = null;
+      stage.classList.remove('am-panning');
+      try { stage.releasePointerCapture(e.pointerId); } catch {}
+    };
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+
+    stage.addEventListener('dblclick', () => {
+      const rect = stage.getBoundingClientRect();
+      scale = fitScale;
+      x = (rect.width - curVw * scale) / 2;
+      y = (rect.height - curVh * scale) / 2;
+      apply();
+    });
+
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !lb.hasAttribute('hidden')) close();
+    });
+
+    lb.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const focusables = lb.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    const expandSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>';
+    diagrams.forEach((diag) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'am-diagram-expand';
+      btn.title = expandLabel;
+      btn.setAttribute('aria-label', expandLabel);
+      btn.innerHTML = expandSvg;
+      btn.addEventListener('click', () => open(diag, btn));
+      diag.prepend(btn);
+    });
+  }
+})();
+(() => {
+// The reply a reader copies from the page: one Markdown text with the decisions and the panel comments.
+// A plain ES module for tests; the page gets it with its `export` keyword dropped (src/runtime/compose.js).
+// decisions: [{ panel, question, picked: [label], suggested: [label], touched }]; comments: [{ panel, title, text }].
+// Comment text is quoted line by line, so text the reader typed cannot pass as part of the structure.
+function replyText({ title, decisions, comments, ui }) {
+  const out = [`# Re: ${title}`];
+  if (decisions.length) {
+    out.push('', `## ${ui.decisions}`);
+    decisions.forEach((d, i) => {
+      const answer = d.picked.length ? d.picked.map((l) => `**${l}**`).join(', ') : '**—**';
+      const same = d.picked.length === d.suggested.length && d.picked.every((l) => d.suggested.includes(l));
+      const why = same ? (d.touched ? ui.confirmed : ui.untouched) : `${ui.was}: ${d.suggested.join(', ') || '—'}`;
+      out.push(`${i + 1}. [${d.panel}] ${d.question}`, `   → ${answer} _(${why})_`);
+    });
+  }
+  const written = comments.filter((c) => c.text.trim());
+  if (written.length) {
+    out.push('', `## ${ui.comments}`);
+    for (const c of written) {
+      out.push(`- **${c.panel} · ${c.title}**`, ...c.text.trim().split('\n').map((l) => `  > ${l}`));
+    }
+    out.push('', `_${ui.typed}_`);
+  }
+  return `${out.join('\n')}\n`;
+}
+
+// Answer on the page: every panel gets a Comment box, and the Reply button collects the ask answers and the comments
+// into one Markdown reply (replyText) to copy back to the agent. Answers and comments stay in localStorage across reloads.
+const replyBtn = document.querySelector('[data-am="reply"]');
+const COMMENT_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>';
+if (replyBtn) {
+  const ui = JSON.parse(replyBtn.dataset.ui);
+  const storeKey = `am-reply:${location.pathname}`;
+  const panels = [...document.querySelectorAll('.am-panel')];
+  const asks = [...document.querySelectorAll('.am-ask')];
+  // Answers are saved by question text, so they still match after am patch has renumbered the asks.
+  const keyOf = (ask) => ask.querySelector('legend')?.textContent.trim() ?? ask.dataset.ask;
+  const touched = new Set();
+  const boxes = new Map();
+
+  const load = () => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey)) || {};
+    } catch {
+      return {};
+    }
+  };
+  const save = () => {
+    const state = {
+      asks: Object.fromEntries(asks.map((a) => [keyOf(a), { picked: picked(a), touched: touched.has(a) }])),
+      comments: Object.fromEntries([...boxes].map(([id, box]) => [id, box.value]).filter(([, text]) => text.trim())),
+    };
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(state));
+    } catch {
+      // Storage may be off (private window, file:// policy); answers then last until the page closes.
+    }
+  };
+  const picked = (ask) => [...ask.querySelectorAll('input')].filter((i) => i.checked).map((i) => i.value);
+  const panelOf = (el) => {
+    const panel = el.closest('.am-panel');
+    return { id: panel?.id.replace(/^panel-/, '') ?? '', title: panel?.querySelector('.am-panel-head h2')?.textContent.trim() ?? '' };
+  };
+
+  const saved = load();
+  for (const ask of asks) {
+    const inputs = [...ask.querySelectorAll('input')];
+    const state = saved.asks?.[keyOf(ask)];
+    // A saved answer applies only while every picked option still exists on the page.
+    if (state && state.picked.every((v) => inputs.some((i) => i.value === v))) {
+      for (const input of inputs) input.checked = state.picked.includes(input.value);
+      if (state.touched) touched.add(ask);
+    }
+    // A click counts even on the option that is already picked: the reader confirms the suggestion.
+    const answer = () => {
+      touched.add(ask);
+      save();
+    };
+    ask.addEventListener('change', answer);
+    ask.addEventListener('click', (e) => { if (e.target.matches('input')) answer(); });
+  }
+
+  for (const panel of panels) {
+    const id = panel.id.replace(/^panel-/, '');
+    // An icon only: narrow panels have no room for a word next to the title.
+    const btn = Object.assign(document.createElement('button'), { type: 'button', className: 'am-comment-btn', title: ui.comment, innerHTML: COMMENT_ICON });
+    btn.setAttribute('aria-label', `${ui.comment} ${id}`);
+    btn.setAttribute('aria-expanded', 'false');
+    const wrap = Object.assign(document.createElement('div'), { className: 'am-comment', hidden: true });
+    const box = Object.assign(document.createElement('textarea'), { rows: 3, placeholder: ui.commentHint, value: saved.comments?.[id] ?? '' });
+    box.setAttribute('aria-label', `${ui.comment} ${id}`);
+    wrap.append(box);
+    const show = (open) => {
+      wrap.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+    };
+    btn.addEventListener('click', () => {
+      show(wrap.hidden);
+      if (!wrap.hidden) box.focus();
+    });
+    box.addEventListener('input', () => {
+      btn.classList.toggle('am-comment-btn--on', Boolean(box.value.trim()));
+      save();
+    });
+    btn.classList.toggle('am-comment-btn--on', Boolean(box.value.trim()));
+    if (box.value.trim()) show(true);
+    (panel.querySelector('.am-panel-head') ?? panel).append(btn);
+    panel.append(wrap);
+    boxes.set(id, box);
+  }
+
+  const sheet = document.createElement('dialog');
+  sheet.className = 'am-reply';
+  sheet.setAttribute('aria-label', ui.title);
+  sheet.innerHTML = '<div class="am-reply-head"><strong></strong><span></span></div><textarea readonly rows="14"></textarea><div class="am-reply-actions"><button type="button" class="am-btn" data-act="copy"></button><button type="button" class="am-btn" data-act="close"></button></div>';
+  sheet.querySelector('strong').textContent = ui.title;
+  sheet.querySelector('span').textContent = ui.hint;
+  const text = sheet.querySelector('textarea');
+  const copy = sheet.querySelector('[data-act="copy"]');
+  const close = sheet.querySelector('[data-act="close"]');
+  copy.textContent = ui.copy;
+  close.textContent = ui.close;
+  document.body.append(sheet);
+
+  const compose = () => {
+    const decisions = asks.map((ask) => ({
+      panel: panelOf(ask).id,
+      question: ask.querySelector('legend')?.textContent.trim() ?? '',
+      picked: picked(ask),
+      suggested: [...ask.querySelectorAll('input[data-suggested]')].map((i) => i.value),
+      touched: touched.has(ask),
+    }));
+    const comments = [...boxes].map(([id, box]) => ({ panel: id, title: panelOf(box).title, text: box.value }));
+    const empty = !decisions.length && !comments.some((c) => c.text.trim());
+    const title = document.querySelector('.am-head h1')?.textContent.trim() ?? document.title;
+    return empty ? '' : replyText({ title, decisions, comments, ui });
+  };
+
+  replyBtn.addEventListener('click', () => {
+    const reply = compose();
+    text.value = reply || ui.empty;
+    copy.disabled = !reply;
+    if (sheet.showModal) sheet.showModal();
+    else sheet.setAttribute('open', '');
+    (reply ? copy : close).focus();
+  });
+  close.addEventListener('click', () => (sheet.close ? sheet.close() : sheet.removeAttribute('open')));
+  copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(text.value);
+    } catch {
+      text.select();
+      document.execCommand('copy');
+    }
+    copy.textContent = ui.done;
+    setTimeout(() => { copy.textContent = ui.copy; }, 1400);
+  });
+}
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+
+(() => {
+  const root = document.documentElement;
+  const zh = /^zh|^ja/.test(root.lang);
+  for (const button of document.querySelectorAll('.am-diagram-expand')) {
+    button.classList.add('ink-media-action');
+    button.textContent = zh ? '放大查看' : 'Expand';
+  }
+  const figures = [...document.querySelectorAll('.am-figure')].filter(f => f.querySelector('img'));
+  let dialog;
+  if (figures.length) {
+    dialog = document.createElement('dialog');
+    dialog.className = 'ink-image-viewer';
+    dialog.setAttribute('aria-labelledby', 'ink-image-title');
+    dialog.innerHTML = '<div class="ink-image-toolbar"><strong id="ink-image-title"></strong><button type="button" data-image-action="out" aria-label="Zoom out">−</button><span data-image-scale></span><button type="button" data-image-action="in" aria-label="Zoom in">＋</button><button type="button" data-image-action="close"></button></div><div class="ink-image-stage"></div>';
+    document.body.append(dialog);
+    const stage = dialog.querySelector('.ink-image-stage');
+    dialog.querySelector('[data-image-action="close"]').textContent = zh ? '关闭' : 'Close';
+    let scale = 1, baseWidth = 1;
+    const resize = () => {
+      const image = stage.querySelector('img');
+      if (image) image.style.width = (baseWidth * scale) + 'px';
+      dialog.querySelector('[data-image-scale]').textContent = Math.round(scale * 100) + '%';
+    };
+    dialog.querySelector('[data-image-action="in"]').addEventListener('click', () => { scale = Math.min(3, scale * 1.25); resize(); });
+    dialog.querySelector('[data-image-action="out"]').addEventListener('click', () => { scale = Math.max(.25, scale / 1.25); resize(); });
+    dialog.querySelector('[data-image-action="close"]').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    for (const figure of figures) {
+      const image = figure.querySelector('img');
+      const size = () => { if (image.naturalHeight > image.naturalWidth && !image.hasAttribute('width') && !image.style.width) image.classList.add('ink-portrait'); };
+      if (image.complete) size(); else image.addEventListener('load', size, { once:true });
+      const source = figure.nextElementSibling;
+      const sourceText = source?.matches('p') ? source.querySelector(':scope > small.ink-source') : null;
+      if (sourceText && source.textContent.trim() === sourceText.textContent.trim()) {
+        let caption = figure.querySelector('figcaption');
+        if (!caption) { caption = document.createElement('figcaption'); figure.append(caption); }
+        caption.append(sourceText); source.remove();
+      }
+      const actions = document.createElement('div'); actions.className = 'ink-media-actions';
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'ink-media-action'; button.textContent = zh ? '查看原图' : 'View image';
+      button.addEventListener('click', () => {
+        const clone = image.cloneNode(true); clone.removeAttribute('class'); clone.removeAttribute('width'); clone.removeAttribute('height'); clone.style.cssText = '';
+        stage.replaceChildren(clone);
+        baseWidth = image.naturalWidth || image.width;
+        scale = Math.min(1, (innerWidth * .92 - 48) / baseWidth);
+        dialog.querySelector('#ink-image-title').textContent = image.alt || (zh ? '图片' : 'Image');
+        dialog.showModal(); resize();
+      });
+      actions.append(button); figure.append(actions);
+    }
+  }
+  const closeViewers = () => {
+    if (dialog?.open) dialog.close();
+    const lightbox = document.querySelector('.am-lightbox:not([hidden])');
+    lightbox?.querySelector('.am-lightbox-close')?.click();
+  };
+  new MutationObserver(closeViewers).observe(root, { attributes:true, attributeFilter:['data-mode','data-theme'] });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (root.dataset.mode === 'auto') closeViewers(); });
+})();
+</script>
+</body>
+</html>

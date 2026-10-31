@@ -1,0 +1,50 @@
+{
+  "artifact": "hana-adapter-20261031",
+  "kind": "命令行接入前验证",
+  "probed_at": "2026-10-31T14:12:04+08:00",
+  "scope": "只验证本地进程能启动、MCP 握手可用、工具清单可返回；未读视频、未联网、未写缓存、未安装任何连接器。",
+  "toolchain": {
+    "python": "3.12.13",
+    "python_executable": "D:\\IA\\apps\\video-reader\\.venv\\Scripts\\python.exe",
+    "mcp_module": true,
+    "faster_whisper": true,
+    "local_ocr": true,
+    "local_model_present": true,
+    "local_model_path": "D:\\IA\\apps\\video-reader\\models\\faster-whisper-medium",
+    "ffmpeg_present": true,
+    "gemini_enabled": false
+  },
+  "servers": [
+    {
+      "name": "Video Reader",
+      "command": "D:\\IA\\apps\\video-reader\\.venv\\Scripts\\python.exe",
+      "args": ["-I", "D:\\IA\\apps\\video-reader\\launch_mcp.py"],
+      "protocol_version": "2024-11-05",
+      "server_version": "1.30.0",
+      "ok": true,
+      "tool_count": 19,
+      "elapsed_seconds": 3.28
+    },
+    {
+      "name": "Scroll Agent",
+      "command": "D:\\IA\\apps\\video-reader\\.venv\\Scripts\\python.exe",
+      "args": ["-I", "D:\\IA\\apps\\video-reader\\launch_scroll.py", "--mcp"],
+      "protocol_version": "2024-11-05",
+      "server_version": "1.30.0",
+      "ok": true,
+      "tool_count": 3,
+      "elapsed_seconds": 0.77
+    }
+  ],
+  "environment": {
+    "VIDEO_READER_CONFIG": "D:\\IA\\apps\\video-reader\\config.json",
+    "PYTHONIOENCODING": "utf-8",
+    "cwd": "D:\\IA\\apps\\video-reader"
+  },
+  "limits": [
+    "未在 Hana 宿主内启动，宿主侧的工具授权、图片显示与超时未验证",
+    "未调用任何取数工具，登录态与网络行为未验证",
+    "两个进程均只做 initialize 与 tools/list，未验证长时间转写任务在宿主下的表现"
+  ],
+  "probe_script": "validation/hana-adapter-20261031/probe_mcp.py"
+}

@@ -1,0 +1,622 @@
+{
+  "reference_sha256": "2425100d59d62bb66fc40ef20f0d5cddeac02f3466785853bd82f6c7f7616ab7",
+  "reference": "Published FLEURS test references independent of these predictions; model pretraining overlap unknown; read speech, not video-domain ground truth",
+  "independent_reference": {
+    "qwen": {
+      "characters": 893,
+      "errors": 43,
+      "substitutions": 22,
+      "deletions": 19,
+      "insertions": 2,
+      "cer": 0.048152295632698766,
+      "clips": 24,
+      "audio_seconds": 283.0,
+      "decode_seconds": 102.62072909993003,
+      "real_time_factor": 0.3626174173142404,
+      "gpu_peak_allocated_gib": 3.3711400032043457
+    },
+    "whisper": {
+      "characters": 893,
+      "errors": 108,
+      "substitutions": 88,
+      "deletions": 19,
+      "insertions": 1,
+      "cer": 0.12094064949608063,
+      "clips": 24,
+      "audio_seconds": 283.0,
+      "decode_seconds": 351.92390430002706,
+      "real_time_factor": 1.2435473650177635,
+      "gpu_peak_allocated_gib": 0
+    }
+  },
+  "paired": {
+    "qwen_fewer_errors": 11,
+    "same_errors": 12,
+    "whisper_fewer_errors": 1
+  },
+  "boundary": {
+    "hard": {
+      "metric": {
+        "characters": 296,
+        "errors": 21,
+        "substitutions": 10,
+        "deletions": 10,
+        "insertions": 1,
+        "cer": 0.07094594594594594
+      },
+      "decode_seconds": 31.791810099995928,
+      "chunks": 6,
+      "duration_seconds": 104.92
+    },
+    "overlap": {
+      "metric": {
+        "characters": 296,
+        "errors": 17,
+        "substitutions": 6,
+        "deletions": 9,
+        "insertions": 2,
+        "cer": 0.057432432432432436
+      },
+      "decode_seconds": 38.0616255000059,
+      "chunks": 6,
+      "duration_seconds": 104.92,
+      "midpoint_only_metric": {
+        "characters": 296,
+        "errors": 17,
+        "substitutions": 6,
+        "deletions": 9,
+        "insertions": 2,
+        "cer": 0.057432432432432436
+      },
+      "shared_pair_seams": 0,
+      "seams": [
+        {
+          "time": 20.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 40.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 60.0,
+          "left_reading": "人们只能",
+          "right_reading": "人们只能",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 80.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 100.0,
+          "left_reading": "秘书发表声明",
+          "right_reading": "秘书发表声明",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        }
+      ],
+      "words_inside_known_silence": [],
+      "word_units": 284,
+      "retained_first_utterance_count": 2,
+      "repeated_utterance_reference": {
+        "kind": "utterance",
+        "start": 93.58,
+        "end": 104.92,
+        "id": "1756",
+        "reference": "周 日 晚 些 时 候 美 国 总 统 唐 纳 德 特 朗 普 通 过 新 闻 秘 书 发 表 声 明 宣 布 美 军 将 撤 离 叙 利 亚"
+      }
+    },
+    "hard7": {
+      "metric": {
+        "characters": 296,
+        "errors": 31,
+        "substitutions": 17,
+        "deletions": 10,
+        "insertions": 4,
+        "cer": 0.10472972972972973
+      },
+      "decode_seconds": 10.004796900000656,
+      "chunks": 15,
+      "duration_seconds": 104.92
+    },
+    "overlap7": {
+      "metric": {
+        "characters": 296,
+        "errors": 24,
+        "substitutions": 12,
+        "deletions": 11,
+        "insertions": 1,
+        "cer": 0.08108108108108109
+      },
+      "decode_seconds": 15.001868799998192,
+      "chunks": 15,
+      "duration_seconds": 104.92,
+      "midpoint_only_metric": {
+        "characters": 296,
+        "errors": 25,
+        "substitutions": 12,
+        "deletions": 11,
+        "insertions": 2,
+        "cer": 0.08445945945945946
+      },
+      "shared_pair_seams": 1,
+      "seams": [
+        {
+          "time": 7.0,
+          "left_reading": "闻秘书发表声明",
+          "right_reading": "闻秘书发表声明",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 14.0,
+          "left_reading": "它是南",
+          "right_reading": "它是南",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 21.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 28.0,
+          "left_reading": "锋利的牙齿上",
+          "right_reading": "锋利的牙齿上",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 35.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 42.0,
+          "left_reading": "有了它",
+          "right_reading": "有了它",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 49.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 56.0,
+          "left_reading": "分之百的确定的预测",
+          "right_reading": "分之百的确定的预测",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.04,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 63.0,
+          "left_reading": "产品出现时",
+          "right_reading": "产品出现时",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.04,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 70.0,
+          "left_reading": "卡勒",
+          "right_reading": "卡勒",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 77.0,
+          "left_reading": "退出了",
+          "right_reading": "就退出了",
+          "disagreement": true,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 84.0,
+          "left_reading": "品中心的声誉始于",
+          "right_reading": "品中心的声誉始于公",
+          "disagreement": true,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 91.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 98.0,
+          "left_reading": "统唐纳德特朗普通过",
+          "right_reading": "统唐纳德特朗普通过",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.04,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        }
+      ],
+      "words_inside_known_silence": [],
+      "word_units": 286,
+      "retained_first_utterance_count": 2,
+      "repeated_utterance_reference": {
+        "kind": "utterance",
+        "start": 93.58,
+        "end": 104.92,
+        "id": "1756",
+        "reference": "周 日 晚 些 时 候 美 国 总 统 唐 纳 德 特 朗 普 通 过 新 闻 秘 书 发 表 声 明 宣 布 美 军 将 撤 离 叙 利 亚"
+      }
+    }
+  },
+  "full": [
+    {
+      "case": "mbti-full-aligned",
+      "duration_seconds": 626.0794375,
+      "decode_seconds": 209.33593679999467,
+      "gpu_peak_allocated_gib": 3.911257743835449,
+      "word_units": 2904,
+      "chunks": 11,
+      "shared_pair_seams": 0,
+      "seam_disagreements": 2,
+      "seams_requiring_review": 2,
+      "seams": [
+        {
+          "time": 60.0,
+          "left_reading": "的辩论加人格已",
+          "right_reading": "的辩论家人格已",
+          "disagreement": true,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 120.0,
+          "left_reading": "在那里预设着才能",
+          "right_reading": "在那里预示着才能",
+          "disagreement": true,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 180.0,
+          "left_reading": "自己的叙事而",
+          "right_reading": "自己的叙事而",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 240.0,
+          "left_reading": "的有待于被移情所",
+          "right_reading": "的有待于被移情所",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 300.0,
+          "left_reading": "验证其普遍性的",
+          "right_reading": "验证其普遍性的",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 360.0,
+          "left_reading": "四个对子将主体分门",
+          "right_reading": "四个对子将主体分门",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 420.0,
+          "left_reading": "能之内的精神境",
+          "right_reading": "能之内的精神境",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 480.0,
+          "left_reading": "一个个体完全的囊括",
+          "right_reading": "一个个体完全的囊括",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 540.0,
+          "left_reading": "迫主体自己把自己把",
+          "right_reading": "迫主体自己把自己把",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 600.0,
+          "left_reading": "困顿和僵局",
+          "right_reading": "困顿和僵局",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        }
+      ],
+      "invalid_timestamps": [],
+      "global_start_time_regressions": [],
+      "zero_duration_units": 11,
+      "first_word": {
+        "text": "在",
+        "start": 1.84,
+        "end": 2.0,
+        "owned": true,
+        "text_start": 0,
+        "text_end": 1,
+        "midpoint_owned": true
+      },
+      "last_word": {
+        "text": "合",
+        "start": 623.52,
+        "end": 623.52,
+        "owned": true,
+        "text_start": 131,
+        "text_end": 132,
+        "midpoint_owned": true
+      }
+    },
+    {
+      "case": "vtuber-full-aligned",
+      "duration_seconds": 308.7786875,
+      "decode_seconds": 87.99706609998248,
+      "gpu_peak_allocated_gib": 3.992246627807617,
+      "word_units": 1615,
+      "chunks": 6,
+      "shared_pair_seams": 0,
+      "seam_disagreements": 1,
+      "seams_requiring_review": 1,
+      "seams": [
+        {
+          "time": 60.0,
+          "left_reading": "搞懂一个账号要怎么做",
+          "right_reading": "搞懂一个账号要怎么做",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 120.0,
+          "left_reading": "有成功案例我们要有一个",
+          "right_reading": "有成功案例我们要有一个共",
+          "disagreement": true,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": true,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 180.0,
+          "left_reading": "这个虚拟主播的",
+          "right_reading": "这个虚拟主播的",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 240.0,
+          "left_reading": "果依旧不尽如人",
+          "right_reading": "果依旧不尽如人",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 300.0,
+          "left_reading": "给自己带来更多的记忆",
+          "right_reading": "给自己带来更多的记忆",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        }
+      ],
+      "invalid_timestamps": [],
+      "global_start_time_regressions": [],
+      "zero_duration_units": 41,
+      "first_word": {
+        "text": "虚",
+        "start": 0.08,
+        "end": 0.24,
+        "owned": true,
+        "text_start": 0,
+        "text_end": 1,
+        "midpoint_owned": true
+      },
+      "last_word": {
+        "text": "拜",
+        "start": 307.68,
+        "end": 308.56,
+        "owned": true,
+        "text_start": 50,
+        "text_end": 51,
+        "midpoint_owned": true
+      }
+    },
+    {
+      "case": "unfamiliar-full-aligned",
+      "duration_seconds": 291.583625,
+      "decode_seconds": 34.77424929998233,
+      "gpu_peak_allocated_gib": 3.854093074798584,
+      "word_units": 1007,
+      "chunks": 5,
+      "shared_pair_seams": 0,
+      "seam_disagreements": 0,
+      "seams_requiring_review": 0,
+      "seams": [
+        {
+          "time": 60.0,
+          "left_reading": "色哪个更长呢",
+          "right_reading": "色哪个更长呢",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 120.0,
+          "left_reading": "照相机从物",
+          "right_reading": "照相机从物",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 180.0,
+          "left_reading": "我们的大脑有时",
+          "right_reading": "我们的大脑有时",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        },
+        {
+          "time": 240.0,
+          "left_reading": "",
+          "right_reading": "",
+          "disagreement": false,
+          "owned_time_overlap_seconds": 0.0,
+          "requires_review": false,
+          "resolution": "midpoint ownership; disagreement is not silently corrected"
+        }
+      ],
+      "invalid_timestamps": [],
+      "global_start_time_regressions": [],
+      "zero_duration_units": 14,
+      "first_word": {
+        "text": "妮",
+        "start": 0.16,
+        "end": 0.16,
+        "owned": true,
+        "text_start": 0,
+        "text_end": 1,
+        "midpoint_owned": true
+      },
+      "last_word": {
+        "text": "吧",
+        "start": 286.96,
+        "end": 287.28,
+        "owned": true,
+        "text_start": 189,
+        "text_end": 190,
+        "midpoint_owned": true
+      }
+    },
+    {
+      "case": "project-offset",
+      "duration_seconds": 13.0,
+      "decode_seconds": 1.8531084000132978,
+      "gpu_peak_allocated_gib": 3.291567325592041,
+      "word_units": 61,
+      "chunks": 1,
+      "shared_pair_seams": 0,
+      "seam_disagreements": 0,
+      "seams_requiring_review": 0,
+      "seams": [],
+      "invalid_timestamps": [],
+      "global_start_time_regressions": [],
+      "zero_duration_units": 1,
+      "first_word": {
+        "text": "搭",
+        "start": 16.0,
+        "end": 16.08,
+        "owned": true,
+        "text_start": 0,
+        "text_end": 1,
+        "midpoint_owned": true
+      },
+      "last_word": {
+        "text": "个",
+        "start": 28.880000000000003,
+        "end": 28.96,
+        "owned": true,
+        "text_start": 71,
+        "text_end": 72,
+        "midpoint_owned": true
+      }
+    }
+  ],
+  "limits": [
+    "24 short read-speech utterances, not independently transcribed video audio",
+    "Unknown model pretraining overlap; no claim of model-unseen test data",
+    "Character normalization does not equate written digits and spoken numbers",
+    "Different CPU/GPU execution; timing is not a controlled hardware speed comparison",
+    "Reference decodes ran concurrently on CPU/GPU; timings describe this run, not isolated performance",
+    "No independent word-level timestamp ground truth; validity is not temporal accuracy",
+    "Overlap ownership can still disagree across independently decoded windows",
+    "Experimental candidate only; default engine and original review data unchanged"
+  ]
+}

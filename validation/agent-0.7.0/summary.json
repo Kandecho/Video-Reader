@@ -1,0 +1,47 @@
+{
+  "status": "passed_with_documented_limits",
+  "core_version": "0.7.0",
+  "plugin_version": "0.2.0",
+  "tests": {"passed": 149, "failed": 0, "log": "tests.log"},
+  "online_round": {
+    "run_id": "round_cf9e00b6d5cb462b8d38dec455effe39",
+    "candidates": 10,
+    "previews": 3,
+    "native_frames": 7,
+    "caption_segments": [171, 751, 1014],
+    "selected": 2,
+    "get_requests": 17,
+    "response_bytes": 3830294,
+    "missing_native_frames_for_one_video_reported": true,
+    "new_full_media_downloads": 0,
+    "asr_requests": 0,
+    "private_messages_sent": 0
+  },
+  "wake_test": {
+    "mode": "range",
+    "test_interval_seconds": [1, 2],
+    "production_frequency": false,
+    "real_model_round_triggered": true,
+    "bilibili_requests": 0,
+    "private_messages_sent": 0,
+    "os_task_created": false,
+    "watcher_left_running": false,
+    "evidence": "wake-summary.json"
+  },
+  "shared_source_cache": {"frames": 5, "speech_segments": 83, "network_requests": 0, "asr_requests": 0},
+  "codex": {"installed": true, "plugin_files": 4, "plugin_bytes": 17195, "tools": 11, "actual_new_tool_calls": 3, "preview_image_blocks": 4},
+  "claude": {"generated": true, "local_manifests_validated": true, "installed": false, "public_directory_ready": false},
+  "private_message_test": {"rounds": 3, "user_confirmed_receipt": true, "listener_stopped": true},
+  "production": {"daily_delivery_enabled": false, "wake_enabled": false, "automatic_task_created": false, "persistent_chat_created": false},
+  "shared_core_models_auth_and_media": true,
+  "new_runtime_dependencies": [],
+  "limits": [
+    "Recommendation workflow is verified, not long-term personal relevance",
+    "Preview evidence is not continuous viewing or full proofreading",
+    "New transport budgets do not cover all legacy Reader/yt-dlp internal requests",
+    "Deep-read contracts and limits tested; no new full-media deep-read acceptance run",
+    "One long-caption model round used about 80000 input tokens; context limits are configurable",
+    "Current Codex CLI skill isolation uses an under-development feature",
+    "Claude adapter validated locally but not installed or inference-tested"
+  ]
+}

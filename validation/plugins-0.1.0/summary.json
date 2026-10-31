@@ -1,0 +1,43 @@
+{
+  "status": "passed",
+  "plugin_id": "video-reader@video-reader-local",
+  "version": "0.1.0",
+  "core_root": "D:\\IA\\apps\\video-reader",
+  "installed_path": "C:/Users/USER\\.codex\\plugins\\cache\\video-reader-local\\video-reader\\0.1.0",
+  "package_file_count": 4,
+  "package_bytes": 14629,
+  "native_codex_plugin_and_skill_discovered": true,
+  "server": "video-reader",
+  "tools": [
+    "bilibili_login",
+    "video_discover",
+    "video_open",
+    "video_read",
+    "video_relisten",
+    "video_review",
+    "video_search",
+    "video_transcript"
+  ],
+  "native_codex_tool_calls": [
+    "video_transcript",
+    "video_read",
+    "video_review"
+  ],
+  "image_blocks": 1,
+  "inspected_image": "D:\\IA\\apps\\video-reader\\validation\\plugins-0.1.0\\codex-native-frame.jpg",
+  "shared_frame_path": "D:\\IA\\apps\\video-reader\\data\\cache\\v_0a2c92d2649039d67069b0ad\\frames\\fb3048d65a49dad05d356332-6404d944\\cue_0000.jpg",
+  "source_snapshot_consistent": true,
+  "speech_records_unchanged": true,
+  "core_config_unchanged": true,
+  "auth_files_unchanged": true,
+  "ephemeral_runtime_only": true,
+  "model_inference_or_asr_requested": false,
+  "persistent_chat_created": false,
+  "review_write_requested": false,
+  "review_status_response_keys": [
+    "review",
+    "session_id",
+    "source_content_policy",
+    "title"
+  ]
+}

@@ -1,0 +1,789 @@
+[
+  {
+    "name": "agent-video-reader",
+    "version": "0.4.0",
+    "license_expression": null,
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/agent-video-reader/agent_video_reader-0.4.0.dist-info/licenses/LICENSE_REVIEW.md"
+    ]
+  },
+  {
+    "name": "annotated-types",
+    "version": "0.8.0",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/annotated-types/annotated_types-0.8.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "anyio",
+    "version": "4.15.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/anyio/anyio-4.15.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "attrs",
+    "version": "26.1.0",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/attrs/attrs-26.1.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "av",
+    "version": "16.1.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/av/av-16.1.0.dist-info/licenses/AUTHORS.py",
+      "licenses/python-packages/av/av-16.1.0.dist-info/licenses/AUTHORS.rst",
+      "licenses/python-packages/av/av-16.1.0.dist-info/licenses/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "certifi",
+    "version": "2026.10.19",
+    "license_expression": null,
+    "license_metadata": "MPL-2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/certifi/certifi-2026.10.19.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "cffi",
+    "version": "2.1.1",
+    "license_expression": "MIT-0",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/cffi/cffi-2.1.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "click",
+    "version": "8.5.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/click/click-8.5.0.dist-info/licenses/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "colorama",
+    "version": "0.4.6",
+    "license_expression": null,
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/colorama/colorama-0.4.6.dist-info/licenses/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "cryptography",
+    "version": "50.0.2",
+    "license_expression": "Apache-2.0 OR BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [
+      "Development Status :: 5 - Production/Stable",
+      "Intended Audience :: Developers",
+      "Natural Language :: English",
+      "Operating System :: MacOS :: MacOS X",
+      "Operating System :: POSIX",
+      "Operating System :: POSIX :: BSD",
+      "Operating System :: POSIX :: Linux",
+      "Operating System :: Microsoft :: Windows",
+      "Programming Language :: Python",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3 :: Only",
+      "Programming Language :: Python :: 3.9",
+      "Programming Language :: Python :: 3.10",
+      "Programming Language :: Python :: 3.11",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3.13",
+      "Programming Language :: Python :: 3.14",
+      "Programming Language :: Python :: 3.15",
+      "Programming Language :: Python :: Implementation :: CPython",
+      "Programming Language :: Python :: Implementation :: PyPy",
+      "Programming Language :: Python :: Free Threading :: 3 - Stable",
+      "Topic :: Security :: Cryptography"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/cryptography/cryptography-50.0.2.dist-info/licenses/LICENSE",
+      "licenses/python-packages/cryptography/cryptography-50.0.2.dist-info/licenses/LICENSE.APACHE",
+      "licenses/python-packages/cryptography/cryptography-50.0.2.dist-info/licenses/LICENSE.BSD"
+    ]
+  },
+  {
+    "name": "ctranslate2",
+    "version": "4.8.3",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [],
+    "retained_license_files": []
+  },
+  {
+    "name": "faster-whisper",
+    "version": "1.2.1",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/faster-whisper/faster_whisper-1.2.1.dist-info/LICENSE"
+    ]
+  },
+  {
+    "name": "filelock",
+    "version": "4.2.4",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/filelock/filelock-4.2.4.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "flatbuffers",
+    "version": "25.12.19",
+    "license_expression": null,
+    "license_metadata": "Apache 2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "retained_license_files": []
+  },
+  {
+    "name": "fsspec",
+    "version": "2026.9.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/fsspec/fsspec-2026.9.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "h11",
+    "version": "0.16.0",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/h11/h11-0.16.0.dist-info/licenses/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "hf-xet",
+    "version": "1.7.0",
+    "license_expression": "Apache-2.0",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/hf-xet/hf_xet-1.7.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "httpcore",
+    "version": "1.0.9",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/httpcore/httpcore-1.0.9.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "httpcore2",
+    "version": "2.15.1",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/httpcore2/httpcore2-2.15.1.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "httpx",
+    "version": "0.28.1",
+    "license_expression": null,
+    "license_metadata": "BSD-3-Clause",
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/httpx/httpx-0.28.1.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "httpx-sse",
+    "version": "0.4.3",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/httpx-sse/httpx_sse-0.4.3.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "httpx2",
+    "version": "2.15.1",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/httpx2/httpx2-2.15.1.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "huggingface_hub",
+    "version": "2.2.0",
+    "license_expression": null,
+    "license_metadata": "Apache-2.0",
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/huggingface_hub/huggingface_hub-2.2.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "idna",
+    "version": "3.20",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/idna/idna-3.20.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "jsonschema",
+    "version": "4.26.0",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/jsonschema/jsonschema-4.26.0.dist-info/licenses/COPYING"
+    ]
+  },
+  {
+    "name": "jsonschema-specifications",
+    "version": "2025.9.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/jsonschema-specifications/jsonschema_specifications-2025.9.1.dist-info/licenses/COPYING"
+    ]
+  },
+  {
+    "name": "mcp",
+    "version": "1.30.0",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/mcp/mcp-1.30.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "numpy",
+    "version": "2.5.4",
+    "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/LICENSE.txt",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/ma/LICENSE",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+      "licenses/python-packages/numpy/numpy-2.5.4.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+      "licenses/python-packages/numpy/numpy/_core/include/numpy/random/LICENSE.txt",
+      "licenses/python-packages/numpy/numpy/ma/LICENSE",
+      "licenses/python-packages/numpy/numpy/random/LICENSE.md"
+    ]
+  },
+  {
+    "name": "onnxruntime",
+    "version": "1.31.0",
+    "license_expression": null,
+    "license_metadata": "MIT License",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/onnxruntime/onnxruntime/LICENSE"
+    ]
+  },
+  {
+    "name": "opencv-python",
+    "version": "5.0.0.93",
+    "license_expression": null,
+    "license_metadata": "Apache 2.0",
+    "classifiers": [
+      "Development Status :: 5 - Production/Stable",
+      "Environment :: Console",
+      "Intended Audience :: Developers",
+      "Intended Audience :: Education",
+      "Intended Audience :: Information Technology",
+      "Intended Audience :: Science/Research",
+      "License :: OSI Approved :: Apache Software License",
+      "Operating System :: MacOS",
+      "Operating System :: Microsoft :: Windows",
+      "Operating System :: POSIX",
+      "Operating System :: Unix",
+      "Programming Language :: Python",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3 :: Only",
+      "Programming Language :: Python :: 3.6",
+      "Programming Language :: Python :: 3.7",
+      "Programming Language :: Python :: 3.8",
+      "Programming Language :: Python :: 3.9",
+      "Programming Language :: Python :: 3.10",
+      "Programming Language :: Python :: 3.11",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3.13",
+      "Programming Language :: Python :: 3.14",
+      "Programming Language :: C++",
+      "Programming Language :: Python :: Implementation :: CPython",
+      "Topic :: Scientific/Engineering",
+      "Topic :: Scientific/Engineering :: Image Recognition",
+      "Topic :: Software Development"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/opencv-python/cv2/LICENSE-3RD-PARTY.txt",
+      "licenses/python-packages/opencv-python/cv2/LICENSE.txt",
+      "licenses/python-packages/opencv-python/opencv_python-5.0.0.93.dist-info/LICENSE-3RD-PARTY.txt",
+      "licenses/python-packages/opencv-python/opencv_python-5.0.0.93.dist-info/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "packaging",
+    "version": "26.3",
+    "license_expression": "Apache-2.0 OR BSD-2-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/packaging/packaging-26.3.dist-info/licenses/LICENSE",
+      "licenses/python-packages/packaging/packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+      "licenses/python-packages/packaging/packaging-26.3.dist-info/licenses/LICENSE.BSD",
+      "licenses/python-packages/packaging/packaging/licenses/__init__.py",
+      "licenses/python-packages/packaging/packaging/licenses/_spdx.py"
+    ]
+  },
+  {
+    "name": "pillow",
+    "version": "12.3.0",
+    "license_expression": "MIT-CMU",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/pillow/pillow-12.3.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "protobuf",
+    "version": "7.36.2",
+    "license_expression": null,
+    "license_metadata": "3-Clause BSD License",
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/protobuf/protobuf-7.36.2.dist-info/LICENSE"
+    ]
+  },
+  {
+    "name": "pyclipper",
+    "version": "1.4.0",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [
+      "Programming Language :: Python",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3.10",
+      "Programming Language :: Python :: 3.11",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3.13",
+      "Programming Language :: Python :: 3.14",
+      "Programming Language :: Cython",
+      "Programming Language :: C++",
+      "Environment :: Other Environment",
+      "Development Status :: 4 - Beta",
+      "Intended Audience :: Developers",
+      "Operating System :: OS Independent",
+      "License :: OSI Approved",
+      "License :: OSI Approved :: MIT License",
+      "Topic :: Multimedia :: Graphics",
+      "Topic :: Scientific/Engineering :: Mathematics",
+      "Topic :: Software Development :: Libraries :: Python Modules"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/pyclipper/pyclipper-1.4.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pycparser",
+    "version": "3.11",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/pycparser/pycparser-3.11.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pydantic",
+    "version": "2.14.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/pydantic/pydantic-2.14.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pydantic-settings",
+    "version": "2.16.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/pydantic-settings/pydantic_settings-2.16.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pydantic_core",
+    "version": "2.50.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/pydantic_core/pydantic_core-2.50.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "PyJWT",
+    "version": "2.15.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/PyJWT/pyjwt-2.15.1.dist-info/licenses/AUTHORS.rst",
+      "licenses/python-packages/PyJWT/pyjwt-2.15.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "python-dotenv",
+    "version": "1.2.4",
+    "license_expression": null,
+    "license_metadata": "BSD-3-Clause",
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/python-dotenv/python_dotenv-1.2.4.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "python-multipart",
+    "version": "0.0.32",
+    "license_expression": "Apache-2.0",
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/python-multipart/python_multipart-0.0.32.dist-info/licenses/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "pywin32",
+    "version": "312",
+    "license_expression": null,
+    "license_metadata": "PSF",
+    "classifiers": [
+      "License :: OSI Approved :: Python Software Foundation License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/pywin32/adodbapi/license.txt",
+      "licenses/python-packages/pywin32/pythonwin/License.txt",
+      "licenses/python-packages/pywin32/pythonwin/pywin/idle/LICENSE.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/adodbapi/license.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/com/License.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/com/win32comext/mapi/src/MAPIStubLibrary/LICENSE",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/isapi/README.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/pythonwin/License.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/pythonwin/Scintilla/License.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/pythonwin/pywin/idle/LICENSE.txt",
+      "licenses/python-packages/pywin32/pywin32-312.dist-info/licenses/win32/License.txt",
+      "licenses/python-packages/pywin32/win32/License.txt",
+      "licenses/python-packages/pywin32/win32com/License.txt",
+      "licenses/python-packages/pywin32/win32comext/License.txt",
+      "licenses/python-packages/pywin32/win32comext/mapi/NOTICE.md"
+    ]
+  },
+  {
+    "name": "PyYAML",
+    "version": "6.0.3",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/PyYAML/pyyaml-6.0.3.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "qrcode",
+    "version": "8.2",
+    "license_expression": null,
+    "license_metadata": "BSD",
+    "classifiers": [
+      "Development Status :: 5 - Production/Stable",
+      "Intended Audience :: Developers",
+      "License :: OSI Approved :: BSD License",
+      "License :: Other/Proprietary License",
+      "Operating System :: OS Independent",
+      "Programming Language :: Python",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3.9",
+      "Programming Language :: Python :: 3.10",
+      "Programming Language :: Python :: 3.11",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3 :: Only",
+      "Programming Language :: Python :: 3.13",
+      "Topic :: Multimedia :: Graphics",
+      "Topic :: Software Development :: Libraries :: Python Modules"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/qrcode/qrcode-8.2.dist-info/LICENSE"
+    ]
+  },
+  {
+    "name": "rapidocr-onnxruntime",
+    "version": "1.4.4",
+    "license_expression": null,
+    "license_metadata": "Apache-2.0",
+    "classifiers": [
+      "Programming Language :: Python :: 3.6",
+      "Programming Language :: Python :: 3.7",
+      "Programming Language :: Python :: 3.8",
+      "Programming Language :: Python :: 3.9",
+      "Programming Language :: Python :: 3.10",
+      "Programming Language :: Python :: 3.11",
+      "Programming Language :: Python :: 3.12"
+    ],
+    "retained_license_files": []
+  },
+  {
+    "name": "referencing",
+    "version": "0.37.0",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/referencing/referencing-0.37.0.dist-info/licenses/COPYING"
+    ]
+  },
+  {
+    "name": "rpds-py",
+    "version": "2026.9.1",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/rpds-py/rpds_py-2026.9.1.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "shapely",
+    "version": "2.2.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [
+      "Development Status :: 5 - Production/Stable",
+      "Intended Audience :: Developers",
+      "Intended Audience :: Science/Research",
+      "Operating System :: Unix",
+      "Operating System :: MacOS",
+      "Operating System :: Microsoft :: Windows",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: 3.11",
+      "Programming Language :: Python :: 3.12",
+      "Programming Language :: Python :: 3.13",
+      "Programming Language :: Python :: 3.14",
+      "Programming Language :: Python :: 3.15",
+      "Topic :: Scientific/Engineering :: GIS"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/shapely/shapely-2.2.0.dist-info/licenses/LICENSE.txt",
+      "licenses/python-packages/shapely/shapely-2.2.0.dist-info/licenses/LICENSE_GEOS",
+      "licenses/python-packages/shapely/shapely-2.2.0.dist-info/licenses/LICENSE_win32"
+    ]
+  },
+  {
+    "name": "six",
+    "version": "1.17.0",
+    "license_expression": null,
+    "license_metadata": "MIT",
+    "classifiers": [
+      "Development Status :: 5 - Production/Stable",
+      "Programming Language :: Python :: 2",
+      "Programming Language :: Python :: 3",
+      "Intended Audience :: Developers",
+      "License :: OSI Approved :: MIT License",
+      "Topic :: Software Development :: Libraries",
+      "Topic :: Utilities"
+    ],
+    "retained_license_files": [
+      "licenses/python-packages/six/six-1.17.0.dist-info/LICENSE"
+    ]
+  },
+  {
+    "name": "sse-starlette",
+    "version": "3.5.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/sse-starlette/sse_starlette-3.5.0.dist-info/licenses/AUTHORS",
+      "licenses/python-packages/sse-starlette/sse_starlette-3.5.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "starlette",
+    "version": "1.9.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/starlette/starlette-1.9.0.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "tokenizers",
+    "version": "0.23.3",
+    "license_expression": null,
+    "license_metadata": null,
+    "classifiers": [
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "retained_license_files": []
+  },
+  {
+    "name": "tqdm",
+    "version": "4.70.1",
+    "license_expression": null,
+    "license_metadata": "MPL-2.0 AND MIT",
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/tqdm/tqdm-4.70.1.dist-info/licenses/LICENCE"
+    ]
+  },
+  {
+    "name": "truststore",
+    "version": "0.10.5",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/truststore/truststore-0.10.5.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "typing-inspection",
+    "version": "0.4.4",
+    "license_expression": "MIT",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/typing-inspection/typing_inspection-0.4.4.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "typing_extensions",
+    "version": "4.16.0",
+    "license_expression": "PSF-2.0",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/typing_extensions/typing_extensions-4.16.0.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "uvicorn",
+    "version": "0.54.0",
+    "license_expression": "BSD-3-Clause",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/uvicorn/uvicorn-0.54.0.dist-info/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "yt-dlp",
+    "version": "2026.8.19",
+    "license_expression": "Unlicense",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/yt-dlp/yt_dlp-2026.8.19.dist-info/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "yt-dlp-ejs",
+    "version": "0.8.0",
+    "license_expression": "Unlicense AND MIT AND ISC",
+    "license_metadata": null,
+    "classifiers": [],
+    "retained_license_files": [
+      "licenses/python-packages/yt-dlp-ejs/yt_dlp_ejs-0.8.0.dist-info/licenses/LICENSE"
+    ]
+  }
+]

@@ -1,0 +1,159 @@
+{
+  "date": "2026-10-28",
+  "core_version": "0.10.0rc2",
+  "plugin_version": "0.5.1",
+  "production_code_changed": false,
+  "automated_real_task_validation": "completed",
+  "human_quality_review": "pending_user",
+  "independent_chat_semantics": "pending_user",
+  "reader_cases": [
+    {
+      "case": "3b1b",
+      "session_id": "v_1ed890055a512d73746d7ec3",
+      "segments": 289,
+      "images": 36,
+      "review": {
+        "snapshot_id": "2855ff1b660d0c35f2d9cbdc",
+        "revision": 2,
+        "reviewed_segments": 289,
+        "total_segments": 289,
+        "complete": true,
+        "corrected_segments": 4,
+        "unresolved_segments": 0,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      }
+    },
+    {
+      "case": "software",
+      "session_id": "v_dc2721f3e01115bcd77a3eea",
+      "segments": 222,
+      "images": 45,
+      "review": {
+        "snapshot_id": "ec84c670787b650212415bda",
+        "revision": 1,
+        "reviewed_segments": 222,
+        "total_segments": 222,
+        "complete": true,
+        "corrected_segments": 7,
+        "unresolved_segments": 1,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      }
+    },
+    {
+      "case": "youtube",
+      "session_id": "v_152006cb4021a3f1a2d7100b",
+      "segments": 1903,
+      "images": 16,
+      "review": {
+        "snapshot_id": "e99f55bcba484e2b82ed8fee",
+        "revision": 1,
+        "reviewed_segments": 1903,
+        "total_segments": 1903,
+        "complete": true,
+        "corrected_segments": 3,
+        "unresolved_segments": 1,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      }
+    },
+    {
+      "case": "essay",
+      "session_id": "v_d138ef2a6f645451c30be582",
+      "segments": 72,
+      "images": 12,
+      "review": {
+        "snapshot_id": "72c5b4e346a2df7e0feee1b8",
+        "revision": 1,
+        "reviewed_segments": 72,
+        "total_segments": 72,
+        "complete": true,
+        "corrected_segments": 7,
+        "unresolved_segments": 1,
+        "author": "host_agent",
+        "exactness_guaranteed": false
+      }
+    }
+  ],
+  "cross_process": {
+    "status": "passed",
+    "new_server_processes": 2,
+    "frozen_replay_equal": true,
+    "next_segment_ids_equal": true,
+    "correction_survives_restart": true,
+    "old_revision_next_rejected": true,
+    "old_revision_frozen_replay_retained": true,
+    "current_revision": 1,
+    "pending_semantic_chat_acceptance": true,
+    "youtube_status": {
+      "status": "logged_in",
+      "authenticated": true,
+      "account_marker": "youtube-f84ccc6b4b663b67813d0c87",
+      "maintenance": "manual replacement after expiry; no automatic refresh or browser extraction",
+      "validity": "A cookie file alone does not prove the current server login state",
+      "automatic_renewal": false
+    }
+  },
+  "scroll": {
+    "batch": {
+      "batch_id": "batch_d86402ff43834769b72bc870240dc56e",
+      "account_scope": "ACCOUNT_SCOPE",
+      "task": "比较两片关于 AI 工具应自动完成到哪一步、哪些控制权必须留给用户。先完整读取再判断 MAW 实际工作流支持、限制或反驳《为什么一键生成，永远是伪需求？》，保留具体时间和证据，不从标题预设结论。",
+      "items": [
+        {
+          "source": "v_dc2721f3e01115bcd77a3eea",
+          "canonical": "https://www.bilibili.com/video/BV1S9bZ6pEHg?p=1",
+          "session_id": "v_dc2721f3e01115bcd77a3eea",
+          "status": "delivered",
+          "phase": "done",
+          "error": null,
+          "gap": null
+        },
+        {
+          "source": "v_d138ef2a6f645451c30be582",
+          "canonical": "https://www.bilibili.com/video/BV1z9n86gEWS?p=1",
+          "session_id": "v_d138ef2a6f645451c30be582",
+          "status": "delivered",
+          "phase": "done",
+          "error": null,
+          "gap": null
+        }
+      ],
+      "pending_cursor": null,
+      "last_acknowledged": "batch_d86402ff43834769b72bc870240dc56e:10",
+      "all_material_delivered": true,
+      "processing_finished": true,
+      "batch_status": "complete",
+      "host_observation": "not_inferred",
+      "messages_sent": 0,
+      "scheduler_changed": false
+    },
+    "pending_replay_equal": true,
+    "observed_material_pages": 10,
+    "semantic_comparison": "report-source.md",
+    "not_user_preference": true
+  },
+  "new_gap": {
+    "type": "traceable continuous caption reading view",
+    "status": "not_implemented",
+    "youtube_raw_segments": 1903,
+    "transitional_cues_approximately_10ms": 950,
+    "raw_text_characters": 104458,
+    "scroll_redundant_initial_speech": true
+  },
+  "artifacts": {
+    "report": "report.html",
+    "source": "report-source.md",
+    "observations": "observations.json",
+    "resume": "resume-check.md"
+  },
+  "protected_scope": {
+    "code_models_scheduler_changed": false,
+    "messages_sent": 0,
+    "inferred_user_preferences_written": false,
+    "public_repository_created": false,
+    "candidate_repacked": false
+  },
+  "verification_note": "No production code changes: prior 213 regression tests not rerun. Reading and MCP/Scroll assertions are fresh task-specific evidence."
+}

@@ -1,0 +1,76 @@
+{
+  "version": "0.6.1",
+  "benchmark_scope": "One cached exact-frame read, first 60 speech segments; isolated cloned manifests/reviews, no preexisting OCR cache. Not full-video processing speed.",
+  "source_session": "v_818021bee807eaa6a7aabae0",
+  "baseline": {
+    "seconds": 51.490706,
+    "speech_frame_checks": 86,
+    "segments": 60,
+    "screen_verification": null,
+    "timing_source": "Retained from the completed measurements printed by the first benchmark invocation before its later assertion failed."
+  },
+  "optimized": {
+    "seconds": 0.013425,
+    "speech_frame_checks": 0,
+    "segments": 60,
+    "screen_verification": {
+      "mode": "auto",
+      "policy": "cached_only",
+      "computed_segments": 0,
+      "cached_segments": 0,
+      "skipped_segments": 60,
+      "reason": null
+    },
+    "timing_source": "Retained from the completed measurements printed by the first benchmark invocation before its later assertion failed."
+  },
+  "same_reading_text": true,
+  "original_speech_unchanged": true,
+  "pending_timestamp_read": {
+    "seconds": 0.176681,
+    "speech_frame_checks": 0,
+    "segments": 60,
+    "screen_verification": {
+      "mode": "auto",
+      "policy": "cached_only",
+      "computed_segments": 0,
+      "cached_segments": 0,
+      "skipped_segments": 60,
+      "reason": null
+    },
+    "timing_source": "Retained from the completed measurements printed by the first benchmark invocation before its later assertion failed."
+  },
+  "pending_normal_transcript_verification": {
+    "mode": "auto",
+    "policy": "pending_only",
+    "computed_segments": 1,
+    "cached_segments": 0,
+    "skipped_segments": 0,
+    "reason": null
+  },
+  "explicit_evidence": {
+    "seconds": 2.219773,
+    "speech_frame_checks": 4,
+    "segments": 3,
+    "screen_verification": {
+      "mode": "auto",
+      "policy": "selected_page",
+      "computed_segments": 3,
+      "cached_segments": 0,
+      "skipped_segments": 0,
+      "reason": null
+    },
+    "timing_source": "Retained from the completed measurements printed by the first benchmark invocation before its later assertion failed."
+  },
+  "mixed_source_asr_review_preserved": true,
+  "tests": {
+    "passed": 77,
+    "failed": 0,
+    "seconds": 5.624,
+    "real_mcp_protocol": true
+  },
+  "limits": [
+    "Skipped OCR is not a verified match.",
+    "No new ASR engine or accuracy claim.",
+    "Temporal numeric/formula frame OCR is controlled separately."
+  ]
+}

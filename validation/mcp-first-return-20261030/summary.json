@@ -1,0 +1,251 @@
+{
+  "source_thread": "01a18d11-fea2-73e2-b7c1-7cefdeac61a0",
+  "video": "BV1Fxxv6YEhC",
+  "session": "v_db1db9eb11cd74ec9bf43cd8",
+  "mcp_open_ms": 355103,
+  "cli_authorized_open_ms": 252634,
+  "initial_delivery_pages": 32,
+  "initial_image_bytes": 0,
+  "cli_first_error": "PermissionError WinError 5 auth/bilibili/.lock",
+  "cached_host_mcp_probe": {
+    "elapsed_ms": 27257,
+    "speech_segments": 7,
+    "native_images": 1,
+    "pages": 1
+  },
+  "runtime_modified": false,
+  "fresh_stdio_probe": {
+    "init_seconds": 0.969,
+    "call_seconds": 0.031,
+    "isError": false,
+    "speech_segments": 7,
+    "images": 1,
+    "pages": 1
+  },
+  "stored_delivery_layout": [
+    {
+      "page": 0,
+      "part_count": 281,
+      "first_pointer": "",
+      "last_pointer": "/visual/frames/0/ocr/15/text",
+      "image_frames": 0
+    },
+    {
+      "page": 1,
+      "part_count": 277,
+      "first_pointer": "/visual/frames/0/ocr/15/confidence",
+      "last_pointer": "/visual/frames/1/ocr/4/box/1/1",
+      "image_frames": 0
+    },
+    {
+      "page": 2,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/1/ocr/4/box/2",
+      "last_pointer": "/visual/frames/1/ocr/22/box",
+      "image_frames": 0
+    },
+    {
+      "page": 3,
+      "part_count": 284,
+      "first_pointer": "/visual/frames/1/ocr/22/box/0",
+      "last_pointer": "/visual/frames/2/ocr/11/confidence",
+      "image_frames": 0
+    },
+    {
+      "page": 4,
+      "part_count": 287,
+      "first_pointer": "/visual/frames/2/ocr/11/box",
+      "last_pointer": "/visual/frames/2/ocr/29/text",
+      "image_frames": 0
+    },
+    {
+      "page": 5,
+      "part_count": 287,
+      "first_pointer": "/visual/frames/2/ocr/29/confidence",
+      "last_pointer": "/visual/frames/2/ocr/47",
+      "image_frames": 0
+    },
+    {
+      "page": 6,
+      "part_count": 263,
+      "first_pointer": "/visual/frames/2/ocr/47/text",
+      "last_pointer": "/visual/frames/3/ocr/7/confidence",
+      "image_frames": 0
+    },
+    {
+      "page": 7,
+      "part_count": 286,
+      "first_pointer": "/visual/frames/3/ocr/7/box",
+      "last_pointer": "/visual/frames/3/ocr/25",
+      "image_frames": 0
+    },
+    {
+      "page": 8,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/3/ocr/25/text",
+      "last_pointer": "/visual/frames/4/ocr/9/box/3",
+      "image_frames": 0
+    },
+    {
+      "page": 9,
+      "part_count": 285,
+      "first_pointer": "/visual/frames/4/ocr/9/box/3/0",
+      "last_pointer": "/visual/frames/4/ocr/27/box/2",
+      "image_frames": 0
+    },
+    {
+      "page": 10,
+      "part_count": 283,
+      "first_pointer": "/visual/frames/4/ocr/27/box/2/0",
+      "last_pointer": "/visual/frames/5/ocr/10/box/1/0",
+      "image_frames": 0
+    },
+    {
+      "page": 11,
+      "part_count": 288,
+      "first_pointer": "/visual/frames/5/ocr/10/box/1/1",
+      "last_pointer": "/visual/frames/5/ocr/28/box/1/0",
+      "image_frames": 0
+    },
+    {
+      "page": 12,
+      "part_count": 281,
+      "first_pointer": "/visual/frames/5/ocr/28/box/1/1",
+      "last_pointer": "/visual/frames/5/ocr/46/text",
+      "image_frames": 0
+    },
+    {
+      "page": 13,
+      "part_count": 283,
+      "first_pointer": "/visual/frames/5/ocr/46/confidence",
+      "last_pointer": "/visual/frames/5/ocr/63/box/2/1",
+      "image_frames": 0
+    },
+    {
+      "page": 14,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/5/ocr/63/box/3",
+      "last_pointer": "/visual/frames/5/ocr/81/box/0/1",
+      "image_frames": 0
+    },
+    {
+      "page": 15,
+      "part_count": 283,
+      "first_pointer": "/visual/frames/5/ocr/81/box/1",
+      "last_pointer": "/visual/frames/6/ocr/14/box/0",
+      "image_frames": 0
+    },
+    {
+      "page": 16,
+      "part_count": 287,
+      "first_pointer": "/visual/frames/6/ocr/14/box/0/0",
+      "last_pointer": "/visual/frames/6/ocr/32/box",
+      "image_frames": 0
+    },
+    {
+      "page": 17,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/6/ocr/32/box/0",
+      "last_pointer": "/visual/frames/6/ocr/49/box/3",
+      "image_frames": 0
+    },
+    {
+      "page": 18,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/6/ocr/49/box/3/0",
+      "last_pointer": "/visual/frames/6/ocr/67/box/1",
+      "image_frames": 0
+    },
+    {
+      "page": 19,
+      "part_count": 275,
+      "first_pointer": "/visual/frames/6/ocr/67/box/1/0",
+      "last_pointer": "/visual/frames/7/ocr/1/box/3",
+      "image_frames": 0
+    },
+    {
+      "page": 20,
+      "part_count": 290,
+      "first_pointer": "/visual/frames/7/ocr/1/box/3/0",
+      "last_pointer": "/visual/frames/7/ocr/19/box/3/1",
+      "image_frames": 0
+    },
+    {
+      "page": 21,
+      "part_count": 288,
+      "first_pointer": "/visual/frames/7/ocr/20",
+      "last_pointer": "/visual/frames/7/ocr/37/box/3/1",
+      "image_frames": 0
+    },
+    {
+      "page": 22,
+      "part_count": 286,
+      "first_pointer": "/visual/frames/7/ocr/38",
+      "last_pointer": "/visual/frames/7/ocr/55/box/3",
+      "image_frames": 0
+    },
+    {
+      "page": 23,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/7/ocr/55/box/3/0",
+      "last_pointer": "/visual/frames/7/ocr/73/box/1",
+      "image_frames": 0
+    },
+    {
+      "page": 24,
+      "part_count": 282,
+      "first_pointer": "/visual/frames/7/ocr/73/box/1/0",
+      "last_pointer": "/visual/frames/7/ocr/91/text",
+      "image_frames": 0
+    },
+    {
+      "page": 25,
+      "part_count": 279,
+      "first_pointer": "/visual/frames/7/ocr/91/confidence",
+      "last_pointer": "/visual/frames/7/ocr/108/box/1/0",
+      "image_frames": 0
+    },
+    {
+      "page": 26,
+      "part_count": 196,
+      "first_pointer": "/visual/frames/7/ocr/108/box/1/1",
+      "last_pointer": "/speech/segments/8/start",
+      "image_frames": 0
+    },
+    {
+      "page": 27,
+      "part_count": 151,
+      "first_pointer": "/speech/segments/8/end",
+      "last_pointer": "/speech/segments/25",
+      "image_frames": 0
+    },
+    {
+      "page": 28,
+      "part_count": 149,
+      "first_pointer": "/speech/segments/25/segment_id",
+      "last_pointer": "/speech/segments/41/review_status",
+      "image_frames": 0
+    },
+    {
+      "page": 29,
+      "part_count": 150,
+      "first_pointer": "/speech/segments/41/has_correction",
+      "last_pointer": "/speech/segments/58/start",
+      "image_frames": 0
+    },
+    {
+      "page": 30,
+      "part_count": 54,
+      "first_pointer": "/speech/segments/58/end",
+      "last_pointer": "/source_content_policy",
+      "image_frames": 0
+    },
+    {
+      "page": 31,
+      "part_count": 0,
+      "first_pointer": null,
+      "last_pointer": null,
+      "image_frames": 8
+    }
+  ]
+}

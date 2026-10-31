@@ -1,0 +1,19 @@
+{
+  "core": "0.10.0rc2",
+  "plugins": "0.5.1",
+  "tests_passed": 213,
+  "candidate_source": "C:/Users/USER\\Documents\\Codex\\2026-10-26\\bv1v1ha6regb-bilibili\\repair-20261028\\video-reader-0.10.0rc2",
+  "candidate_archive": "C:/Users/USER\\Documents\\Codex\\2026-10-26\\bv1v1ha6regb-bilibili\\repair-20261028\\video-reader-0.10.0rc2-source.zip",
+  "candidate_sha256": "9a58ce91579298d3361eaecdfc1c038782db9ff72249644aab51c0a344925f1e",
+  "case": "BV1pW411J7s8",
+  "session_id": "v_1ed890055a512d73746d7ec3",
+  "range": [
+    780,
+    1040
+  ],
+  "reviewed_segments": 65,
+  "review_revision": 1,
+  "boundary_notes": 2,
+  "full_source_review_complete": false,
+  "public_upload": false
+}

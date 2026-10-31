@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-29",
+  "core_version": "0.10.0rc4",
+  "plugin_version": "0.5.3",
+  "user_feedback": "BV1zBHt6iE4U extraction and summary accepted; requested timestamped danmaku as optional combined consumer material.",
+  "interfaces": ["video_open", "video_read", "video_export"],
+  "option": {"include_danmaku": false},
+  "materials": ["source playback timestamp_seconds and progress_ms", "overlapping speech_segment_ids", "nearest sampled frame ID, actual time and signed delta_seconds"],
+  "continuation": "Session-scoped immutable snapshots, including blocked/closed/unsupported states; ordinary lossless delivery cursors.",
+  "scope": "Original account, Bilibili part/CID and [start,end). Audience statements remain distinct from narration; time placement is not semantic verification.",
+  "export": "Opt-in acquired snapshots only; no network acquisition.",
+  "regression": {"tests": 234, "seconds": 29.084, "status": "passed"},
+  "mcp_new_process": {"tools": 18, "default_off": "passed", "enabled_read": "passed", "optional_export": "passed"},
+  "hosts": {"codex": "0.5.3", "claude": "0.5.3"},
+  "live_source": "BV1zBHt6iE4U",
+  "live_range": [380, 415],
+  "live_danmaku_times": [383.28, 408.06],
+  "live_frame_deltas_seconds": [0.02, 0.006688],
+  "independent_review": "Original CID and frozen non-ready states issues resolved and regression-covered.",
+  "backup": "D:/IA/apps/video-reader/validation/aligned-danmaku-20261029/backup-20261029-223850"
+}

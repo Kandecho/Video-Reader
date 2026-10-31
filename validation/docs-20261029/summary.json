@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-29",
+  "change_type": "documentation_only",
+  "core": "0.10.0rc2",
+  "plugin": "0.5.1",
+  "current_entry": "../../docs/handoff.md",
+  "current_decisions": "../../docs/decisions.md",
+  "current_route": "../../planning/roadmap-20261021-source.md",
+  "history_index": "../../docs/history-index.md",
+  "changes": [
+    "目的包含响应速度与开放阅读",
+    "区分可回答、已核查及材料完整",
+    "澄清宿主语义校对与Reader候选检查",
+    "独立初校保留为待验证方向",
+    "旧决定/交接/路线归档；精简当前入口",
+    "历史建议退出当前执行顺序"
+  ],
+  "runtime_behavior_changed": false,
+  "known_unsynced_behavior": "Canonical and installed Skill/MCP still carry earlier proofreading requirements; later mechanism work must address them together.",
+  "new_model_selected": false,
+  "candidate_rebuilt": false,
+  "published": false,
+  "feature_tests": {
+    "latest_count": 213,
+    "rerun": false,
+    "evidence": "../reader-0.10.0rc2/tests-all.log"
+  },
+  "validation": "See installed-check.json for link and installed/protected file hash results.",
+  "source_work": "C:/Users/USER\\Documents\\Codex\\2026-10-26\\bv1v1ha6regb-bilibili\\docs-cleanup-20261029"
+}

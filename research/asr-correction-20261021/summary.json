@@ -1,0 +1,148 @@
+{
+  "checked_at_utc": "2026-10-20T19:10:13.435600+00:00",
+  "scope": "read-only project investigation and bounded local probes; no production implementation change",
+  "component_version": "0.4.0",
+  "repositories_reviewed": 8,
+  "reference_files_reviewed": 36,
+  "repositories": [
+    {
+      "name": "JefferyHcool/BiliNote",
+      "stars": 7579,
+      "forks": 971,
+      "pushed_at": "2026-09-01T03:33:03Z",
+      "archived": false,
+      "license_metadata": "MIT",
+      "commit": "90940fde4d224d0f69ad99674f4af0a1ea52d3c4",
+      "url": "https://github.com/JefferyHcool/BiliNote",
+      "metadata_url": "https://api.github.com/repos/JefferyHcool/BiliNote"
+    },
+    {
+      "name": "Huanshere/VideoLingo",
+      "stars": 18860,
+      "forks": 2083,
+      "pushed_at": "2026-09-30T17:03:30Z",
+      "archived": false,
+      "license_metadata": "Apache-2.0",
+      "commit": "01f843492759be9bbfd1a5cb697b799cc9de1609",
+      "url": "https://github.com/Huanshere/VideoLingo",
+      "metadata_url": "https://api.github.com/repos/Huanshere/VideoLingo"
+    },
+    {
+      "name": "jianchang512/pyvideotrans",
+      "stars": 19477,
+      "forks": 2411,
+      "pushed_at": "2026-10-15T09:42:07Z",
+      "archived": false,
+      "license_metadata": "GPL-3.0",
+      "commit": "f9f35d102a2bd7393285eee1e3eaaa69744dab11",
+      "url": "https://github.com/jianchang512/pyvideotrans",
+      "metadata_url": "https://api.github.com/repos/jianchang512/pyvideotrans"
+    },
+    {
+      "name": "krillinai/OpenCreator",
+      "stars": 13764,
+      "forks": 1508,
+      "pushed_at": "2026-10-20T06:06:23Z",
+      "archived": false,
+      "license_metadata": "Apache-2.0",
+      "commit": "a595282fba72d6594f56b6d4dd928fb3cae72110",
+      "url": "https://github.com/krillinai/OpenCreator",
+      "metadata_url": "https://api.github.com/repos/krillinai/OpenCreator"
+    },
+    {
+      "name": "m-bain/whisperX",
+      "stars": 24724,
+      "forks": 2497,
+      "pushed_at": "2026-10-18T16:53:35Z",
+      "archived": false,
+      "license_metadata": "BSD-2-Clause",
+      "commit": "db8fde4d31a3e7f49fe5835938685a76f5ba5477",
+      "url": "https://github.com/m-bain/whisperX",
+      "metadata_url": "https://api.github.com/repos/m-bain/whisperX"
+    },
+    {
+      "name": "modelscope/FunASR",
+      "stars": 20768,
+      "forks": 2090,
+      "pushed_at": "2026-10-20T15:48:57Z",
+      "archived": false,
+      "license_metadata": "MIT",
+      "commit": "1d066f9d560c9c93100ea6b04582e857930d893b",
+      "url": "https://github.com/modelscope/FunASR",
+      "metadata_url": "https://api.github.com/repos/modelscope/FunASR"
+    },
+    {
+      "name": "QwenLM/Qwen3-ASR",
+      "stars": 3740,
+      "forks": 361,
+      "pushed_at": "2026-06-26T08:20:17Z",
+      "archived": false,
+      "license_metadata": "Apache-2.0",
+      "commit": "7c6daf77a2421100f5fb066495372c00129d39ff",
+      "url": "https://github.com/QwenLM/Qwen3-ASR",
+      "metadata_url": "https://api.github.com/repos/QwenLM/Qwen3-ASR"
+    },
+    {
+      "name": "xiaokeaijqx/VideoNote",
+      "stars": 48,
+      "forks": 8,
+      "pushed_at": "2026-06-17T08:04:37Z",
+      "archived": false,
+      "license_metadata": "Apache-2.0",
+      "commit": "b976105e6812a2e64aff35583534749bd6d63630",
+      "url": "https://github.com/xiaokeaijqx/VideoNote",
+      "metadata_url": "https://api.github.com/repos/xiaokeaijqx/VideoNote"
+    }
+  ],
+  "clip_results_completed": 3,
+  "clip_ranges_with_all_variants_completed": [
+    [
+      161,
+      188
+    ]
+  ],
+  "incomplete_cases": [
+    "transference",
+    "project-awareness"
+  ],
+  "experiment_anomalies": [
+    {
+      "case": "transference",
+      "variant": "auto-title",
+      "operation": "initial shared-model probe",
+      "status": "stopped_without_result",
+      "reason": "no segment output after more than 100 seconds for a 13-second clip; cause not established",
+      "observed_at_utc": "2026-10-20T19:06:24.412798+00:00"
+    },
+    {
+      "case": "transference",
+      "variant": "auto-title",
+      "status": "timeout",
+      "timeout_seconds": 70
+    },
+    {
+      "case": "project-awareness",
+      "variant": "auto-title",
+      "status": "timeout",
+      "timeout_seconds": 70
+    }
+  ],
+  "no_accuracy_benchmark_claim": true,
+  "new_models_installed": false,
+  "new_packages_installed": false,
+  "production_config_changed": false,
+  "saved_transcripts_changed": false,
+  "cloud_inference_used": false,
+  "recommendations": [
+    "Deliver an automatically usable corrected transcript with original text and per-edit evidence retained.",
+    "Use full-video semantic context and a source-scoped terminology inventory; do not globally replace homophones.",
+    "Add explicit local re-decoding that cannot be short-circuited by the full-ASR cache, with bounded cancellable work.",
+    "Keep complete word alignments, separate semantic correction from timestamp alignment.",
+    "Evaluate Qwen3-ASR 0.6B and contextual Paraformer ONNX as candidate local recognizers on full videos and negative controls."
+  ],
+  "evidence": {
+    "source_snapshot": "project-snapshot.json",
+    "local_probe": "hint-probe.json",
+    "report": "report.html"
+  }
+}

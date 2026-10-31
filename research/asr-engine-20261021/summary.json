@@ -1,0 +1,162 @@
+{
+  "model": "Qwen3-ASR-0.6B",
+  "model_revision": "5eb144179a02acc5e5ba31e748d22b0cf3e303b0",
+  "paired_clips": [
+    {
+      "case": "subject",
+      "range": [
+        161,
+        188
+      ],
+      "duration": 27,
+      "qwen": {
+        "seconds": 10.815944000001764,
+        "term_occurrences": {
+          "主体": 4,
+          "猪蹄": 0,
+          "主题": 0,
+          "单线程": 1,
+          "非拓扑学": 1,
+          "叙事": 1
+        }
+      },
+      "whisper": {
+        "seconds": 28.85167019997607,
+        "term_occurrences": {
+          "主体": 0,
+          "猪蹄": 3,
+          "主题": 1,
+          "单线程": 0,
+          "非拓扑学": 0,
+          "叙事": 0
+        }
+      }
+    },
+    {
+      "case": "transference",
+      "range": [
+        233,
+        246
+      ],
+      "duration": 13,
+      "qwen": {
+        "seconds": 2.730487399996491,
+        "term_occurrences": {
+          "移情": 1,
+          "疫情": 0,
+          "主体": 1,
+          "猪蹄": 0,
+          "规训": 1
+        }
+      },
+      "whisper": {
+        "seconds": 17.51741200001561,
+        "term_occurrences": {
+          "移情": 0,
+          "疫情": 1,
+          "主体": 0,
+          "猪蹄": 1,
+          "规训": 0
+        }
+      }
+    },
+    {
+      "case": "project",
+      "range": [
+        16,
+        29
+      ],
+      "duration": 13,
+      "qwen": {
+        "seconds": 2.2726674000150524,
+        "term_occurrences": {
+          "项目意识": 2
+        }
+      },
+      "whisper": {
+        "seconds": 13.168759899999714,
+        "term_occurrences": {
+          "项目意识": 2
+        }
+      }
+    },
+    {
+      "case": "trotter",
+      "range": [
+        55,
+        66
+      ],
+      "duration": 11,
+      "qwen": {
+        "seconds": 2.284024699998554,
+        "term_occurrences": {
+          "猪蹄": 2,
+          "主体": 0
+        }
+      },
+      "whisper": {
+        "seconds": 11.188659300009022,
+        "term_occurrences": {
+          "猪蹄": 2,
+          "主体": 0
+        }
+      }
+    },
+    {
+      "case": "epidemic",
+      "range": [
+        18,
+        28
+      ],
+      "duration": 10,
+      "qwen": {
+        "seconds": 1.3441568999842275,
+        "term_occurrences": {
+          "疫情": 1,
+          "移情": 0
+        }
+      },
+      "whisper": {
+        "seconds": 9.90436410001712,
+        "term_occurrences": {
+          "疫情": 1,
+          "移情": 0
+        }
+      }
+    }
+  ],
+  "full_qwen": [
+    {
+      "case": "mbti-full",
+      "duration_seconds": 626.07898,
+      "decode_seconds": 89.27746569999726,
+      "gpu_peak_allocated_gib": 2.346193790435791,
+      "real_time_factor": 0.14259776889490405
+    },
+    {
+      "case": "vtuber-full",
+      "duration_seconds": 308.778667,
+      "decode_seconds": 43.80082850001054,
+      "gpu_peak_allocated_gib": 2.346193790435791,
+      "real_time_factor": 0.14185186083470766
+    },
+    {
+      "case": "unfamiliar-full",
+      "duration_seconds": 291.583833,
+      "decode_seconds": 31.92508220000309,
+      "gpu_peak_allocated_gib": 2.346193790435791,
+      "real_time_factor": 0.10948851955040692
+    }
+  ],
+  "independent_audio_CER_measured": false,
+  "default_engine_changed": false,
+  "timing_scope": "Observed Windows workload: Qwen fp16 on RTX5060 GPU versus Whisper int8 on CPU; not equal-device speed comparison. First short Qwen decode includes warmup.",
+  "aborted_probe": "A single 626s Qwen decode was interrupted near 8GB device memory. It returned no full-video result. Final full runs use <=120s nonoverlapping chunks, without word alignment.",
+  "limitations": [
+    "No independent audio-only reference, no general accuracy claim.",
+    "Qwen whole MBTI still confuses 主体/主题, and has other terminology errors.",
+    "Short project clip starts differently between engines; do not equate term recovery with no omissions/additions.",
+    "Qwen chunk boundaries have no forced word alignment; chunks are not word timestamps.",
+    "The first two Whisper clip result records clipped generated end times to requested range in the probe harness. Repeated out-of-window text remains visible; these segment timestamps are not alignment evidence."
+  ]
+}

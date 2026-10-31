@@ -1,0 +1,265 @@
+{
+  "version": "0.3.0",
+  "checked_at_utc": "2026-10-20T18:08:19.264329+00:00",
+  "scope": "Five real cases; full caption reading for first four; partial controlled ASR for two; visual text reading for fifth.",
+  "verdict": "Core evidence-reading paths work; animated values, recognition errors, and dense-text coverage require active rereading.",
+  "local_media_processing": true,
+  "cloud_asr_used": false,
+  "gemini_used": false,
+  "host_agent_viewed_frames": true,
+  "core_application_code_changed": false,
+  "overview_frames_viewed": 120,
+  "science_additional_frames_viewed": 10,
+  "text_additional_frames_viewed": 16,
+  "total_frames_viewed_excluding_duplicate_local_sessions": 146,
+  "cases": [
+    {
+      "bvid": "BV1E1421t7m2",
+      "url": "https://www.bilibili.com/video/BV1E1421t7m2?p=1",
+      "title": "【40集】万物工作原理3D动画合集-中英cc字幕-Branch Education",
+      "part_title": "电子显微镜工作原理",
+      "session_id": "v_60c4b2b9cf78f7fae34491b1",
+      "duration_seconds": 1193.575102,
+      "open_seconds": 0.099,
+      "reused_session": true,
+      "caption_track": {
+        "kind": "manual",
+        "language": "zh-CN",
+        "source": "bilibili",
+        "cid": 1629169785
+      },
+      "caption_segments": 239,
+      "overview_frames_viewed": 24,
+      "frame_pages_read": 3,
+      "speech_status": "ready",
+      "warnings": []
+    },
+    {
+      "bvid": "BV1waJi6dEHv",
+      "url": "https://www.bilibili.com/video/BV1waJi6dEHv?p=1",
+      "title": "《异环》还有多少离谱建筑？土木学长看笑了",
+      "part_title": "《异环》还有多少离谱建筑？土木学长看笑了",
+      "session_id": "v_227e37954c92c718e448be56",
+      "duration_seconds": 503.189333,
+      "open_seconds": 19.103,
+      "reused_session": false,
+      "caption_track": {
+        "kind": "automatic",
+        "language": "ai-zh",
+        "source": "bilibili",
+        "cid": 42819390730
+      },
+      "caption_segments": 243,
+      "overview_frames_viewed": 24,
+      "frame_pages_read": 3,
+      "speech_status": "ready",
+      "warnings": []
+    },
+    {
+      "bvid": "BV1TdSxByEVA",
+      "url": "https://www.bilibili.com/video/BV1TdSxByEVA?p=1",
+      "title": "心态，运营思维，追求——虚拟感的缺失究竟是哪里出了问题【虚拟主播创作手册 1.5】",
+      "part_title": "深水怠 虚拟主播创作手册1.5(修改) (1)",
+      "session_id": "v_609fc8631aa1e190edce5748",
+      "duration_seconds": 308.778667,
+      "open_seconds": 15.054,
+      "reused_session": false,
+      "caption_track": {
+        "kind": "automatic",
+        "language": "ai-zh",
+        "source": "bilibili",
+        "cid": 34455555733
+      },
+      "caption_segments": 141,
+      "overview_frames_viewed": 24,
+      "frame_pages_read": 3,
+      "speech_status": "ready",
+      "warnings": []
+    },
+    {
+      "bvid": "BV16wpL6iEqi",
+      "url": "https://www.bilibili.com/video/BV16wpL6iEqi?p=1",
+      "title": "锐评解神者公司续作，神人游戏",
+      "part_title": "studio_video_1791680882809",
+      "session_id": "v_4c6d48d5bac04cde26e78434",
+      "duration_seconds": 424.4,
+      "open_seconds": 12.942,
+      "reused_session": false,
+      "caption_track": {
+        "kind": "automatic",
+        "language": "ai-zh",
+        "source": "bilibili",
+        "cid": 42639491077
+      },
+      "caption_segments": 182,
+      "overview_frames_viewed": 24,
+      "frame_pages_read": 3,
+      "speech_status": "ready",
+      "warnings": []
+    },
+    {
+      "bvid": "BV1Xt4y1P7BH",
+      "url": "https://www.bilibili.com/video/BV1Xt4y1P7BH?p=1",
+      "title": "精神分析批判MBTI——INTP等荒诞的人格规训中止了主体进一步理解自身和他者的可能",
+      "part_title": "精神分析批判MBTI——INTP等荒诞的人格规训中止了主体进一步理解自身和他者的可能",
+      "session_id": "v_a3366514875c8d04f48b163f",
+      "duration_seconds": 626.07898,
+      "open_seconds": 15.405,
+      "reused_session": false,
+      "caption_track": null,
+      "caption_segments": 0,
+      "overview_frames_viewed": 24,
+      "frame_pages_read": 3,
+      "speech_status": "requires_transcription",
+      "warnings": []
+    }
+  ],
+  "measurements": {
+    "preparation_note": "First four prepared with up to three concurrent workers; science cache reused. Fifth prepared separately. Not a controlled performance benchmark.",
+    "new_science_followup_seconds": 1.808,
+    "new_science_formula_followup_seconds": 0.57,
+    "new_dense_text_extraction_seconds": 0.626,
+    "dense_text_next_page_seconds": 0.004
+  },
+  "local_asr": [
+    {
+      "bvid": "BV1TdSxByEVA",
+      "online_session_id": "v_609fc8631aa1e190edce5748",
+      "local_session_id": "v_9122cdf0dbd3e98e6567a4be",
+      "test_mode": "same_downloaded_media_opened_as_local_file_without_caption_input; online_AI_captions_exist",
+      "interval": [
+        0,
+        90
+      ],
+      "asr_seconds": 96.461,
+      "total_seconds": 101.885,
+      "subrange_reread_seconds": 0.002,
+      "subrange_reused_asr": true,
+      "model": "faster-whisper-medium",
+      "language": "zh",
+      "segments": 41,
+      "status": "passed",
+      "cloud_used": false
+    },
+    {
+      "bvid": "BV16wpL6iEqi",
+      "online_session_id": "v_4c6d48d5bac04cde26e78434",
+      "local_session_id": "v_b093751740259b2c610044b3",
+      "test_mode": "same_downloaded_media_opened_as_local_file_without_caption_input; online_AI_captions_exist",
+      "interval": [
+        120,
+        180
+      ],
+      "asr_seconds": 77.805,
+      "total_seconds": 82.691,
+      "subrange_reread_seconds": 0.002,
+      "subrange_reused_asr": true,
+      "model": "faster-whisper-medium",
+      "language": "zh",
+      "segments": 18,
+      "status": "passed",
+      "cloud_used": false
+    }
+  ],
+  "observations": [
+    {
+      "case": "BV1E1421t7m2",
+      "kind": "animated_numeric_transition",
+      "evidence": [
+        {
+          "seconds": 99.467,
+          "visible": "SEM 865 nm"
+        },
+        {
+          "seconds": 103,
+          "visible": "SEM 1 nm"
+        },
+        {
+          "seconds": 149.2,
+          "visible": "TEM 98 pm"
+        },
+        {
+          "seconds": 153,
+          "visible": "TEM 50 pm"
+        }
+      ],
+      "finding": "Initial snapshots catch the animated counters, not final limits. Nearby stable frames agree with captions."
+    },
+    {
+      "case": "BV1E1421t7m2",
+      "kind": "progressively_revealed_formula",
+      "finding": "At 795s only F= appears; at 800s F=qv is still incomplete. Later sampled frames change scenes. Complete formula was not visually established; do not infer it from an incomplete frame."
+    },
+    {
+      "case": "BV1TdSxByEVA",
+      "kind": "ASR_keyword_error",
+      "seconds": 20.56,
+      "asr": "项目历史",
+      "corrected_using": "Later spoken text plus visible 项目意识 at 25.733s",
+      "finding": "Functional ASR success is not a guarantee of exact transcription."
+    },
+    {
+      "case": "BV16wpL6iEqi",
+      "kind": "AI_caption_vs_visible_document",
+      "seconds": 53.067,
+      "ai_caption": "UR自选",
+      "visible_document": "随机完整UR旅鸟×1、旅鸟招募券×100",
+      "finding": "The announcement screenshot supports a random UR, not a choice. The burnt-in yellow caption also says 随机. Caption source wording must not override visible evidence."
+    },
+    {
+      "case": "BV16wpL6iEqi",
+      "kind": "proper_name_error",
+      "seconds": 17.7,
+      "ai_caption": "深渊",
+      "visible_name": "深鸢"
+    },
+    {
+      "case": "BV1Xt4y1P7BH",
+      "kind": "no_platform_captions_and_dense_visible_text",
+      "fresh_player_code": 0,
+      "need_login_subtitle": false,
+      "platform_tracks": [],
+      "finding": "Default 24-frame sampling is about 26.1s apart; some snapshots contain only connectors. The 0-32s visual reread at 2s intervals reveals the missing paragraph. Full video text coverage was not established."
+    }
+  ],
+  "answer_examples": [
+    {
+      "case": "BV1E1421t7m2",
+      "question": "这一集讲什么？",
+      "answer": "介绍 TEM 与 SEM，重点沿 TEM 的电子源、加速、磁透镜、薄样品、放大和探测链路解释，再比较 SEM 与 STEM。",
+      "evidence": "All 239 caption segments, 24 overview frames, and 10 followup frames."
+    },
+    {
+      "case": "BV1E1421t7m2",
+      "question": "为什么先用磷光屏，再换 CMOS？",
+      "answer": "视频说明磷光屏用于对准和概览，正确设置后移开屏幕，以更灵敏的 CMOS 捕获图像，避免失焦电子束损伤相机。",
+      "evidence": "Captions 863.55-908.63s; viewed frames at 875, 886 and 900s show screen and mechanical motion."
+    },
+    {
+      "case": "BV1waJi6dEHv",
+      "question": "开头说的牛腿问题指什么？",
+      "answer": "画面显示轨道下方的三角支座未直接托住轨道；讲解质疑它是否真正承担支撑作用。",
+      "evidence": "Frame 20.967s plus captions 14.10-39.64s."
+    },
+    {
+      "case": "BV16wpL6iEqi",
+      "question": "公告补偿的是 UR 自选吗？",
+      "answer": "截图写随机完整 UR 和 100 张招募券，且限定已创建角色的指定服务器账号。",
+      "evidence": "Viewed announcement frames at 53.067s and 70.767s; AI wording conflicts with screenshot."
+    },
+    {
+      "case": "BV1Xt4y1P7BH",
+      "question": "开头的画面正文在表达什么？",
+      "answer": "作者批评用十六种人格快速筛选和呈现自己，并将其视为预先规定主体的框架。这是作者的论述，未在本轮评判其哲学或心理学结论。",
+      "evidence": "Visible text sampled every 2s in 0-32s; no captions or ASR used."
+    }
+  ],
+  "limits": [
+    "Not an independent accuracy benchmark or a claim of continuous audiovisual perception.",
+    "The third and fourth online videos actually expose AI captions; no-caption ASR was tested by opening the same downloaded media as local files without subtitles.",
+    "Only 0-90s of the VTuber video and 120-180s of the game video were locally transcribed.",
+    "The fifth video received visual overview and 0-32s dense rereading, not full transcription or full text extraction.",
+    "Music, sound effects, tone and brief motions were not assessed as raw audio/video."
+  ],
+  "next_priority": "Improve host reading guidance for animated values, text-heavy sequences, and caption/visual disagreements before adding platform or recommendation features."
+}
