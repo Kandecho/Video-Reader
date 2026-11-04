@@ -1,0 +1,15 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Kandecho/scroll-agent",
+  "title": "Scroll Agent",
+  "description": "Independent Bilibili account, personal feed, inbox and authorized delivery; automation in trial.",
+  "repository": {"url": "https://github.com/Kandecho/Video-Reader", "source": "github"},
+  "websiteUrl": "https://github.com/Kandecho/Video-Reader/blob/main/docs/mcp-registry.md",
+  "version": "0.1.0",
+  "packages": [{
+    "registryType": "mcpb",
+    "identifier": "https://github.com/Kandecho/Video-Reader/releases/download/mcpb-v0.1.0/scroll-agent-0.1.0.mcpb",
+    "fileSha256": "6cefeff37eca60295965df04339a0b778a7ef59e8564fedea1d4b4047fa30beb",
+    "transport": {"type": "stdio"}
+  }]
+}

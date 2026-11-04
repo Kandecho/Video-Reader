@@ -1,0 +1,34 @@
+{
+  "manifest_version": "0.3",
+  "name": "video-reader",
+  "display_name": "Video Reader",
+  "version": "0.1.0",
+  "description": "Read timestamped video materials and manage a shared task queue and history using a prepared local core.",
+  "long_description": "Windows adapter for Video Reader 0.10.0rc6: Bilibili, YouTube and local video materials, subtitles, speech, frames, comments, and independent reading tasks/results. Prepare the core and its Python environment first. Reader supplies evidence; the host agent understands it. Scroll Agent is a separate bundle from the same full project release and shares the core. No model, credentials or runtime is bundled.",
+  "author": {"name": "Kandecho", "url": "https://github.com/Kandecho"},
+  "repository": {"type": "git", "url": "https://github.com/Kandecho/Video-Reader"},
+  "homepage": "https://github.com/Kandecho/Video-Reader",
+  "documentation": "https://github.com/Kandecho/Video-Reader/blob/main/docs/mcp-registry.md",
+  "support": "https://github.com/Kandecho/Video-Reader/issues",
+  "license": "MIT",
+  "keywords": ["video", "bilibili", "youtube", "transcript", "subtitles", "frames", "queue", "history", "local"],
+  "compatibility": {"platforms": ["win32"], "runtimes": {"python": ">=3.11"}},
+  "server": {
+    "type": "python",
+    "entry_point": "server/launch.py",
+    "mcp_config": {
+      "command": "${user_config.core_root}/.venv/Scripts/python.exe",
+      "args": ["-I", "${__dirname}/server/launch.py", "reader"],
+      "env": {
+        "VIDEO_READER_ROOT": "${user_config.core_root}",
+        "VIDEO_READER_CONFIG": "${user_config.config_file}",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "tools_generated": true,
+  "user_config": {
+    "core_root": {"type": "directory", "title": "Video Reader installation", "description": "Prepared Windows core folder containing .venv/Scripts/python.exe and config.json.", "required": true},
+    "config_file": {"type": "file", "title": "Configuration file (optional)", "description": "Select an existing config file, or leave empty to use config.json in the core folder.", "required": false, "default": ""}
+  }
+}

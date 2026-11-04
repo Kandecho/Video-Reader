@@ -17,12 +17,16 @@ FILES = [
     'CONTRIBUTING.md', 'examples/create_fixture.py',
     'tools/build_plugins.py', 'tools/build_candidate.py',
     'tools/build_dsh_index.py', 'discovery/dsh/index.json', 'discovery/dsh/README.md',
+    'tools/build_mcpb.py', 'adapters/mcpb/README.md', 'adapters/mcpb/launch.py',
+    'adapters/mcpb/reader/manifest.json', 'adapters/mcpb/scroll/manifest.json',
+    'discovery/mcp/reader.server.json', 'discovery/mcp/scroll.server.json',
     'adapters/dsh/package.json', 'adapters/dsh/cordis.patch.yml',
     'adapters/dsh/locale/en.json', 'adapters/dsh/locale/zh.json',
     'adapters/dsh/README.md', 'adapters/dsh/LICENSE',
     'tools/check_models.py', 'docs/models/faster-whisper-medium.json',
     'licenses/upstream/watch-MIT.txt',
     'validation/release-20261104/report-source.md', 'validation/release-20261104/summary.json',
+    'validation/mcp-registry-20261104/report-source.md', 'validation/mcp-registry-20261104/summary.json',
 ]
 
 

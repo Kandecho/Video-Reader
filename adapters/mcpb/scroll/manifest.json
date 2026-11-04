@@ -1,0 +1,34 @@
+{
+  "manifest_version": "0.3",
+  "name": "scroll-agent",
+  "display_name": "Scroll Agent",
+  "version": "0.1.0",
+  "description": "Use a separate Bilibili account for personal discovery, inbox and authorized delivery through a prepared local core.",
+  "long_description": "Windows adapter for Scroll in Video Reader 0.10.0rc6. Independent Bilibili account workflows, inbox synchronization, preferences, feedback and authorized delivery have real usage. Continuous inbox polling and background consumption are not implemented; some automation remains under trial. The companion Video Reader bundle exposes materials and the independent task queue/history. Prepare one shared core and login first. No credentials, models or runtime are bundled, and installing this adapter does not send messages or start schedules.",
+  "author": {"name": "Kandecho", "url": "https://github.com/Kandecho"},
+  "repository": {"type": "git", "url": "https://github.com/Kandecho/Video-Reader"},
+  "homepage": "https://github.com/Kandecho/Video-Reader",
+  "documentation": "https://github.com/Kandecho/Video-Reader/blob/main/docs/mcp-registry.md",
+  "support": "https://github.com/Kandecho/Video-Reader/issues",
+  "license": "MIT",
+  "keywords": ["bilibili", "scroll", "account", "inbox", "feed", "delivery", "local"],
+  "compatibility": {"platforms": ["win32"], "runtimes": {"python": ">=3.11"}},
+  "server": {
+    "type": "python",
+    "entry_point": "server/launch.py",
+    "mcp_config": {
+      "command": "${user_config.core_root}/.venv/Scripts/python.exe",
+      "args": ["-I", "${__dirname}/server/launch.py", "scroll"],
+      "env": {
+        "VIDEO_READER_ROOT": "${user_config.core_root}",
+        "VIDEO_READER_CONFIG": "${user_config.config_file}",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  },
+  "tools_generated": true,
+  "user_config": {
+    "core_root": {"type": "directory", "title": "Video Reader installation", "description": "Prepared Windows core folder containing .venv/Scripts/python.exe and config.json; share it with the Reader bundle.", "required": true},
+    "config_file": {"type": "file", "title": "Configuration file (optional)", "description": "Select an existing config file, or leave empty to use config.json in the core folder.", "required": false, "default": ""}
+  }
+}

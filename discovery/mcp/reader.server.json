@@ -1,0 +1,15 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Kandecho/video-reader",
+  "title": "Video Reader",
+  "description": "Local video evidence, transcripts, frames, comments and shared reading queues/history.",
+  "repository": {"url": "https://github.com/Kandecho/Video-Reader", "source": "github"},
+  "websiteUrl": "https://github.com/Kandecho/Video-Reader/blob/main/docs/mcp-registry.md",
+  "version": "0.1.0",
+  "packages": [{
+    "registryType": "mcpb",
+    "identifier": "https://github.com/Kandecho/Video-Reader/releases/download/mcpb-v0.1.0/video-reader-0.1.0.mcpb",
+    "fileSha256": "677b053a35b6253447b994c036b73397f39f1ee45d50f164e4f9cd4c6e8e2b90",
+    "transport": {"type": "stdio"}
+  }]
+}

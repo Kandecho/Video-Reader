@@ -44,6 +44,7 @@ Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Cl
 | 第一次安装、接入助手、读一条视频 | [首次使用](docs/getting-started.md) |
 | 在 DSH 中安装整包薄适配 | [DSH 接入](docs/dsh.md) |
 | 从 DSH 插件索引发现本项目 | [发现与收录](docs/discovery.md) |
+| 使用 MCPB 接入包、在官方目录查询 | [MCP Registry](docs/mcp-registry.md) |
 | 区分可用能力、试用部分与未完成项 | [能力状态](docs/capabilities.md) |
 | 设置模型、登录或调整文件位置 | [安装与配置](docs/installation.md) |
 | 查命令、工具参数、续读和导出 | [CLI 与 MCP 参考](docs/reader-reference.md) |

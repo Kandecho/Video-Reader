@@ -26,12 +26,12 @@ https://raw.githubusercontent.com/Kandecho/Video-Reader/main/discovery/dsh/index
 | [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) | PR 添加一个 `data/plugins` YAML；支持 monorepo 子包 | 指向 adapters/dsh 的链接、中英文功能介绍及分类；仓库需有 topic、真实 bundle 和维护 |
 | [bruc3van/awesome-dsh-plugin](https://github.com/bruc3van/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | Topic 与简介进入发现/待审核流程，由维护者核实 | 已有 dsh-plugin topic、简介和真实可安装子包；自动发现不等于通过审核，自荐位还有单独要求 |
 
-本项目已有公开源码、MIT、dsh.bundle.patch、固定版本和实装记录。社区是否接受、何时更新均由对方维护流程决定；当前不能使用其“已收录”或“已验证”徽章。
+本项目已有公开源码、MIT、dsh.bundle.patch、固定版本和实装记录。2026-11-04 已提交[开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)及[Awesome DSH PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)，当前待审核。社区是否接受、何时更新均由对方维护流程决定；当前不能使用其“已收录”或“已验证”徽章。
 
 ## 其他 Agent 如何发现
 
 - **GitHub 检索**：About/topics 用于默认仓库搜索，README 需显式 `in:readme`。仓库已有平台、MCP、DSH、Scroll 等字段；它们让关键词可匹配，不承诺宽泛查询排名。
 - **直接读取仓库**：从 [README](../README.md)到安装、能力状态和当前索引，均有可跟随的链接。Agent 不必先读交接或历史报告才能判断适用性与安装前提。
-- **通用 MCP Registry**：另有 server.json、发布者验证及实际分发格式要求。它支持 GitHub/GitLab Release 上的 MCPB，不必先发布 npm；当前 DSH tgz 不是 MCPB。可优先验证复用现有核心的标准 MCPB，再登记 Reader 与 Scroll 的各自服务入口；不能只补一个清单便宣称已收录。[官方要求](https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/server-json/official-registry-requirements.md)、[MCPB 格式与验证](https://github.com/modelcontextprotocol/registry/blob/main/docs/modelcontextprotocol-io/package-types.mdx#mcpb-packages)。
+- **通用 MCP Registry**：官方入口为 [registry.modelcontextprotocol.io](https://registry.modelcontextprotocol.io/)，支持网页按名称搜索和公开 API。两份标准 MCPB 已通过清单与实际 stdio 验证，复用现有 Windows 核心，Reader 与 Scroll 分别登记；完整源码与两个接入包仍从同一项目 Release 提供。安装前提、登记状态和精确查询见 [MCP Registry 指南](mcp-registry.md)，DSH tgz 与 MCPB 是不同接入格式。
 
-本批[验证记录](https://github.com/Kandecho/Video-Reader/blob/main/validation/dsh-discovery-20261104/report-source.md)区分作者索引、社区目录与 GitHub 查询；[社区准备资料](../discovery/dsh/submissions.md)给出可以审核后提交的具体条目。当前安装入口见 [DSH 指南](dsh.md)。
+前批[验证记录](https://github.com/Kandecho/Video-Reader/blob/main/validation/dsh-discovery-20261104/report-source.md)区分作者索引、社区目录与 GitHub 查询；[社区申请](../discovery/dsh/submissions.md)保留已提交条目及状态。当前安装入口见 [DSH 指南](dsh.md)及 [MCPB 指南](mcp-registry.md)。

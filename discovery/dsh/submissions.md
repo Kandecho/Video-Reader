@@ -1,6 +1,6 @@
-# 社区收录准备资料
+# 社区收录申请与资料
 
-日期：2026-11-04。这些资料可供审核后提交，目前没有向第三方发送 Issue 或 PR。作者索引已公开可订阅，社区收录须分别按对方流程处理。
+日期：2026-11-04。已按用户授权提交[开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)及[Awesome DSH PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)，均待维护者处理，不能表述为已收录。PR 仅新增下述一个 YAML，自动检查仍在运行。作者索引已公开可订阅，社区收录须分别按对方流程处理。
 
 ## 开放插件市场
 
