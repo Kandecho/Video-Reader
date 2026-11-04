@@ -4,9 +4,13 @@
 
 ## 当前从哪里继续
 
+最新任务已打通 DSH 发现路径：作者 format-1 索引位于 discovery/dsh/index.json，通过 raw GitHub HTTPS 订阅；从已发布 f2656bf 生成，安装固定到 adapters/dsh 0.1.0。真实 plugin_market 的三组中英文检索、版本/兼容性、未安装→Git 安装→已安装以及 Reader 队列/Scroll 状态调用均通过。常用 web profile 已启用官方发现 bundle 和只读工具、订阅项目索引、安装整包；原配置和 launch.ps1 已备份，后者提供核心目录。web 服务启动和两个 MCP 工具表初始化通过，测试服务已停止，GUI 点击仍未验收。见[发现指南](discovery.md)和[本批证据](../validation/dsh-discovery-20261104/report-source.md)。
+
+社区索引快照中本项目尚未收录；已整理开放插件市场 Issue、awesome-dsh-plugin PR 和 Topic 发现型目录的不同规则，以及[可提交资料](../discovery/dsh/submissions.md)，未向第三方发送。GitHub 三条组合查询可返回本仓库，位置只代表本次返回页。通用 MCP Registry 支持 GitHub/GitLab Release 的 MCPB，可作为后续跨宿主发现方向，不必先发 npm；当前 DSH tgz 不能当 MCPB 登记。
+
 最新确认：发布仍按整包，包含 Reader、独立 reading_tasks 和 Scroll，不因部分自动化试用而排除 Scroll。DSH 0.1.0 薄包已完成本地及公开 URL 的 tgz 安装、两个 MCP 实际调用、队列查询、原生读图和中文/空格核心路径验证；[同一 Release](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)已提供 153 文件清单的整包源码与 6 文件薄包，3 个服务端摘要核对一致。见[安装指南](dsh.md)及[本批证据](../validation/dsh-bundle-20261104/report-source.md)。核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5，原发布资产不覆盖。
 
-README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](capabilities.md)区分可用、试用与尚未接入；[相关项目](related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；未发布 npm 或提交插件索引。
+README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](capabilities.md)区分可用、试用与尚未接入；[相关项目](related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；未发布 npm 或提交社区收录申请。
 
 About/topics 已更新；限定本仓库的默认 bilibili mcp 查询由未命中变为命中，宽泛 B 站/YouTube 查询仍未进当次前 30。复查 10 个 dsh-* 仓库并固定深读 5 个，见[呈现与检索](../research/dsh-presentation-20261104/report-source.md)。短演示与目标索引仍待讨论。
 

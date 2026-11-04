@@ -211,6 +211,12 @@ About/topics 已按同意的草案修改；保留 7 条真实 GitHub 查询前�
 
 对外说明明确独立 B 站账号、小号首页和主号授权私信已有真实使用；定时日试用仍有故障记录，常驻收件、持续后台消费和独立初校仍未接入。见[能力状态](../docs/capabilities.md)及[相关项目](../docs/related-projects.md)。没有新调度或发送；npm 与目标索引收录仍未实施。上节记录的是 Reader-only 实测阶段，整包接入由本节更新。
 
+### 9. DSH 索引发现与 Agent 检索（2026-11-04）
+
+用户要求用本机 DSH 打通发现路径，并调查其他 Agent 的检索入口。作者 format-1 索引已公开，工具从固定发布提交生成；真实模型三组中英文搜索均命中，返回固定 Git 子目录安装参数，安装后状态为 installed，Reader 队列和 Scroll 状态可调用。常用 web profile 已配置发现及核心目录并安装整包，备份保留；web 启动通过，GUI 点击未验收。索引工具 3 项与分发 1 项回归通过。见[指南](../docs/discovery.md)及[实测](../validation/dsh-discovery-20261104/report-source.md)。
+
+两个社区索引本批快照未含本项目。Issue/PR/Topic 等渠道及[提交资料](../discovery/dsh/submissions.md)已整理，未对外发送或宣称审核通过。GitHub 三条组合查询本次能返回仓库，不扩张为稳定排名。后续通用发现可验证标准 MCPB，再考虑 MCP Registry；DSH tgz 不能直接替代 MCPB。没有新增业务发送、来信同步或调度。
+
 ## G 查阅入口
 
 使用者从 [README](../README.md)、[首次使用](../docs/getting-started.md)或[文档首页](../docs/README.md)开始。开发接续从 [handoff](../docs/handoff.md) 开始，详细资料由 [registry](../docs/registry.md) 按需定位。历史正文中的“当前”“下一步”仅适用于当时。

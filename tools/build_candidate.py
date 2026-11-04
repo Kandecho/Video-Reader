@@ -16,6 +16,7 @@ FILES = [
     'docs/tasks.md', 'docs/triage.md', 'docs/inbox-queue.md', 'docs/scroll-reference.md', 'docs/architecture.md',
     'CONTRIBUTING.md', 'examples/create_fixture.py',
     'tools/build_plugins.py', 'tools/build_candidate.py',
+    'tools/build_dsh_index.py', 'discovery/dsh/index.json', 'discovery/dsh/README.md',
     'adapters/dsh/package.json', 'adapters/dsh/cordis.patch.yml',
     'adapters/dsh/locale/en.json', 'adapters/dsh/locale/zh.json',
     'adapters/dsh/README.md', 'adapters/dsh/LICENSE',

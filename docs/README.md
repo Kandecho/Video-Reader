@@ -31,6 +31,6 @@
 
 维护者可继续查 [架构](architecture.md)、[知识路由](registry.md)、[交接](handoff.md)及[有效决定](decisions.md)。带日期的研究和验收记录用于回查当时事实，不作为首次使用步骤。
 
-[DSH 薄包验证](https://github.com/Kandecho/Video-Reader/blob/main/validation/dsh-bundle-20261104/report-source.md)记录整包安装与实际调用；[同类仓库考察](https://github.com/Kandecho/Video-Reader/blob/main/research/dsh-presentation-20261104/report-source.md)保留 About/topics 与检索基线。当前尚未发布 npm 或提交插件索引。
+[DSH 薄包验证](https://github.com/Kandecho/Video-Reader/blob/main/validation/dsh-bundle-20261104/report-source.md)记录整包安装；[发现路径实测](https://github.com/Kandecho/Video-Reader/blob/main/validation/dsh-discovery-20261104/report-source.md)记录索引搜索、Git 安装及本机配置；[同类仓库考察](https://github.com/Kandecho/Video-Reader/blob/main/research/dsh-presentation-20261104/report-source.md)保留检索基线。作者索引已公开，社区收录与通用 MCP Registry 仍另行处理。
 
 返回 [项目首页](../README.md)。

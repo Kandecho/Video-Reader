@@ -1,0 +1,179 @@
+{
+  "date": "2026-11-04",
+  "dsh_version": "0.2.2-rc.1",
+  "scope": "Publisher index, real DSH discovery, pinned Git install and local web profile setup",
+  "publisher_index_url": "https://raw.githubusercontent.com/Kandecho/Video-Reader/main/discovery/dsh/index.json",
+  "publisher_index_sha256": "de060877ac78c0708b2a91153bd3c68e42311ac5d9d153a670e1878994d7f1db",
+  "pinned_adapter_commit": "f2656bf030ec94b9f6dfea22008c1d3168f4e4c6",
+  "adapter_version": "0.1.0",
+  "install_target": "git+https://github.com/Kandecho/Video-Reader.git#f2656bf030ec94b9f6dfea22008c1d3168f4e4c6&path:/adapters/dsh",
+  "model_checks": {
+    "publisher_queries": [
+      {
+        "query": "video reader",
+        "total": 1,
+        "version": "0.1.0"
+      },
+      {
+        "query": "字幕 画面",
+        "total": 1,
+        "version": "0.1.0"
+      },
+      {
+        "query": "账号 私信",
+        "total": 1,
+        "version": "0.1.0"
+      }
+    ],
+    "discover": {
+      "exit": 0,
+      "tool_calls": 9,
+      "completed": true
+    },
+    "installed": {
+      "exit": 0,
+      "tool_calls": 4,
+      "completed": true
+    }
+  },
+  "community_indexes": [
+    {
+      "name": "open",
+      "url": "https://dshopen.org/index.json",
+      "final_url": "https://dshopen.org/index.json",
+      "status": 200,
+      "bytes": 1560222,
+      "format": 1,
+      "plugin_count": 1011,
+      "own_entries": []
+    },
+    {
+      "name": "realguan",
+      "url": "https://realguan.github.io/dsh-plugin-market/dsh-index.json",
+      "final_url": "https://realguan.github.io/dsh-plugin-market/dsh-index.json",
+      "status": 200,
+      "bytes": 11470480,
+      "format": 1,
+      "plugin_count": 8266,
+      "own_entries": []
+    }
+  ],
+  "github_queries": [
+    {
+      "query": "topic:dsh-plugin bilibili mcp",
+      "returned": 20,
+      "own_position": 11,
+      "repositories": [
+        "Yuuyuko-uu/dsh-bili-subagent",
+        "Yaemikoreal/BilibiliPlayer",
+        "Scorpioflz/dsh-cbw-bilibili",
+        "Kihara777/NixKits",
+        "xby-skill/xby-bilibili-video-info",
+        "xby-skill/xby-bilibili-api",
+        "2332239652/dsh-bilibili-retrieval",
+        "xby-skill/xby-bilibili",
+        "jcaiagent7143-ui/linkdigest-mcp",
+        "ShingStars/dsh-bili-models-legacy",
+        "Kandecho/Video-Reader",
+        "Doomsgeats/dsh-bili-feed",
+        "ShingStars/dsh-bili-free-scroll",
+        "qinglang-fenglin/dsh-bili-scroll",
+        "littlefallenstar/dsh-bili-scroll",
+        "hezhaochao/dsh-video-comments",
+        "rentaoyan0628-collab/dsh-bili-danmaku-lite",
+        "aba3345/dsh-bili-see",
+        "youxin484/qq-bridge-addons",
+        "TongPeng-1/dsh-video-understanding"
+      ]
+    },
+    {
+      "query": "topic:dsh-plugin \"video reader\"",
+      "returned": 2,
+      "own_position": 1,
+      "repositories": [
+        "Kandecho/Video-Reader",
+        "ck99998888/dsh-video-reader"
+      ]
+    },
+    {
+      "query": "bilibili queues mcp is:public",
+      "returned": 2,
+      "own_position": 1,
+      "repositories": [
+        "Kandecho/Video-Reader",
+        "Ash-end/local-video-downloader"
+      ]
+    }
+  ],
+  "local_web": {
+    "profile_configured": true,
+    "official_discovery_bundle_enabled": true,
+    "publisher_index_added": true,
+    "reader_scroll_bundle_installed": true,
+    "launcher_core_root_set": true,
+    "backup_created": true,
+    "startup": {
+      "http_status": 401,
+      "mcp_list_tools_requests": 2,
+      "mcp_initialize_requests": 0,
+      "root_missing_error": false,
+      "duplicate_tool_error": false
+    },
+    "test_service_stopped": true,
+    "gui_click_flow_verified": false
+  },
+  "checks": {
+    "dsh_official_schema_valid": true,
+    "discovered_git_target_installed": true,
+    "installed_source_text_matches_release": true,
+    "index_generator_tests": 3,
+    "distribution_tests": 1,
+    "document_files": 15,
+    "local_document_links": 232,
+    "public_files_scanned": 371,
+    "private_content_findings": 0
+  },
+  "source_evidence": [
+    {
+      "repo": "polang233/dsh-plugin-index",
+      "path": ".github/CONTRIBUTING.md",
+      "commit": "bae4d618038586ffb5d1976a1c53803ec2009177",
+      "url": "https://github.com/polang233/dsh-plugin-index/blob/bae4d618038586ffb5d1976a1c53803ec2009177/.github/CONTRIBUTING.md",
+      "sha256": "d1d881d1c3a2e1f169ecae2ee7b18ee868c4e7736b4d7e9e1191410d0eaa3f03"
+    },
+    {
+      "repo": "awesome-dsh-plugin/awesome-dsh-plugin",
+      "path": "contributing.md",
+      "commit": "c4261924d2d8845901faaae5d0e6301a75afafa5",
+      "url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/c4261924d2d8845901faaae5d0e6301a75afafa5/contributing.md",
+      "sha256": "ca7e7508953a1c88ffa54ef8a0633b13f1f4f916ddfacfab3d11c07b89ef17dc"
+    },
+    {
+      "repo": "bruc3van/awesome-dsh-plugin",
+      "path": "CONTRIBUTING.md",
+      "commit": "3571845393dd81119cfe3e348a8161fed4edc38a",
+      "url": "https://github.com/bruc3van/awesome-dsh-plugin/blob/3571845393dd81119cfe3e348a8161fed4edc38a/CONTRIBUTING.md",
+      "sha256": "4315ee3b3fa749c0ba360b23f80992e0d053c852b49bfe41994eece14cf2d00d"
+    },
+    {
+      "repo": "modelcontextprotocol/registry",
+      "path": "docs/modelcontextprotocol-io/package-types.mdx",
+      "commit": "7809e442458c0118f0512d58af943ba3fb050787",
+      "url": "https://github.com/modelcontextprotocol/registry/blob/7809e442458c0118f0512d58af943ba3fb050787/docs/modelcontextprotocol-io/package-types.mdx",
+      "sha256": "431f81e535b0b7c17e7b628f590194fd7f1a4e4209b870d003f6db0b05e611c0"
+    }
+  ],
+  "evidence_sha256": {
+    "discover-run.jsonl": "8e20c50785632985968cd94a825d1e29103f108ae2eae286dad32be23f4665cf",
+    "installed-run.jsonl": "f60a518e3acdfe37c5b722d6082eeb6dd8cca96ef43c7327b2f58e34ebd2867c",
+    "install-discovered-node.log": "bd417570c293fdbe317d00df8eb4c55497eaf178fb681bdb53ed299d1ae3bca3"
+  },
+  "new_messages_sent": 0,
+  "schedules_changed": false,
+  "third_party_issues_or_prs_sent": 0,
+  "mcp_registry_published": false,
+  "observations": [
+    "An explicit Windows dsh.cmd invocation split the &path install argument. Direct Node CLI invocation preserved it and installed successfully.",
+    "Fuzzy community searches returned a different package for similar words; absence was checked by exact name/repository, not nonempty result count."
+  ]
+}

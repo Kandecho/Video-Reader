@@ -16,7 +16,7 @@ dsh web
 
 已运行的 DSH 需要退出后从这个终端重新启动；仅刷新页面不会更新进程的环境变量。下次从另一个终端启动时，也需设置 `VIDEO_READER_ROOT`。如使用自定义配置，可另设绝对路径 `VIDEO_READER_CONFIG`；两套 MCP 共用它。未设置核心目录时，适配器会明确提示该变量缺失。
 
-安装不会启用定时任务，也不会授权发送私信或评论。独立 B 站账号、收件、队列和授权投递的真实可用状态，以及仍在试用的自动化，见[能力状态](capabilities.md)。当前未发布 npm 包或提交插件索引，使用上面的 tgz 地址安装。
+安装不会启用定时任务，也不会授权发送私信或评论。独立 B 站账号、收件、队列和授权投递的真实可用状态，以及仍在试用的自动化，见[能力状态](capabilities.md)。当前可从项目索引或上面的 tgz 地址安装；尚未发布 npm，也未获第三方社区索引收录。
 
 源码开发时，可在 `adapters/dsh` 执行 `npm pack`，再把 tgz 的绝对路径传给 `dsh plugin --profile <name> add`。卸载用 `dsh plugin --profile web remove dsh-video-reader`，重启后生效；共享核心及记录保留。
 
