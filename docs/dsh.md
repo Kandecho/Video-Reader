@@ -4,6 +4,8 @@ DSH 适配器 **0.1.0** 接入同一安装中的 Reader、通用队列/历史和
 
 ## 安装薄包
 
+也可以先订阅[项目插件索引](discovery.md)，让 DSH 的发现页或 `plugin_market` 查到版本、仓库和固定 Git 安装参数；下面保留 Release tgz 的直接安装方式。
+
 源码与适配器在[同一发布页](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)提供。薄包只装连接配置，不复制核心、凭据、模型或材料。请把目录改为你的实际安装位置：
 
 ```powershell

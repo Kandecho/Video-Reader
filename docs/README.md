@@ -9,6 +9,7 @@
 | 安装依赖、配置模型、平台登录、调整目录 | [安装与配置](installation.md) |
 | 查命令或工具参数、跟进长任务 | [CLI 与 MCP 参考](reader-reference.md) |
 | 在 DSH 中安装 Reader + Scroll 整包薄适配 | [DSH 接入](dsh.md) |
+| 添加 DSH 索引源、了解社区收录与 Agent 发现 | [发现与收录](discovery.md) |
 | 区分真实可用、试用中和尚未接入 | [能力状态](capabilities.md) |
 | 对比 dsh-bili-scroll 等相关项目 | [相关项目](related-projects.md) |
 | 了解分页、续读、原文与校对、材料导出 | [材料与续读](material-delivery.md) |

@@ -1,0 +1,65 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Video Reader — publisher index",
+    "zh": "Video Reader 项目索引"
+  },
+  "description": {
+    "en": "Maintained by the Video Reader author. Reader, shared tasks and Scroll are shipped together.",
+    "zh": "项目作者维护的索引，整包包含 Reader、通用任务和 Scroll。"
+  },
+  "plugins": [
+    {
+      "name": "dsh-video-reader",
+      "title": {
+        "en": "Video Reader + Scroll Agent",
+        "zh": "视频阅读 Video Reader + Scroll"
+      },
+      "description": {
+        "en": "Windows. Read Bilibili, YouTube and local videos with timestamped text and images. Includes shared queues/history and Scroll's independent Bilibili account, inbox and authorized delivery workflows. Reuses an existing local installation; scheduled workflows remain in trial.",
+        "zh": "Windows。读取 B 站、YouTube 和本地视频，带时间点追问文字与画面。整包接入通用队列/历史、Scroll 独立 B 站账号、私信收件与授权投递。复用已安装核心；定时工作流仍在试用。"
+      },
+      "author": "Kandecho",
+      "homepage": "https://github.com/Kandecho/Video-Reader#readme",
+      "repository": {
+        "url": "https://github.com/Kandecho/Video-Reader",
+        "directory": "adapters/dsh"
+      },
+      "metadata": {
+        "keywords": [
+          "dsh",
+          "dsh-plugin",
+          "deepseek-harness",
+          "mcp",
+          "bilibili",
+          "youtube",
+          "video-reader",
+          "scroll-agent",
+          "queue",
+          "history",
+          "transcript",
+          "subtitles",
+          "frames",
+          "inbox",
+          "字幕",
+          "画面"
+        ]
+      },
+      "versions": [
+        {
+          "version": "0.1.0",
+          "publishTimestamp": 1793797035,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/Kandecho/Video-Reader",
+            "commit": "f2656bf030ec94b9f6dfea22008c1d3168f4e4c6",
+            "path": "adapters/dsh"
+          },
+          "engines": {
+            "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+          }
+        }
+      ]
+    }
+  ]
+}
