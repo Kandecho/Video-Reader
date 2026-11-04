@@ -77,14 +77,14 @@ class ReadEfficiencyTests(unittest.TestCase):
         self.assertNotIn('matched', result['segments'][0]['quality_flags'])
         self.assertEqual(read_json(self.reader.directory(self.sid) / 'manifest.json'), before)
 
-    def test_pending_default_still_checks_but_only_pending_after_partial_review(self):
+    def test_pending_default_defers_deep_checks_after_partial_review(self):
         self.review(count=1)
         with patch('video_reader.vision._frame_at', side_effect=self.screen) as frames:
             result = self.reader.transcript(self.sid, source='asr')
-        self.assertEqual(frames.call_count, 2)
-        self.assertTrue(all(call.args[2] > 6 for call in frames.call_args_list))
-        self.assertEqual(result['screen_verification']['computed_segments'], 1)
-        self.assertEqual(result['screen_verification']['skipped_segments'], 1)
+        self.assertEqual(frames.call_count, 0)
+        self.assertEqual(result['screen_verification']['computed_segments'], 0)
+        self.assertEqual(result['screen_verification']['skipped_segments'], 2)
+        self.assertEqual(result['screen_verification']['policy'],'cached_only')
         self.assertEqual(result['segments'][1]['review_status'], 'pending')
 
     def test_evidence_and_explicit_verification_compute_missing_then_reuse_raw_cache(self):
@@ -140,9 +140,9 @@ class ReadEfficiencyTests(unittest.TestCase):
         self.reader.save(self.data)
         with patch('video_reader.vision._frame_at', side_effect=self.screen) as frames:
             result = self.reader.transcript(self.sid, source='asr')
-        self.assertGreater(frames.call_count, 0)
+        self.assertEqual(frames.call_count, 0)
         self.assertFalse(result['review']['complete'])
-        self.assertEqual(result['screen_verification']['skipped_segments'], 0)
+        self.assertEqual(result['screen_verification']['skipped_segments'], 2)
 
     def test_manual_captions_require_opt_in_and_invalid_options_fail_before_side_effects(self):
         self.data['speech'][0]['track']['kind'] = 'manual'

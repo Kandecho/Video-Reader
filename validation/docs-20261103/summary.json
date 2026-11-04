@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-03",
+  "scope": "documentation_only",
+  "status": "verified",
+  "changes": [
+    "docs/history/handoff-through-20261031.md",
+    "docs/handoff.md",
+    "docs/decisions.md",
+    "planning/roadmap-20261021-source.md",
+    "docs/registry.md",
+    "docs/history-index.md",
+    "planning/roadmap-20261021.html",
+    "validation/docs-20261103/summary.json"
+  ],
+  "local_artifact_index": "session workspace HANDOFF.md",
+  "archive": "docs/history/handoff-through-20261031.md; original text retained with relative links rebased",
+  "current_handoff": "Scroll Inbox and persistent queue discussion, not implementation authorization",
+  "distinctions": [
+    "confirmed user needs vs assistant proposals",
+    "Reader material ready vs host read vs discussion result",
+    "network clue vs confirmed root cause",
+    "historical evidence vs current capability"
+  ],
+  "verification": {
+    "markdown_files": 7,
+    "local_links_and_heading_targets": 166,
+    "missing_targets": 0,
+    "roadmap_html_regenerated": true,
+    "runtime_tests_run": false
+  },
+  "runtime_changes": false,
+  "dispatch_or_messages_sent": false
+}

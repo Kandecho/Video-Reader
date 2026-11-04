@@ -4,17 +4,21 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = [
+    'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'LICENSE_REVIEW.md', 'RELEASE_NOTES.md',
     'pyproject.toml', 'requirements-runtime-windows.txt', 'config.example.json',
-    'bootstrap.ps1', 'run.ps1', 'scroll.ps1', 'launch.py', 'launch_mcp.py', 'launch_scroll.py',
+    'bootstrap.ps1', 'run.ps1', 'scroll.ps1', 'tasks.ps1', 'launch.py', 'launch_mcp.py', 'launch_scroll.py', 'launch_tasks.py',
     'skill/SKILL.md', 'scroll-skill/SKILL.md',
-    'docs/installation.md', 'docs/material-delivery.md', 'docs/scroll-batch.md',
+    'docs/installation.md', 'docs/material-delivery.md', 'docs/material-reference.md', 'docs/reader-reference.md', 'docs/scroll-batch.md',
+    'docs/tasks.md', 'docs/triage.md', 'docs/inbox-queue.md', 'docs/scroll-reference.md', 'docs/architecture.md',
     'CONTRIBUTING.md', 'examples/create_fixture.py',
     'tools/build_plugins.py', 'tools/build_candidate.py',
     'tools/check_models.py', 'docs/models/faster-whisper-medium.json',
     'licenses/upstream/watch-MIT.txt',
+    'validation/release-20261104/report-source.md', 'validation/release-20261104/summary.json',
 ]
 
 
@@ -25,8 +29,11 @@ def build(destination, root=ROOT):
     if destination == root or root.is_relative_to(destination):
         raise ValueError('Candidate destination must not contain the source checkout')
     selected = {name: name for name in FILES}
-    selected['README.candidate.md' if (root / 'README.candidate.md').is_file() else 'README.md'] = 'README.md'
-    for folder in ('video_reader', 'scroll_agent', 'tests'):
+    # Public operation references link to other top-level docs; keep those routes
+    # available in the source archive without including runtime evidence/logs.
+    for path in (root / 'docs').glob('*.md'):
+        selected[path.relative_to(root).as_posix()] = path.relative_to(root).as_posix()
+    for folder in ('video_reader', 'scroll_agent', 'reading_tasks', 'tests'):
         for path in (root / folder).rglob('*'):
             if path.is_file() and path.suffix in ('.py', '.json', '.txt', '.md') and '__pycache__' not in path.parts:
                 selected[path.relative_to(root).as_posix()] = path.relative_to(root).as_posix()
@@ -42,19 +49,11 @@ def build(destination, root=ROOT):
         shutil.copyfile(original, output)
         manifest[target] = hashlib.sha256(output.read_bytes()).hexdigest()
     (destination / '.gitignore').write_text('.venv/\n__pycache__/\n*.pyc\n*.egg-info/\nconfig.json\n.private/\ndata/\nauth/\nmodels/\nruntimes/\nresearch/\nintegrations/\n.test-work/\n', encoding='utf-8')
-    notices = ('# Distribution status and third-party notices\n\n'
-        'Local technical candidate only. Original code has no selected public distribution license yet; do not infer permission to publish it.\n\n'
-        'video_reader/vendor/{frames,runtime,transcribe,gemini}.py derives from watch 0.3.2 / bradautomates/claude-video, '
-        'Copyright (c) 2026 Bradley Bonanno, MIT. Full notice: licenses/upstream/watch-MIT.txt.\n\n'
-        'Python distributions retain their own installed licenses. yt-dlp is Unlicense; RapidOCR/PaddleOCR assets and optional Qwen models state Apache-2.0; '
-        'Whisper model publishers state MIT. These dependencies/models are not bundled in this source archive. '
-        'FFmpeg/ffprobe, Node and Python are separate machine dependencies. Review the actual binary build licenses when distributing binaries.\n\n'
-        'No credentials, private configuration, model weights, user videos, research datasets, schedules or generated host paths are included.\n')
-    (destination / 'THIRD_PARTY_NOTICES.md').write_text(notices, encoding='utf-8')
-    for name in ('.gitignore', 'THIRD_PARTY_NOTICES.md'):
+    for name in ('.gitignore',):
         manifest[name] = hashlib.sha256((destination / name).read_bytes()).hexdigest()
-    report = {'version': '0.10.0rc4', 'files': manifest, 'publication': 'not_authorized',
-              'original_code_license': 'pending_separate_decision', 'credential_and_model_files_included': False}
+    version=tomllib.loads((root/'pyproject.toml').read_text(encoding='utf-8-sig'))['project']['version']
+    report = {'version': version, 'files': manifest, 'publication': 'source_release_candidate',
+              'original_code_license': 'MIT', 'credential_and_model_files_included': False}
     (destination / 'candidate-manifest.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
     return {'candidate': str(destination), 'files': len(manifest), 'version': report['version']}
 

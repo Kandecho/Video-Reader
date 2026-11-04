@@ -12,7 +12,7 @@ from .platform import PlatformError
 from .sources import resolve
 
 
-def target(source):
+def target(source, platform=None):
     if not isinstance(source, str) or not source.strip():
         raise ReaderError('Uploader source must be a UID, Bilibili space URL, or BV/video URL')
     value = source.strip()
@@ -21,10 +21,10 @@ def target(source):
     match = re.fullmatch(r'https?://space\.bilibili\.com/([1-9]\d{0,19})(?:/(?:upload/)?video)?/?(?:[?#].*)?', value)
     if match:
         return {'uid': match[1]}
-    video = resolve(value)
+    video = resolve(value, shortlink_resolver=platform.resolve_shortlink if platform else None)
     if video['platform'] != 'bilibili':
         raise ReaderError('Uploader enumeration currently supports Bilibili only')
-    return {'bvid': video['bvid']}
+    return {'shortlink': video['canonical']} if video.get('shortlink') else {'bvid': video['bvid']}
 
 
 class _QuietLogger:
@@ -101,7 +101,7 @@ def _page(platform, uid, page):
 
 
 def uploader_videos(platform, source, page=1):
-    selected = target(source)
+    selected = target(source, platform)
     if isinstance(page, bool) or not isinstance(page, int) or not 1 <= page <= 1000:
         raise ReaderError('page must be an integer between 1 and 1000')
     ttl = platform.config['preview']['recommendation_ttl_seconds']

@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-31",
+  "core": "0.10.0rc6",
+  "plugin": "0.5.5",
+  "tests": {
+    "total": 262,
+    "new": 19,
+    "status": "passed"
+  },
+  "renewal": {
+    "validated": false,
+    "changed": false
+  },
+  "original_manifests_unchanged": true,
+  "real_cases": {
+    "scope": "real cached source material, isolated manifests; no renewal or model rerun",
+    "delivery": [
+      {
+        "session": "v_b78507575a301d71c41ee7a5",
+        "before_first_image_page": 9,
+        "after_first_image_page": 1,
+        "canonical_pages_before": 9,
+        "pages_after": 10,
+        "first_frames": 8,
+        "first_segments": 60,
+        "lossless_roundtrip": true,
+        "budget": 21842
+      },
+      {
+        "session": "v_fb4b65d5ddb30a561eb57629",
+        "before_first_image_page": 16,
+        "after_first_image_page": 1,
+        "canonical_pages_before": 16,
+        "pages_after": 17,
+        "first_frames": 8,
+        "first_segments": 60,
+        "lossless_roundtrip": true,
+        "budget": 21782
+      }
+    ],
+    "asr": {
+      "whisper_segments": 3,
+      "whisper_text_status": [
+        "unverified_candidate",
+        "unverified_candidate",
+        "unverified_candidate"
+      ],
+      "qwen_status": "alignment_unresolved",
+      "qwen_processed": true,
+      "qwen_review_complete": false,
+      "qwen_raw_candidate": "爱，",
+      "qwen_alignment": [
+        {
+          "text": "爱",
+          "start": 298.0,
+          "end": 298.0,
+          "owned": false,
+          "text_start": 0,
+          "text_end": 1
+        }
+      ]
+    },
+    "native_mcp": {
+      "native_images": 8,
+      "segments": 60,
+      "frame_cache_reused": true,
+      "mcp_cli_same_snapshot": true,
+      "first_pixels_unchanged": true,
+      "seconds": 0.578,
+      "note": "cached frames incl. prior temporal evidence; verify=False isolates delivery, not a cold-processing speed benchmark"
+    },
+    "native_preview": {
+      "bvid": "BV1KLxN6ZERf",
+      "indices": 156,
+      "frames": 5,
+      "recovery": {
+        "attempts": 1,
+        "prior_errors": [],
+        "invalid_cache_bypassed": true
+      },
+      "network_requests": 1,
+      "offline_valid_cache_reused": true
+    }
+  },
+  "metadata_recovery": {
+    "scope": "fault injection of historical first failure; second attempt is real same-account metadata extraction, no media download or renewal",
+    "id": "BV1KLxN6ZERf_p1",
+    "attempts": {
+      "retry_count": 1,
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed",
+          "seconds": 0.0,
+          "type": "ReaderError",
+          "message": "Unable to download webpage: Remote end closed connection without response (injected historical signature)",
+          "transient_webpage_error": true
+        },
+        {
+          "attempt": 2,
+          "status": "success",
+          "seconds": 4.813
+        }
+      ]
+    },
+    "identical_commands": true,
+    "network_requests": 3
+  },
+  "review": {
+    "independent_reviewers": 2,
+    "findings_fixed": [
+      "projection counters overflow",
+      "startup fallback missing status IO lock"
+    ]
+  },
+  "limits": [
+    "No acoustic ground truth; candidate labels do not establish hallucination or silence",
+    "External transient network cause unconfirmed",
+    "Cold OCR processing depth unchanged",
+    "Old frozen pages retain original order"
+  ],
+  "remote_pushed": false,
+  "installed_smoke": {
+    "core_version": "0.10.0rc6",
+    "plugin_version": "0.5.5",
+    "fresh_stdio_mcp": true,
+    "native_images": 8,
+    "speech_segments": 60,
+    "shared_cli_mcp_snapshot": true,
+    "original_pixels": true,
+    "network_calls": 0,
+    "renewal_called": false
+  }
+}

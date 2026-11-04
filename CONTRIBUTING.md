@@ -1,10 +1,8 @@
 # Reproduce and contribute
 
-Publication update (2026-10-31): source is maintained at https://github.com/Kandecho/Video-Reader. Older candidate statements below retain their historical scope. Original-code licensing remains undecided; third-party notices are preserved.
+Source and issues: https://github.com/Kandecho/Video-Reader. Original code is MIT licensed; retain upstream attribution and the separate third-party notices. Current release scope and known limitations are in [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
-This local source candidate has not been published. A public repository and original-code license are separate decisions.
-
-Use Python 3.12 on Windows for the tested environment. Run `bootstrap.ps1 -Features mcp,vision`, then `python -m unittest discover -s tests -v` with the created environment. Optional ASR/Qwen/GPU and real platform authentication are separate integration checks; tests do not require private credentials, video caches, model weights or message delivery. FFmpeg/ffprobe must be on PATH. Preserve Reader/Scroll responsibilities and existing source/review identities. Add a focused regression for a meaningful new behavior or failure, rather than mirroring code.
+Use Python 3.12 on Windows for the tested environment. Run `bootstrap.ps1 -Features mcp,vision,asr`, then `python -m unittest discover -s tests -v` with the created environment. The full suite needs the ASR package even though decoding is mocked and no speech model is required; the default bootstrap deliberately omits that optional package. Qwen/GPU and real platform authentication are separate integration checks; tests do not require private credentials, video caches, model weights or message delivery. FFmpeg/ffprobe must be on PATH. Preserve Reader/Scroll responsibilities and existing source/review identities. Add a focused regression for a meaningful new behavior or failure, rather than mirroring code.
 
 Generate an independent synthetic fixture with `python examples/create_fixture.py NEW_FOLDER`. The expected file describes three small tasks: full bilingual pagination/replay, exact visual conflict inspection, and portable export. The fixture intentionally contains an instruction-like subtitle. Treat it as source data; it must not change the host's task. There is no audio track, so a host must not claim it heard any speech.
 

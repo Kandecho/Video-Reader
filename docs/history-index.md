@@ -18,6 +18,16 @@
 | 本地 ASR 引擎首轮对照 | [实验报告](../research/asr-engine-20261021/report-source.md)、[结果汇总](../research/asr-engine-20261021/summary.json) | 查首轮 Windows/GPU、无对齐原文及历史参数时；新进展看下一行 |
 | Qwen 独立参考、对齐与边界 | [本轮报告](../research/qwen-foundations-20261021/report-source.md)、[汇总](../research/qwen-foundations-20261021/summary.json)、[运行说明](../research/qwen-foundations-20261021/README.md) | 查冻结人工参考 CER、官方 ForcedAligner、重叠切分、显存约束及动态/原生声音缺口时 |
 
+## 2026-10-30 至 11-03 诊断与使用证据
+
+| 证据 | 适用范围 |
+|---|---|
+| [共享运行任务](../validation/runtime-jobs-20261030/report-source.md)、[rc6 修复](../validation/diagnosis-repairs-20261031/report-source.md) | 任务状态与接续、独立处理/消费评估、后续修复及真实复验 |
+| [ASR 同窗追查](../validation/asr-followup-20261031/report-source.md) | 联网依据、强制语言退化和后处理遮蔽；策略修复尚未实施 |
+| [双片阅读观察](../validation/reading-pair-20261103/report-source.md)、[攻略选图复验](../validation/guide-image-selection-20261103/report-source.md) | 已读材料、默认深检查与材料锁、准星帧和闪光结果的选图边界 |
+| [Scroll 状态观察](../validation/scroll-state-20261103/report-source.md) | 日推失败上层错误、用户网络线索及 preparing 遗留快照；非根因诊断结论 |
+| [本轮文档维护](../validation/docs-20261103/summary.json) | 主维护文档同步、交接归档及文档核对范围；不充当功能验收 |
+
 ## 2026-10-28 实现与阅读证据
 
 [2026-10-28 真实阅读与 Scroll 比较](../validation/task-reading-20261028/report-source.md)、[汇总](../validation/task-reading-20261028/summary.json)、[跨聊天接续材料](../validation/task-reading-20261028/resume-check.md)：查完整数学/软件/长访谈、关键错误修正、两片比较及人工复核范围。
@@ -46,9 +56,13 @@
 | 入口整理过程 | [2026-10-21 记录](get-start-20261021.md)、[2026-10-24 整理](../validation/docs-20261024/report.md) | 追查入口职责、初稿、自检与改动依据，不作日常必读 |
 
 
-## 本次归档
+## 2026-10-29 归档
 
 - [10 月 28 日前决定全文](history/decisions-through-20261028.md)
 - [10 月 28 日前交接全文](history/handoff-through-20261028.md)
 - [10 月 28 日路线全文](history/roadmap-through-20261028.md)
 - [本次文档整理](../validation/docs-20261029/summary.json)
+
+## 2026-11-03 交接整理
+
+[截至 10 月 31 日的交接快照](history/handoff-through-20261031.md)保留本次整理前的内容；当前接续统一读 handoff。

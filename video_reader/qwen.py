@@ -134,5 +134,8 @@ def decode(data, lo, hi, directory, config, context, emit):
                            'timing_accuracy_verified': False, 'mean_word_probability_available': False},
               'elapsed_seconds': round(time.monotonic() - started, 3), 'job_path': str(target),
               'scope': 'speech only; raw text and model-estimated timing, not native sound understanding'}
+    from .recognition import unplaced
+    if unplaced(record):
+        record['status'] = 'alignment_unresolved'
     write_json(target / 'record.json', record)
     return record

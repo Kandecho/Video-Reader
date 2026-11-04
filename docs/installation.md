@@ -1,12 +1,12 @@
 # Install and relocate
 
-Publication update (2026-10-31): source is maintained at https://github.com/Kandecho/Video-Reader. Older candidate statements below retain their historical scope. Original-code licensing remains undecided; third-party notices are preserved.
+Source: https://github.com/Kandecho/Video-Reader. Original code is MIT licensed; third-party notices remain in effect. Core 0.10.0rc6 and host adapters 0.5.5 are the current source prerelease.
 
-This is a local release candidate. Creating a public repository, uploading it and selecting the license for original code are separate decisions. The tested target is Windows x64 with Python 3.12; no other-machine or other-OS validation is implied.
+The supported installation baseline is Windows x64 with Python 3.12 and PowerShell 7. This release is validated in a clean isolated directory on the same machine; no other-machine or other-OS validation is implied. Models, credentials, FFmpeg, Node and Python environments are not bundled.
 
 ## Source candidate versus current documentation
 
-The [2026-10-28 docs1 candidate](../validation/docs-20261028/summary.json) is a tested historical source snapshot. The 2026-10-29 documentation cleanup has not rebuilt or published that archive. Current purpose and unresolved reading-workflow changes live in [decisions](decisions.md) and the [route](../planning/roadmap-20261021-source.md). A later candidate must sync the approved documentation and host instructions; old candidate success does not verify new behavior.
+The current source candidate takes its README, license and notices directly from the maintained source. See [release notes](../RELEASE_NOTES.md) for scope and limitations. Earlier installation records apply to their dated versions; the rc6 release acceptance is recorded separately in the source repository's validation/release-20261104 directory. A successful older candidate does not verify later behavior.
 
 ## Prerequisites
 

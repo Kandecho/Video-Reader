@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-03",
+  "video": "BV1Cxxt6JEqP",
+  "issue": "VR-VISUAL-20261103-11",
+  "core_modified": false,
+  "guide_revision": 2,
+  "selected_images": 11,
+  "new_requested_timestamp_frames": 110,
+  "single_frame_or_crop_requests": 9,
+  "redownload": false,
+  "new_asr": false,
+  "c_flash_result_verified": false,
+  "user_quality_acceptance": "pending",
+  "report": "report-source.md"
+}

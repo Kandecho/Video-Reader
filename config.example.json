@@ -5,7 +5,9 @@
   "frame_width": 1280,
   "page_frames": 8,
   "page_transcript_segments": 60,
+  "tasks": {"directory": "data/tasks", "database": null, "library": null},
   "agent": {
+    "inbox": {"sender_uid": null},
     "delivery": {"enabled": false, "recipient_uid": null},
     "daily": {"enabled": false, "time": "20:00", "timezone": "+08:00"},
     "wake": {"enabled": false, "mode": "range", "interval_seconds": null, "min_seconds": null, "max_seconds": null, "timezone": "local", "windows": []}

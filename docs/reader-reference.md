@@ -1,6 +1,18 @@
 # Video Reader 操作与接入参考
 
-身份：当前 0.10.0rc5 / 薄插件 0.5.4 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；现有 Skill/MCP 仍有旧的先逐段校对要求，行为尚未同步。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
+
+## 0.10.0rc6 诊断状态与首屏材料
+
+大阅读的 `view=reading` 先提供 `reading_projection`，包含原像素取样图和容得下的完整字幕段。它是阅读入口，`delivery.next_cursor` 后仍保留 canonical 无损材料；并未减少处理深度或全片覆盖要求。投影只交付一部分时，用 `remaining_in_snapshot` 明示，暂不暴露可能跳过材料的 speech/visual 下一页入口。单图本身超图片预算时仍明确延后。既有冻结页不重排。
+
+`text_status=unverified_candidate` 表示可疑机器识别原文；`recognition_assessment` 与 source_processed 处理覆盖分开。Qwen 的 `alignment_unresolved` / `unplaced_candidates` 保留 raw_text、input_range、owner_range、raw_alignment，不制造归属时间；该状态不等于声学无人声，尚存候选时 review.complete 为 false。处理过的旧缓存直接派生这些字段，原 profile、段 ID 与校对历史不变。新动态游标绑定诊断变化，旧冻结页仍可读。
+
+元数据获取新增 extracting_source_metadata / retrying_source_metadata 阶段，仅明确网页瞬时超时或断连恢复一次；限制、预算耗尽和暂停不自动恢复。最终 AcquisitionError / job.error.details 保留 stage 与 attempts，成功也保留 acquisition.metadata_extraction 的恢复记录。下载前重新核对 B 站 part/CID。预览会在缓存写入前检查索引与图格，在线旁路旧坏缓存并至多一次有界重取；离线保留缺口。
+
+Windows 状态读写共享 job 的短时 .status.lock，包括启动失败兜底，避免读 JSON 与原子替换交错。它不持有视频材料锁。详见 [修复验收](../validation/diagnosis-repairs-20261031/report-source.md)。续期不在本轮验证范围。
+
+
+身份：当前 0.10.0rc6 工作区 / 薄插件 0.5.5 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
 
 使用入口见 [README](../README.md)，现有操作步骤见 [阅读 Skill](../skill/SKILL.md)；历史计数和测试范围回到对应验收。
 
@@ -169,13 +181,13 @@ Python 包和已验证版本在 `requirements-runtime-windows.txt`：包含 MCP 
 
 CLI 与两个 MCP 在进程入口显式将标准输入、输出和错误流设为 UTF-8，复用同一个配置函数。不要依赖 `PYTHONIOENCODING`：当前 `-I` 启动会忽略 `PYTHON*` 环境变量。修复覆盖转写日志中的中文和连接号，避免宿主按 UTF-8 读取 GBK 后关闭日志管道。已运行的旧 MCP 需重连才能加载；不改变 Windows 全局编码。见 [UTF-8 修复验收](../validation/utf8-20261027/report.txt)。
 
-`mcp-config.json` 含当前安装路径的启动配置，交给其他宿主接入即可。默认 19 工具：`video_job`、`video_search`、`video_discover`、`video_uploader_videos`、`video_preview`、`video_preview_batch`、`video_open`、`video_read`、`video_transcript`、`video_review`、`video_relisten`、`bilibili_login`、`video_continue`、`video_frame`、`video_sound`、`video_export`、`video_youtube_status`、`video_comments`、`video_danmaku`。评论、楼中楼和弹幕分页见[材料参考](material-reference.md)。更新工具列表后，需要重启已连接的 MCP 进程。
+`mcp-config.json` 含当前安装路径的启动配置，交给其他宿主接入即可。默认 20 工具：`video_job`、`video_search`、`video_discover`、`video_uploader_videos`、`video_preview`、`video_preview_batch`、`video_open`、`video_read`、`video_transcript`、`video_review`、`video_relisten`、`bilibili_login`、`video_continue`、`video_frame`、`video_sound`、`video_export`、`video_youtube_status`、`video_comments`、`video_danmaku`、`video_tasks`。通用任务见[任务参考](tasks.md)。评论、楼中楼和弹幕分页见[材料参考](material-reference.md)。更新工具列表后，需要重启已连接的 MCP 进程。
 
-## Codex / Claude Code 薄插件 0.5.4
+## Codex / Claude Code 薄插件 0.5.5
 
-共享安装版本为 0.10.0rc4。插件仅含清单、双 MCP 启动配置、两个分工明确的 Skill 和短说明，每端 5 文件。源码、`.venv`、Qwen 环境、模型、凭据和缓存仍在安装目录，不复制进插件。共用磁盘数据，不是共用单个内存进程；Qwen 仍错峰使用。
+共享核心版本为 0.10.0rc6，生成适配器版本为 0.5.5。插件仅含清单、双 MCP 启动配置、两个分工明确的 Skill 和短说明，每端 5 文件。源码、`.venv`、Qwen 环境、模型、凭据和缓存仍在安装目录，不复制进插件。共用磁盘数据，不是共用单个内存进程；Qwen 仍错峰使用。
 
-本机 Codex 已更新 `video-reader@video-reader-local` 至 0.5.3，缓存位于 `C:/Users/USER\.codex\plugins\cache\video-reader-local\video-reader\0.5.3`。包名保留兼容，包含 `video-reader` / `scroll-agent` 两个独立 MCP。两个 Skill 分别为 `$video-reader:video-read` 与 `$video-reader:scroll-agent`；自然语言也可自动路由。旧会话可能需重启 MCP 才刷新，不因此中断用户工作；日推脚本不依赖这个会话。
+包名保留 `video-reader@video-reader-local`，包含 `video-reader` / `scroll-agent` 两个独立 MCP。两个 Skill 分别为 `$video-reader:video-read` 与 `$video-reader:scroll-agent`；自然语言也可自动路由。生成成功不表示某个宿主已经安装或启用；以宿主查询结果为准。更新后重新连接 MCP 才加载新的工具表，日推脚本不依赖这个会话。
 
 ```powershell
 codex plugin marketplace add 'D:\IA\apps\video-reader\integrations\codex'

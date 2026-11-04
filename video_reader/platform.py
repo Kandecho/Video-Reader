@@ -32,7 +32,8 @@ def trusted(url):
         host = parsed.hostname or ''
         valid = (parsed.scheme == 'https' and not parsed.username and not parsed.password
                  and parsed.port in (None, 443) and any(host == name or host.endswith('.' + name)
-                 for name in ('bilibili.com', 'hdslb.com')))
+                 for name in ('bilibili.com', 'hdslb.com')) or
+                 parsed.scheme == 'https' and host == 'b23.tv' and not parsed.username and not parsed.password and parsed.port in (None, 443))
     except (ValueError, TypeError):
         valid = False
     if not valid:
@@ -40,7 +41,9 @@ def trusted(url):
 
 
 class NoRedirect(HTTPRedirectHandler):
-    def redirect_request(self, *args, **kwargs):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urlparse(req.full_url).hostname == 'b23.tv':
+            return None  # Expose Location to the bounded transport; never follow it.
         raise PlatformError('platform_redirect_refused')
 
 
@@ -90,10 +93,33 @@ class Platform:
                    'Origin': 'https://www.bilibili.com', 'Accept-Encoding': 'identity', **(headers or {})}
         if data is not None:
             headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        with self.opener.open(Request(url, data=data, headers=headers), timeout=self.options['timeout_seconds']) as response:
-            return response.read(self.options['max_response_bytes'] + 1)
+        try:
+            with self.opener.open(Request(url, data=data, headers=headers), timeout=self.options['timeout_seconds']) as response:
+                return response.read(self.options['max_response_bytes'] + 1)
+        except HTTPError as error:
+            if urlparse(url).hostname != 'b23.tv' or error.code not in (301, 302, 303, 307, 308):
+                raise
+            target = error.headers.get('Location', '')
+            parsed = urlparse(target)
+            if (parsed.scheme != 'https' or parsed.hostname not in ('bilibili.com','www.bilibili.com','m.bilibili.com')
+                    or parsed.username or parsed.password or parsed.port not in (None,443)):
+                raise PlatformError('untrusted_shortlink_target') from None
+            return json.dumps({'code':0,'target':target}).encode('utf-8')
 
-    def request(self, url, form=None, *, ttl=0, binary=False, headers=None):
+    def resolve_shortlink(self, source):
+        from .sources import resolve
+        selected = resolve(source)
+        if not selected.get('shortlink'):
+            raise PlatformError('expected_shortlink')
+        result = self.request(selected['canonical'], ttl=self.config['preview']['material_ttl_seconds'])
+        target = result.get('target') if isinstance(result,dict) else None
+        parsed = urlparse(target or '')
+        if (parsed.scheme != 'https' or parsed.hostname not in ('bilibili.com','www.bilibili.com','m.bilibili.com')
+                or parsed.username or parsed.password or parsed.port not in (None,443)):
+            raise PlatformError('untrusted_shortlink_target')
+        return target
+
+    def request(self, url, form=None, *, ttl=0, binary=False, headers=None, validate=None):
         trusted(url)
         if form is not None and url not in self.write_endpoints:
             raise PlatformError('write_not_authorized')
@@ -107,8 +133,17 @@ class Platform:
         cache = self.root / (key + ('.bin' if binary else '.json'))
         with self.lock:
             if form is None and ttl and cache.is_file() and (self.offline or time.time() - cache.stat().st_mtime <= ttl):
-                self.trace.append({'cache': 'hit', 'bytes': 0})
-                return cache.read_bytes() if binary else read_json(cache)
+                cached = cache.read_bytes() if binary else read_json(cache)
+                try:
+                    if validate:
+                        validate(cached)
+                except PlatformError as error:
+                    self.trace.append({'cache': 'invalid', 'bytes': 0, 'reason': error.code})
+                    if self.offline:
+                        raise
+                else:
+                    self.trace.append({'cache': 'hit', 'bytes': 0})
+                    return cached
             if self.offline:
                 raise PlatformError('offline_cache_miss')
             state = read_json(self.state_path) if self.state_path.exists() else {}
@@ -143,6 +178,8 @@ class Platform:
                     if code in RESTRICTED:
                         state['paused'] = str(code)
                     raise PlatformError('platform_code:' + str(code))
+                if validate:
+                    validate(result)
                 if form is None and ttl:
                     cache.write_bytes(result) if binary else write_json(cache, result)
                 entry['status'] = 'ok'
@@ -156,11 +193,14 @@ class Platform:
             finally:
                 write_json(self.state_path, state)
 
-    def json(self, path, params=None, *, ttl=0):
+    def json(self, path, params=None, *, ttl=0, validate=None):
         url = API + path + ('?' + urlencode(params) if params else '')
-        result = self.request(url, ttl=ttl)
-        if not isinstance(result, dict) or not isinstance(result.get('data'), dict):
-            raise PlatformError('platform_invalid_data')
+        def envelope(value):
+            if not isinstance(value, dict) or not isinstance(value.get('data'), dict):
+                raise PlatformError('platform_invalid_data')
+            if validate:
+                validate(value['data'])
+        result = self.request(url, ttl=ttl, validate=envelope)
         return result['data']
 
     def resume(self):

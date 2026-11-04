@@ -1,0 +1,171 @@
+{
+  "date": "2026-11-04",
+  "baseline": "working tree, includes uncommitted modules",
+  "reader_tools": 19,
+  "scroll_tools": 6,
+  "tests": {
+    "count": 126,
+    "passed": true,
+    "triage_tests": 12
+  },
+  "trial": [
+    {
+      "bvid": "BV1n14g6iEeU",
+      "status": "undetermined",
+      "content_type": "analysis",
+      "intent": "none",
+      "queue_state": "pending",
+      "frames": 5,
+      "captions": 295
+    },
+    {
+      "bvid": "BV1ub4g6EE2e",
+      "status": "awaiting_user",
+      "content_type": "project_demo",
+      "intent": "request",
+      "queue_state": "pending",
+      "frames": 5,
+      "captions": 49
+    },
+    {
+      "bvid": "BV1f94c6uEr3",
+      "status": "suggested",
+      "content_type": "tutorial",
+      "intent": "none",
+      "queue_state": "pending",
+      "frames": 5,
+      "captions": 507
+    },
+    {
+      "bvid": "BV14q4G6SEpa",
+      "status": "suggested",
+      "content_type": "resource_list",
+      "intent": "none",
+      "queue_state": "pending",
+      "frames": 5,
+      "captions": 50
+    },
+    {
+      "bvid": "BV17Vxm6FEqy",
+      "status": "suggested",
+      "content_type": "project_demo",
+      "intent": "none",
+      "queue_state": "pending",
+      "frames": 5,
+      "captions": 195
+    },
+    {
+      "bvid": "BV1pS4G6rEKH",
+      "status": "undetermined",
+      "content_type": "creative_work",
+      "intent": "comment",
+      "queue_state": "pending",
+      "frames": 5,
+      "captions": 0
+    }
+  ],
+  "statuses": {
+    "undetermined": 2,
+    "awaiting_user": 1,
+    "suggested": 3
+  },
+  "material": {
+    "frozen_pages": 21,
+    "sample_frames": 30,
+    "available_caption_segments": 1096,
+    "host_observation": "all six contact sheets; selected caption excerpts, not full proofreading"
+  },
+  "scheme_executions": 0,
+  "messages_sent": 0,
+  "full_reading_completed": false,
+  "mcp_fresh": {
+    "reader_mcp": {
+      "tools": [
+        "bilibili_login",
+        "video_comments",
+        "video_continue",
+        "video_danmaku",
+        "video_discover",
+        "video_export",
+        "video_frame",
+        "video_job",
+        "video_open",
+        "video_preview",
+        "video_preview_batch",
+        "video_read",
+        "video_relisten",
+        "video_review",
+        "video_search",
+        "video_sound",
+        "video_transcript",
+        "video_uploader_videos",
+        "video_youtube_status"
+      ]
+    },
+    "scroll_mcp": {
+      "tools": [
+        "scroll_batch",
+        "scroll_inbox",
+        "scroll_memory",
+        "scroll_queue",
+        "scroll_round",
+        "scroll_triage"
+      ],
+      "statuses": [
+        "undetermined",
+        "awaiting_user",
+        "suggested",
+        "suggested",
+        "suggested",
+        "undetermined"
+      ],
+      "native_images": 1
+    },
+    "offline_short_link_reproduction": {
+      "mocked_network_calls_before_offline_platform": 1,
+      "real_network_calls": 0,
+      "confirmed": true,
+      "source": "video_reader/sources.py: b23.tv resolution"
+    }
+  },
+  "cli": {
+    "scroll": {
+      "status": "suggested",
+      "queue_state": "pending"
+    },
+    "legacy_bridge": {
+      "status": "suggested",
+      "queue_state": "pending"
+    }
+  },
+  "architecture": {
+    "python_files": 52,
+    "index_file": "architecture-index.json",
+    "index_sha256": "5be38cf1e83cc0b3ca1c040cae3574ad04f78e04de413b448e67b1d27b823717",
+    "report": "../../docs/architecture-20261104.md",
+    "findings": 9,
+    "shortlink_bug_fixed": false
+  },
+  "page_check": {
+    "desktop": {
+      "headings": [
+        "六条试跑：功能已经落地",
+        "检查发现与优先顺序",
+        "总体结构：谁负责什么",
+        "Reader 全部主要能力",
+        "Scroll 全部工作流",
+        "数据、标识与一致性",
+        "依赖、边界与后续重点",
+        "验证范围"
+      ],
+      "svgs": 10,
+      "overflow": false
+    },
+    "mobile": {
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    "errors": []
+  }
+}

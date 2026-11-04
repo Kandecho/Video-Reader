@@ -23,17 +23,17 @@ def controls(source, page=1, page_size=20, sort='newest', root=None):
         raise ReaderError('root must be a positive comment ID string')
 
 
-def video(source):
+def video(source, platform=None):
     if not isinstance(source, str) or not source.strip():
         raise ReaderError('source must be a Bilibili BV or video URL')
-    selected = resolve(source)
+    selected = resolve(source, shortlink_resolver=platform.resolve_shortlink if platform else None)
     if selected['platform'] != 'bilibili':
         raise ReaderError('Community reading currently supports Bilibili only')
     return selected
 
 
 def metadata(platform, source):
-    selected = video(source)
+    selected = video(source, platform)
     info = platform.json('/x/web-interface/view', {'bvid': selected['bvid']}, ttl=platform.config['preview']['material_ttl_seconds'])
     return selected, info
 

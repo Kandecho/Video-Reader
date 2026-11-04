@@ -46,6 +46,22 @@ class Reader:
             raise ReaderError("Invalid video session id")
         return self.cache / session
 
+    def materials(self, sources):
+        """Batch lookup of owned material hints without network, OCR or Scroll state."""
+        from .catalog import lookup, account_scope
+        if isinstance(sources,str): sources=[sources]
+        return lookup(self.cache,sources,scopes={source:account_scope(self.config,source) for source in sources})
+
+    def speech_index(self,session,source='auto',context=None):
+        """Read-only identity/revision index for resumable consumers, without decoding or OCR."""
+        from .review import overlay
+        data=self.load(session)
+        context=self._reading_context(data,context,source)
+        speech=self._speech(data,0,data['metadata']['duration_seconds'],source,context)
+        segments,review=overlay(self.directory(session),speech,speech.get('segments',[]),'reading')
+        return {'segment_ids':[s['segment_id'] for s in segments],
+                'signatures':[digest(s) for s in segments],'review':review}
+
     def load(self, session):
         path = self.directory(session) / "manifest.json"
         if not path.is_file():
@@ -64,6 +80,12 @@ class Reader:
         if sub := data["source"]["identity"].get("subtitles"):
             if sources.file_identity(sub["path"]) != sub:
                 raise ReaderError("Subtitle file changed; reopen the source")
+        known = {record['id'] for record in data['reads']}
+        for detail_path in sorted((self.directory(session) / 'frame-details').glob('*.json')):
+            detail = read_json(detail_path)
+            if detail.get('media_identity') == data.get('media_identity') and detail['id'] not in known:
+                data['reads'].append(detail)
+                known.add(detail['id'])
         return data
 
     def save(self, data):
@@ -94,6 +116,9 @@ class Reader:
             from .bilibili_auth import BilibiliAuth
             report('checking_account')
             with BilibiliAuth(self.config).reader_profile(profile) as (io_profile, cache_profile, authentication):
+                if resolved.get('shortlink'):
+                    from .platform import Platform
+                    resolved = sources.resolve(source, subtitles, shortlink_resolver=Platform(self.config).resolve_shortlink)
                 return self._open(resolved, io_profile, cache_profile, authentication, task, strategy, include_danmaku)
         if resolved['platform'] == 'youtube':
             from .youtube_auth import reader_profile
@@ -212,7 +237,7 @@ class Reader:
     def _cached_preview(self, platform, source, density, max_frames, make_sheet):
         """Reuse owned source material without ASR/OCR or another media download."""
         from .preview import controls, contact_sheet
-        resolved = sources.resolve(source)
+        resolved = sources.resolve(source, shortlink_resolver=platform.resolve_shortlink)
         if resolved['platform'] != 'bilibili':
             return None
         count = controls(density, max_frames)
@@ -302,10 +327,16 @@ class Reader:
                 self.save(data)
         report('source_ready', session_id=session, materials={'media_available': True,
                'captions_available': bool(data['speech']), 'caption_segments': sum(len(s['segments']) for s in data['speech'])})
-        result = self.read(session, task=task, strategy=strategy, include_danmaku=include_danmaku)
+        result = self.read(session, task=task, strategy=strategy, include_danmaku=include_danmaku,
+                           temporal=False, verify=False)
+        result['inspection'] = {'mode':'initial', 'temporal_checks_requested':False,
+                                'speech_ocr_requested':False,
+                                'next_action':'Use read with temporal=True or verify=True when needed by the question'}
         result["reused_session"] = reused
         result['acquisition'] = {'media_cache_reused': reused, 'download_performed': not reused and resolved['platform'] != 'local',
             'request_accounting': 'Native API and downloader urlopen calls share the account budget/pause; lower-level redirects are not separately counted'}
+        if data.get('acquisition_diagnostics'):
+            result['acquisition']['metadata_extraction'] = data['acquisition_diagnostics']
         return result
 
     def window(self, data, start=0, end=None):
@@ -364,7 +395,7 @@ class Reader:
             if temporal is True and not ocr_available:
                 raise ReaderError('Temporal text checks need the optional vision extra; install it or select temporal=False')
             vision_enabled = vision_enabled and ocr_available
-            temporal = vision_enabled if temporal is None else temporal
+            temporal = False if temporal is None else temporal
             from .vision import FRAME_REVISION as vision_revision
             parameters = {"start": lo, "end": hi, "timestamps": points, "budget": budget, "width": width,
                           'temporal': temporal, 'vision_revision': vision_revision if temporal else 0}
@@ -501,14 +532,17 @@ class Reader:
             segments = sorted((s for s in candidates if s['end'] > lo and s['start'] < hi),
                               key=lambda s: (s['start'], s['end']))
             segments = list({(s['start'], s['end'], s['text']): s for s in segments}.values())
+            from .recognition import assess
+            assessment, unplaced_candidates = assess(records, segments, lo, hi)
             from .review import identity
             review_document = data.get('review_documents', {}).get(digest(identity(record)))
             return {**{k: v for k, v in record.items() if k not in ('segments', 'start', 'end', 'qwen_chunk')}, **alignment,
                     **({'review_document_id': review_document} if review_document else {}),
-                    'start': lo, 'end': hi, 'status': 'partial' if missing else 'ready' if segments else 'no_speech',
+                    'start': lo, 'end': hi, 'status': 'partial' if missing else 'alignment_unresolved' if unplaced_candidates else 'ready' if segments else 'no_speech',
                     'segments': segments, 'coverage': coverage, 'available_sources': available,
+                    'recognition_assessment': assessment, 'unplaced_candidates': unplaced_candidates,
                     'quality': {'source': 'human_declared' if (record.get('track') or {}).get('kind') == 'manual' else 'machine_generated',
-                                'exactness_guaranteed': False}}
+                                'exactness_guaranteed': False, 'text_status': assessment['text_status']}}
         if source == 'captions':
             return {'status': 'unavailable', 'segments': [], 'coverage': coverage,
                     'available_sources': available, 'reason': 'No caption track covers this interval'}
@@ -528,6 +562,7 @@ class Reader:
         from .review import overlay
         selected, coverage = overlay(directory, full, selected, view='raw')
         automatic = verify is None
+        cached_only = cached_only or (automatic and view != 'evidence')
         enabled = self.config.get('vision', {}).get('enabled', True)
         ocr_available = importlib.util.find_spec('rapidocr_onnxruntime') is not None
         if verify is True and not ocr_available:
@@ -670,7 +705,7 @@ class Reader:
         # disagreement, never promote successful process completion to truth.
         from collections import Counter
         baseline = self._speech(data, lo, hi, source='asr', context=baseline_context)
-        if baseline.get('status') != 'ready':
+        if not baseline.get('segments') and not baseline.get('unplaced_candidates'):
             baseline = self._speech(data, lo, hi, context=baseline_context)
         pieces = []
         for segment in baseline.get('segments', []):

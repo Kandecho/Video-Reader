@@ -191,5 +191,53 @@ class JobTests(unittest.TestCase):
             self.assertEqual(state['status'],'interrupted')
             self.assertFalse(state['worker_alive'])
 
+    def test_state_replacement_waits_for_active_status_reader(self):
+        from video_reader import jobs
+        job_id='j_'+'f'*24;now=time.time();path=self.store.path(job_id)
+        write_json(path,{'job_id':job_id,'status':'running','stage':'initializing',
+          'created_at':now,'heartbeat_at':now,'progress_at':now,'stage_started_at':now,'stage_seconds':{},'materials':{}})
+        worker=Running(self.store,job_id)
+        reading=threading.Event();release=threading.Event();written=threading.Event();errors=[]
+        original=jobs.read_json
+        def paused_read(filename):
+            if Path(filename)==path and threading.current_thread().name=='state-reader':
+                reading.set()
+                if not release.wait(2):raise AssertionError('reader not released')
+            return original(filename)
+        def observe():
+            try:self.store.status(job_id)
+            except BaseException as exc:errors.append(exc)
+        def update():
+            try:worker.update('completed',status='completed',finished_at=time.time());written.set()
+            except BaseException as exc:errors.append(exc)
+        with patch.object(jobs,'read_json',side_effect=paused_read):
+            a=threading.Thread(target=observe,name='state-reader');a.start();self.assertTrue(reading.wait(2))
+            b=threading.Thread(target=update);b.start()
+            try:self.assertFalse(written.wait(.1),'writer replaced a file still being read')
+            finally:release.set();a.join(2);b.join(2)
+        self.assertEqual(errors,[])
+        self.assertTrue(written.is_set())
+        self.assertEqual(self.store.status(job_id)['status'],'completed')
+
+    def test_startup_failure_waits_for_status_io_lock_and_preserves_error(self):
+        from video_reader.job_worker import fail_startup
+        job_id='j_'+'a'*24;now=time.time()
+        write_json(self.store.path(job_id),{'job_id':job_id,'status':'queued','stage':'starting_worker',
+          'created_at':now,'heartbeat_at':now,'progress_at':now,'stage_started_at':now})
+        done=threading.Event();began=threading.Event();errors=[]
+        def fail():
+            began.set()
+            try:fail_startup(self.store.root,job_id,ValueError('config mismatch'));done.set()
+            except BaseException as exc:errors.append(exc)
+        with FileLock(str(self.store.root/(job_id+'.status.lock'))):
+            thread=threading.Thread(target=fail);thread.start();self.assertTrue(began.wait(2))
+            self.assertFalse(done.wait(.1))
+        thread.join(2)
+        self.assertEqual(errors,[])
+        self.assertTrue(done.is_set())
+        state=self.store.status(job_id)
+        self.assertEqual(state['status'],'failed')
+        self.assertEqual(state['error']['message'],'config mismatch')
+
 
 if __name__=='__main__':unittest.main(verbosity=2)

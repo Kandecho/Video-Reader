@@ -1,0 +1,305 @@
+{
+  "probed_at": "2026-10-31T17:17:01.480116+08:00",
+  "source_commit": "253c955bfef59559a24d720adbec7e8035e05205",
+  "source_sha256": {
+    "video_reader\\reader.py": "23a65daa57d9329f39a2db0525f3e80dde76c30c0c4ee1814c1e1aa2ba6a8d80",
+    "video_reader\\preview.py": "306ed2ee963abb4ceb7f39fbf9b297105c2658d47fbba8932ccca32a49dd0676",
+    "video_reader\\speech.py": "fee09218ac08f11fb92e7d4d632f3790981f74ceac2017b8a7b6f47192bdef44",
+    "video_reader\\delivery.py": "93366a7022a588e47ebda6ddc5a38ef5830c073b31b34272ade057b00770cdb6",
+    "video_reader\\bilibili_auth.py": "3306b3930a661b8911280daed6ada9c1d4e423efbe99ccd5ef3da845e1530d53",
+    "video_reader\\sources.py": "3510f22a59d035c6de4a0e7abcbfb993445614c0f8b5e27567ff11092602e460",
+    "video_reader\\platform.py": "689a032648083657928f9e0405c5e088a2eed562c30fe059ad3b5b12c33d8343"
+  },
+  "online_snapshot_request_count": 14,
+  "snapshot_matrix": [
+    {
+      "bvid": "BV1KLxN6ZERf",
+      "mode": "full",
+      "code": 0,
+      "index_count": 156,
+      "image_count": 2,
+      "elapsed_seconds": 0.297
+    },
+    {
+      "bvid": "BV1KLxN6ZERf",
+      "mode": "cookie_omitted",
+      "code": 0,
+      "index_count": 0,
+      "image_count": 2,
+      "elapsed_seconds": 1.953,
+      "position_replay_error": "snapshot_index_unavailable"
+    },
+    {
+      "bvid": "BV1KLxN6ZERf",
+      "mode": "without_SESSDATA",
+      "code": 0,
+      "index_count": 156,
+      "image_count": 2,
+      "elapsed_seconds": 1.875
+    },
+    {
+      "bvid": "BV1KLxN6ZERf",
+      "mode": "SESSDATA_only",
+      "code": 0,
+      "index_count": 156,
+      "image_count": 2,
+      "elapsed_seconds": 2.016
+    },
+    {
+      "bvid": "BV1QHxe6jEF9",
+      "mode": "full",
+      "code": 0,
+      "index_count": 234,
+      "image_count": 3,
+      "elapsed_seconds": 1.969
+    },
+    {
+      "bvid": "BV1QHxe6jEF9",
+      "mode": "cookie_omitted",
+      "code": 0,
+      "index_count": 234,
+      "image_count": 3,
+      "elapsed_seconds": 2.031
+    },
+    {
+      "bvid": "BV1QHxe6jEF9",
+      "mode": "without_SESSDATA",
+      "code": 0,
+      "index_count": 234,
+      "image_count": 3,
+      "elapsed_seconds": 2.078
+    },
+    {
+      "bvid": "BV1QHxe6jEF9",
+      "mode": "SESSDATA_only",
+      "code": 0,
+      "index_count": 234,
+      "image_count": 3,
+      "elapsed_seconds": 1.782
+    },
+    {
+      "bvid": "BV1Z8xA6zEpD",
+      "mode": "full",
+      "code": 0,
+      "index_count": 99,
+      "image_count": 1,
+      "elapsed_seconds": 1.984
+    },
+    {
+      "bvid": "BV1Z8xA6zEpD",
+      "mode": "cookie_omitted",
+      "code": 0,
+      "index_count": 99,
+      "image_count": 1,
+      "elapsed_seconds": 2.0
+    },
+    {
+      "bvid": "BV1Z8xA6zEpD",
+      "mode": "without_SESSDATA",
+      "code": 0,
+      "index_count": 99,
+      "image_count": 1,
+      "elapsed_seconds": 2.0
+    },
+    {
+      "bvid": "BV1Z8xA6zEpD",
+      "mode": "SESSDATA_only",
+      "code": 0,
+      "index_count": 0,
+      "image_count": 1,
+      "elapsed_seconds": 2.031,
+      "position_replay_error": "snapshot_index_unavailable"
+    },
+    {
+      "bvid": "BV1KLxN6ZERf",
+      "mode": "full",
+      "code": 0,
+      "index_count": 156,
+      "image_count": 2,
+      "elapsed_seconds": 1.86
+    },
+    {
+      "bvid": "BV1KLxN6ZERf",
+      "mode": "cookie_omitted",
+      "code": 0,
+      "index_count": 156,
+      "image_count": 2,
+      "elapsed_seconds": 1.969
+    }
+  ],
+  "cache_replay": {
+    "index_count": 0,
+    "age_seconds": 9804.596,
+    "ttl_seconds": 86400,
+    "frames_from_cache": 0,
+    "frames_from_fresh_index": 5,
+    "old_index_unchanged": true
+  },
+  "asr": {
+    "elapsed_seconds": 20.593,
+    "fresh": {
+      "source": "local_faster_whisper",
+      "status": "ready",
+      "range": [
+        0,
+        120
+      ],
+      "segments": 3,
+      "language": "en",
+      "language_probability": 0.6793021559715271,
+      "segment_metrics": [
+        {
+          "range": [
+            1.46,
+            2.0
+          ],
+          "avg_logprob": -0.6621,
+          "no_speech_probability": 0.7382,
+          "mean_word_probability": 0.0156,
+          "flags": [
+            "low_word_confidence",
+            "suspect_decoding"
+          ]
+        },
+        {
+          "range": [
+            6.21,
+            8.23
+          ],
+          "avg_logprob": -0.6621,
+          "no_speech_probability": 0.7382,
+          "mean_word_probability": 0.5929,
+          "flags": [
+            "low_word_confidence",
+            "suspect_decoding"
+          ]
+        },
+        {
+          "range": [
+            8.23,
+            8.93
+          ],
+          "avg_logprob": -0.6621,
+          "no_speech_probability": 0.7382,
+          "mean_word_probability": 0.0351,
+          "flags": [
+            "low_word_confidence",
+            "suspect_decoding"
+          ]
+        }
+      ]
+    },
+    "existing": {
+      "source": "local_faster_whisper",
+      "status": "ready",
+      "range": [
+        0.0,
+        120.0
+      ],
+      "segments": 3,
+      "language": "en",
+      "language_probability": 0.6793021559715271,
+      "segment_metrics": [
+        {
+          "range": [
+            1.46,
+            2.0
+          ],
+          "avg_logprob": -0.6621,
+          "no_speech_probability": 0.7382,
+          "mean_word_probability": 0.0156,
+          "flags": [
+            "low_word_confidence",
+            "suspect_decoding"
+          ]
+        },
+        {
+          "range": [
+            6.21,
+            8.23
+          ],
+          "avg_logprob": -0.6621,
+          "no_speech_probability": 0.7382,
+          "mean_word_probability": 0.5929,
+          "flags": [
+            "low_word_confidence",
+            "suspect_decoding"
+          ]
+        },
+        {
+          "range": [
+            8.23,
+            8.93
+          ],
+          "avg_logprob": -0.6621,
+          "no_speech_probability": 0.7382,
+          "mean_word_probability": 0.0351,
+          "flags": [
+            "low_word_confidence",
+            "suspect_decoding"
+          ]
+        }
+      ]
+    },
+    "same_decoded_text": true,
+    "source_sha256": "6c428522b1bb20855fc7d679608dddc4d3249a126f7bb9dc076d38ac6a98ae1a",
+    "original_manifest_unchanged": true
+  },
+  "qwen_ownership": {
+    "existing_record_status": "no_speech",
+    "raw_text_length": 2,
+    "raw_word_count": 1,
+    "owned_word_count": 0,
+    "replayed_text_empty": true,
+    "owner": [
+      300.0,
+      360.0
+    ],
+    "input": [
+      298.0,
+      362.0306875
+    ],
+    "raw_word_times": [
+      [
+        298.0,
+        298.0,
+        false
+      ]
+    ],
+    "warnings": [
+      {
+        "kind": "zero_duration_unit",
+        "index": 0,
+        "text": "爱"
+      }
+    ],
+    "raw_text_has_replacement_char": false
+  },
+  "current_login": {
+    "is_login": true,
+    "user_id_present": true
+  },
+  "renewal_synthetic_replay": {
+    "outage": {
+      "authenticated": true,
+      "renewal": "unavailable",
+      "renewal_code": "BILIBILI_AUTH_UNAVAILABLE"
+    },
+    "recovered": {
+      "authenticated": true,
+      "renewal": "not_needed"
+    },
+    "refresh_branch": {
+      "authenticated": true,
+      "renewal": "refreshed"
+    },
+    "renew_method_invoked": true,
+    "synthetic_only": true
+  },
+  "source_modified": false,
+  "network_counts": [
+    37,
+    54
+  ],
+  "raw_workspace": "C:/Users/USER/Documents/Codex/2026-10-29/video-read/independent-diagnosis-20261031"
+}

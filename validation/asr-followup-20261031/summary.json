@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-31",
+  "scope": "ASR follow-up diagnosis; web official sources plus local controlled experiments",
+  "source": "BV1Z8xA6zEpD?p=1",
+  "exact_historical_input_hash_matched": true,
+  "qwen": {
+    "controlled_forced_language_degeneration_reproduced": true,
+    "diagnostic_max_new_tokens": 128,
+    "production_max_new_tokens": 4096,
+    "auto_output_tokens": 3,
+    "forced_output_tokens": 128,
+    "postprocessed_candidate": "爱，",
+    "forced_alignment_local_seconds": [
+      0,
+      0
+    ],
+    "owner_range": [
+      300,
+      360
+    ],
+    "audio_range": [
+      298,
+      362
+    ],
+    "generation": {
+      "do_sample": false,
+      "num_beams": 1,
+      "temperature": 1e-06
+    },
+    "positive_control_ok": true,
+    "zero_control_empty": true,
+    "opening_english_candidates_under_three_language_conditions": true
+  },
+  "whisper": {
+    "opening_segments": 3,
+    "opening_vad_regions": [
+      {
+        "start": 1.456,
+        "end": 2.768
+      },
+      {
+        "start": 6.0,
+        "end": 10.16
+      }
+    ],
+    "mid_window_vad_regions": [],
+    "cross_model_exact_word_agreement": false,
+    "direct_audio_ground_truth_obtained": false
+  },
+  "installed_policy_changed": false,
+  "original_manifest_unchanged": true,
+  "renewal_called": false,
+  "sources": [
+    "https://github.com/QwenLM/Qwen3-ASR/blob/main/qwen_asr/inference/qwen3_asr.py",
+    "https://github.com/QwenLM/Qwen3-ASR/blob/main/qwen_asr/inference/utils.py",
+    "https://arxiv.org/html/2601.21337v2#S3",
+    "https://github.com/SYSTRAN/faster-whisper/blob/master/faster_whisper/transcribe.py",
+    "https://github.com/openai/whisper/blob/main/model-card.md#performance-and-limitations"
+  ],
+  "raw_evidence_local": "asr-followup-20261031/{qwen-probe,whisper-probe,alignment-probe}.json"
+}

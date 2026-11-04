@@ -6,7 +6,7 @@
 
 - 接续开发先读 [handoff](docs/handoff.md)，再按 [知识路由](docs/registry.md) 找当前决定和路线。交接是快照，历史报告中的“下一步”不自动授权实施。
 - 对齐目的和取舍读 [决定记录](docs/decisions.md)；当前能力、缺口及后续方向只在 [路线](planning/roadmap-20261021-source.md) 主维护。
-- 实际读片使用 [阅读 Skill](skill/SKILL.md) 和 [操作参考](docs/reader-reference.md)。2026-10-29 已确认及时回答与按疑点深入的体验；现有 Skill/MCP 仍有旧的逐段校对要求，尚未完成行为同步。接续设计时明确处理这一差距，勿把旧流程误当新的产品目的。
+- 实际读片使用 [阅读 Skill](skill/SKILL.md) 和 [操作参考](docs/reader-reference.md)。及时回答与按疑点深入的体验已于 2026-11-04 同步至源码 Skill、MCP 及生成适配器；默认复用已有核验，新 OCR 按需请求。全片逐段校对不作为每次回答的前置条件，完整观察与校对状态仍须如实表达。
 - Scroll 日试用规则与依赖只在 [daily-trial](docs/daily-trial.md) 维护。查状态用 status / 日记录，不为了验收触发发送。
 
 ## 已确认边界
@@ -15,7 +15,7 @@ Reader 是通用视频材料组件，支持开放阅读和定向追问；用户�
 
 当前 Reader 获取、转写、取帧、提供差异线索并保存校对；宿主负责语义校对、理解和分析。已有校对可复用，首次读取不会自动得到语义校对稿。Reader 独立初校是待验证方向，尚未新增校对模型或自动修正流程。
 
-Reader / Scroll 源码与 MCP 分开，共享安装、模型、登录和材料。个人推荐、偏好、投递和调度归 Scroll；保留原 CLI 兼容桥，不新增第二套阅读核心。
+Reader / 通用任务 / Scroll 源码分域，两套 MCP 共享安装、模型、登录和材料。通用队列、任务历史、分流、批读及结果归 reading_tasks；私信 Inbox 与原消息/同步历史、个人推荐、偏好、投递和调度归 Scroll。任务库身份不跟随平台登录，材料账号绑定保留。保留原 CLI/MCP 兼容入口，不新增第二套阅读核心。当前边界与操作见 [架构](docs/architecture.md)及[任务参考](docs/tasks.md)。
 
 默认本地，Gemini 关闭，失败不自动转云端。不从 watch、BiliNote 或旧原型读取配置、凭据。应用、配置、模型和缓存归本组件；Python、FFmpeg、Node 按公共依赖管理。
 

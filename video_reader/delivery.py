@@ -86,7 +86,71 @@ def asset_identities(result):
             for frame in _images(result) if Path(frame['path']).is_file()}
 
 
-def pages(result, text_budget, image_budget):
+def reading_page(result, text_budget, image_budget):
+    """Readable projection; the canonical lossless record follows unchanged."""
+    visual = result.get('visual') or {}
+    if not visual.get('frames'):
+        return None
+    page = {key: copy.deepcopy(result[key]) for key in ('session_id', 'title', 'source', 'platform',
+            'read_id', 'range', 'metadata', 'processing', 'warnings', 'source_content_policy') if key in result}
+    page['reading_projection'] = {'kind': 'reading', 'canonical_evidence_follows': True,
+        'notice': 'Readable source text and original pixels. Continue delivery for full OCR/word evidence; this is not proof of whole-video coverage.'}
+    page['visual'] = {key: copy.deepcopy(value) for key, value in visual.items() if key != 'frames'}
+    page['visual']['frames'] = []
+    speech = result.get('speech') or {}
+    page['speech'] = {key: copy.deepcopy(speech[key]) for key in ('source', 'start', 'end', 'status', 'track',
+        'language', 'language_probability', 'coverage', 'quality', 'review', 'recognition_assessment',
+        'returned_segments', 'total_segments', 'next_offset', 'next_cursor') if key in speech}
+    page['speech']['segments'] = []
+    if len(encoded(page)) > text_budget:
+        return None
+    used = 0
+    for frame in visual['frames']:
+        size = Path(frame['path']).stat().st_size
+        if used+size > image_budget:
+            break
+        item = {key: copy.deepcopy(frame[key]) for key in ('id', 'path', 'time', 'timestamp_seconds',
+                    'requested_time', 'precision', 'reason') if key in frame}
+        if frame.get('temporal'):
+            item['temporal_evidence_available'] = True
+        page['visual']['frames'].append(item)
+        if len(encoded(page)) > text_budget:
+            page['visual']['frames'].pop()
+            break
+        used += size
+    for segment in speech.get('segments', []):
+        item = {key: copy.deepcopy(segment[key]) for key in ('segment_id', 'start', 'end', 'text', 'review_status',
+                 'has_correction', 'quality_flags', 'evidence_available', 'text_status') if key in segment}
+        page['speech']['segments'].append(item)
+        if len(encoded(page)) > text_budget:
+            page['speech']['segments'].pop()
+            break
+    while True:
+        frame_count = len(page['visual']['frames'])
+        segment_count = len(page['speech']['segments'])
+        page['reading_projection'].update(frames_in_snapshot=len(visual['frames']), frames_returned=frame_count,
+            speech_segments_in_snapshot=len(speech.get('segments', [])), speech_segments_returned=segment_count)
+        page['speech']['returned_segments'] = segment_count
+        if frame_count < len(visual['frames']):
+            page['visual'].pop('next_page', None)
+            page['visual']['remaining_in_snapshot'] = len(visual['frames'])-frame_count
+        if segment_count < len(speech.get('segments', [])):
+            page['speech'].pop('next_offset', None)
+            page['speech'].pop('next_cursor', None)
+            page['speech']['remaining_in_snapshot'] = len(speech['segments'])-segment_count
+        if len(encoded(page)) <= text_budget:
+            return page
+        # Final counters may push a nearly full page over budget. Keep its
+        # original pixels by deferring a whole utterance to canonical pages.
+        if page['speech']['segments']:
+            page['speech']['segments'].pop()
+        elif page['visual']['frames']:
+            page['visual']['frames'].pop()
+        else:
+            return None
+
+
+def pages(result, text_budget, image_budget, *, reading=False):
     images = list(_images(result))
     image_size = sum(Path(f['path']).stat().st_size for f in images if Path(f['path']).is_file())
     if len(encoded(result)) <= text_budget and image_size <= image_budget:
@@ -114,6 +178,10 @@ def pages(result, text_budget, image_budget):
         used += size
     if selected:
         output.append({'visual': {'frames': selected}})
+    if reading:
+        first = reading_page(result, text_budget, image_budget)
+        if first:
+            output.insert(0, first)
     return output
 
 
@@ -129,10 +197,12 @@ def fingerprint(reader, session, parameters, result=None):
         snapshot, revision = review['snapshot_id'], review['revision']
     else:
         revision = state(reader.directory(session), snapshot)['revision']
+    from .recognition import diagnostic_identity
     return {'session_id': session, 'source_identity': digest(data['source']['identity']),
             'media_identity': file_identity(data['media_path']),
             'account_scope': (data.get('authentication') or {}).get('account_marker'),
             'speech_snapshot': snapshot, 'review_revision': revision,
+            'recognition_diagnostics': diagnostic_identity(speech),
             **({'speech_material_snapshot': material_id(speech)} if speech.get('review_document_id') else {}),
             'parameters': parameters}
 
@@ -192,7 +262,8 @@ def emit(reader, result, operation, parameters):
         result['speech']['next_cursor'] = bridge_id + ':next'
     page_budget = max(1000, text_budget - len(encoded(binding)) - 1500)
     record = {'schema': 1, 'operation': operation, 'binding': binding,
-              'result': result, 'pages': pages(result, page_budget, image_budget),
+              'result': result, 'pages': pages(result, page_budget, image_budget,
+                  reading=operation == 'read' and parameters.get('view', 'reading') == 'reading'),
               'image_identities': asset_identities(result),
               'next_parameters': next_parameters}
     identity = digest(record)
@@ -246,11 +317,16 @@ def resume(reader, session, cursor):
     if not record['next_parameters']:
         raise ReaderError('This delivery is complete')
     current = fingerprint(reader, session, record['binding']['parameters'])
+    if 'recognition_diagnostics' not in record['binding']:
+        current.pop('recognition_diagnostics', None)  # Preserve pre-policy continuations.
     if current != record['binding']:
         raise ReaderError('Material changed (source/speech/review revision); restart the original request. Frozen delivered pages remain readable.')
     result = getattr(reader, record['operation'])(**record['next_parameters'])
     after = result['delivery']['binding']
-    if any(after.get(key) != record['binding'].get(key) for key in ('session_id', 'source_identity', 'media_identity', 'account_scope', 'speech_snapshot', 'speech_material_snapshot', 'review_revision')):
+    compared = ['session_id', 'source_identity', 'media_identity', 'account_scope', 'speech_snapshot', 'speech_material_snapshot', 'review_revision']
+    if 'recognition_diagnostics' in record['binding']:
+        compared.append('recognition_diagnostics')
+    if any(after.get(key) != record['binding'].get(key) for key in compared):
         raise ReaderError('Material changed while continuing; restart the original request')
     return result
 

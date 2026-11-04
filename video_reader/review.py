@@ -92,8 +92,12 @@ def overlay(directory, full_speech, selected, view='reading', revision=None):
         sid = index.get((item['start'], item['end'], item['text']))
         correction = saved['corrections'].get(sid)
         issue = saved.get('issues', {}).get(sid)
+        from .recognition import candidate
+        suspect = candidate(original)
+        reviewed = sid in saved['reviewed_segment_ids']
         item.update(segment_id=sid, raw_text=item['text'], text_view=view,
-                    review_status='uncertain' if issue else 'reviewed' if sid in saved['reviewed_segment_ids'] else 'pending')
+                    review_status='uncertain' if issue else 'reviewed' if reviewed else 'uncertain' if suspect else 'pending',
+                    text_status='reviewed_text' if reviewed and not issue else 'unverified_candidate' if suspect or issue else 'source_text')
         if issue:
             item['review_issue'] = issue
         if correction:
@@ -109,19 +113,21 @@ def overlay(directory, full_speech, selected, view='reading', revision=None):
                 flags.append(screen_status)
             if issue:
                 flags.append('review_uncertain')
-            item = {k: item[k] for k in ('segment_id', 'start', 'end', 'text', 'review_status')}
+            item = {k: item[k] for k in ('segment_id', 'start', 'end', 'text', 'review_status', 'text_status')}
             item.update(has_correction=bool(correction), quality_flags=flags,
                         evidence_available=bool(original.get('recognition') or original.get('screen_verification') or correction or issue))
         result.append(item)
     active_ids = {s['segment_id'] for s in all_segments}
     reviewed_ids = active_ids & set(saved['reviewed_segment_ids'])
+    unplaced_count = len(full_speech.get('unplaced_candidates', []))
     return result, {'snapshot_id': snapshot, 'revision': saved['revision'],
                     'reviewed_segments': len(reviewed_ids),
                     'total_segments': len(all_segments),
                     'complete': bool(full_speech.get('coverage', {}).get('complete')) and
-                                len(reviewed_ids) == len(all_segments),
+                                len(reviewed_ids) == len(all_segments) and not unplaced_count,
                     'corrected_segments': len(active_ids & saved['corrections'].keys()),
                     'unresolved_segments': len(active_ids & saved.get('issues', {}).keys()),
+                    'unresolved_candidates': unplaced_count,
                     'author': 'host_agent', 'exactness_guaranteed': False}
 
 
@@ -185,6 +191,8 @@ def prepare(directory, speech, offset, limit, selected_scope=None, scope_speech=
     for item, original in zip(page, segments[offset:offset+limit]):
         item['original'] = original['text']
     return {'snapshot_id': snapshot, 'base_revision': saved['revision'], 'segments': page,
+            'recognition_assessment': (scope_speech or speech).get('recognition_assessment'),
+            'unplaced_candidates': copy.deepcopy((scope_speech or speech).get('unplaced_candidates', [])),
             **({'review_scope': selected_scope, 'scope_review': scope_coverage(directory, speech, selected_scope, scope_speech)} if selected_scope else {}),
             'source': speech.get('source'), 'track': speech.get('track'),
             'offset': offset, 'next_offset': offset+limit if offset+limit < len(segments) else None,
@@ -199,9 +207,11 @@ def scope_coverage(directory, speech, selected_scope, scope_speech):
     ids = {s['segment_id'] for s in scoped_segments(segments, selected_scope)}
     saved = state(directory, snapshot)
     reviewed = ids & set(saved['reviewed_segment_ids'])
+    unplaced_count = len(scope_speech.get('unplaced_candidates', []))
     return {**selected_scope, 'source_processed': scope_speech['coverage']['complete'],
             'total_segments': len(ids), 'reviewed_segments': len(reviewed),
-            'complete': scope_speech['coverage']['complete'] and reviewed == ids,
+            'complete': scope_speech['coverage']['complete'] and reviewed == ids and not unplaced_count,
+            'unresolved_candidates': unplaced_count,
             'unresolved_segments': len(ids & saved.get('issues', {}).keys()),
             'exactness_guaranteed': False}
 

@@ -10,7 +10,7 @@
 
 本次阅读会话为 `v_67f60950efb89868ad54bb9c`，来源为 B 站自动字幕。共 367 段，已提交宿主校对 revision 1，修正 25 段，保留 3 处疑点。查看 86 张样本帧，HTML 使用 20 张。该覆盖不等于连续观看或准确率保证。
 
-本目录 [evidence.json](evidence.json) 保存新旧导出的元数据、同段修正示例、资源路径实例及证据文件指纹。完整案例包位于 `D:/hangk/Documents/ADD-dev-helper/sources/speak-human-video-case-2026-10-24/`；分析正文是其同级的 `speak-human-video-case-2026-10-24.md`。这些是本机调查材料，不是可直接公开分发的样例。
+本目录 [evidence.json](evidence.json) 保存新旧导出的元数据、同段修正示例、资源路径实例及证据文件指纹。完整案例包位于 `[本机私有案例包目录]/`；分析正文是其同级的 `speak-human-video-case-2026-10-24.md`。这些是本机调查材料，不是可直接公开分发的样例。
 
 ## 实际观察到的问题
 

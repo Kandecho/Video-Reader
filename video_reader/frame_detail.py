@@ -4,7 +4,7 @@ import math
 from filelock import FileLock
 from PIL import Image
 
-from .common import ReaderError, digest, stamp
+from .common import ReaderError, digest, stamp, write_json
 from .vendor import frames
 
 
@@ -16,12 +16,15 @@ def inspect_frame(reader, session, frame_id, width=1920, region=None):
         not region[0] < region[2] or not region[1] < region[3]):
         raise ReaderError('region must be normalized [left,top,right,bottom] within 0..1')
     directory = reader.directory(session)
-    with FileLock(str(directory / '.lock'), timeout=600):
+    identity = digest([frame_id, width, region, 'source-detail-1'])
+    detail_root = directory / 'frame-details'
+    detail_root.mkdir(parents=True, exist_ok=True)
+    # Source media is immutable. Distinct detail requests need no OCR/ASR lock.
+    with FileLock(str(detail_root / (identity + '.lock')), timeout=30):
         data = reader.load(session)
         original = next((f for read in data['reads'] for f in read['frames'] if f['id'] == frame_id), None)
         if not original:
             raise ReaderError('Frame ID does not belong to this video session; use returned cell/frame IDs')
-        identity = digest([frame_id, width, region, 'source-detail-1'])
         cached = next((r for r in data['reads'] if r['id'] == identity), None)
         if cached and all(Path(f['path']).is_file() for f in cached['frames']):
             return {'session_id': session, 'visual': {'frames': cached['frames']}}
@@ -45,6 +48,7 @@ def inspect_frame(reader, session, frame_id, width=1920, region=None):
                 frame['path'] = str(path)
         frame.update(id=identity + ':0', time=stamp(frame['timestamp_seconds']), parent_frame_id=frame_id,
                      region=region, precision='source_frame', source_time=time)
-        data['reads'].append({'id': identity, 'start': time, 'end': time, 'frames': [frame], 'detail': True})
-        reader.save(data)
+        write_json(detail_root / (identity + '.json'),
+                   {'id': identity, 'start': time, 'end': time, 'frames': [frame], 'detail': True,
+                    'media_identity': data.get('media_identity')})
     return {'session_id': session, 'visual': {'frames': [frame], 'complete_continuous_coverage': False}}

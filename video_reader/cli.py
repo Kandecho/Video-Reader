@@ -10,13 +10,14 @@ from .reader import Reader
 
 
 def parser():
+    from reading_tasks.api import ACTIONS as TASK_ACTIONS
     p = argparse.ArgumentParser(description="Read video as source material for an agent; JSON output")
     p.add_argument("--config")
     sub = p.add_subparsers(dest="command", required=True)
     agent = sub.add_parser('agent', help='Run, inspect or configure the lightweight video agent')
     agent.add_argument('action', choices=('status', 'config', 'candidates', 'preview', 'prepare', 'finish',
-                                         'run', 'deliver', 'test-message', 'memory', 'forget', 'tick', 'watch', 'resume',
-                                         'batch-start', 'batch-next', 'batch-status', 'batch-retry'))
+                                         'run', 'deliver', 'test-message', 'memory', 'forget', 'tick', 'watch', 'resume', 'recover', 'report', 'report-send',
+                                         *TASK_ACTIONS, 'inbox-status', 'inbox-sync', 'inbox-history', 'inbox-enqueue'))
     agent.add_argument('value', nargs='?', default='')
     agent.add_argument('--query', default='')
     agent.add_argument('--payload', help='UTF-8 JSON settings or host decisions, never executable code')
@@ -28,6 +29,11 @@ def parser():
     agent.add_argument('--poll-seconds', type=float, default=30)
     agent.add_argument('--cursor')
     agent.add_argument('--index', type=int)
+    from reading_tasks.cli import task_options
+    task_options(agent)
+    agent.add_argument('--max-pages', type=int, default=3)
+    agent.add_argument('--page-size', type=int, default=50)
+
     for name in ('search', 'discover'):
         discovery = sub.add_parser(name, help='Find Bilibili video candidates without downloading')
         if name == 'search':
@@ -252,7 +258,8 @@ def main():
             return 1
         return 1 if args.command in ('uploader-videos', 'preview-batch', 'comments', 'danmaku') and result.get('status') not in ('ready', 'closed') else 0
     except (ReaderError, OSError, ValueError) as exc:
-        print(json.dumps({"error": str(exc), "type": type(exc).__name__, "code": getattr(exc, "code", None)}, ensure_ascii=False))
+        print(json.dumps({"error": str(exc), "type": type(exc).__name__, "code": getattr(exc, "code", None),
+                          "details": getattr(exc, "details", None)}, ensure_ascii=False))
         return 1
 
 

@@ -1,5 +1,17 @@
 # Material identity and consumption
 
+
+## 0.10.0rc6 诊断状态与首屏材料
+
+大阅读的 `view=reading` 先提供 `reading_projection`，包含原像素取样图和容得下的完整字幕段。它是阅读入口，`delivery.next_cursor` 后仍保留 canonical 无损材料；并未减少处理深度或全片覆盖要求。投影只交付一部分时，用 `remaining_in_snapshot` 明示，暂不暴露可能跳过材料的 speech/visual 下一页入口。单图本身超图片预算时仍明确延后。既有冻结页不重排。
+
+`text_status=unverified_candidate` 表示可疑机器识别原文；`recognition_assessment` 与 source_processed 处理覆盖分开。Qwen 的 `alignment_unresolved` / `unplaced_candidates` 保留 raw_text、input_range、owner_range、raw_alignment，不制造归属时间；该状态不等于声学无人声，尚存候选时 review.complete 为 false。处理过的旧缓存直接派生这些字段，原 profile、段 ID 与校对历史不变。新动态游标绑定诊断变化，旧冻结页仍可读。
+
+元数据获取新增 extracting_source_metadata / retrying_source_metadata 阶段，仅明确网页瞬时超时或断连恢复一次；限制、预算耗尽和暂停不自动恢复。最终 AcquisitionError / job.error.details 保留 stage 与 attempts，成功也保留 acquisition.metadata_extraction 的恢复记录。下载前重新核对 B 站 part/CID。预览会在缓存写入前检查索引与图格，在线旁路旧坏缓存并至多一次有界重取；离线保留缺口。
+
+Windows 状态读写共享 job 的短时 .status.lock，包括启动失败兜底，避免读 JSON 与原子替换交错。它不持有视频材料锁。详见 [修复验收](../validation/diagnosis-repairs-20261031/report-source.md)。续期不在本轮验证范围。
+
+
 `video_open` and `video_read` accept a task description, bounds, exact cue timestamps and a strategy. The host interprets the user's question. Adaptive extraction supplies speech-cue frames, scene changes and sparse timeline checks; it is not an independent question-answering model and never certifies task completeness. Full learning requires all chosen speech and necessary visuals; focused questions expand only as evidence requires. Density and resolution are independent of token budgets.
 
 CLI/MCP use adaptive initial extraction (up to 12 frames). Legacy Python Reader calls keep uniform defaults. Uniform and scene strategies retain explicit caps; dense defaults to 48 and uses exact source timestamps, avoiding the old uniform helper's 2 fps limit on short videos. No perceptual deduplication drops code/text differences or black frames. All strategies are samples, not continuous event coverage.

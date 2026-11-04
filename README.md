@@ -1,94 +1,87 @@
-# Video Reader — 可供 Agent 复用的视频材料
+# Video Reader
 
-身份：当前用途与使用入口。共享安装 0.10.0rc5，宿主薄插件 0.5.4；本机安装目录为 `D:/IA/apps/video-reader`。
+让 Agent 像使用图文一样使用视频：读取字幕与画面、定位疑点、继续追问，并回查原始材料。可以先看再聊，也可以带着问题深入；不需要先生成笔记。
 
-输入视频链接、BV 号或本地文件，让当前 Agent 像读图文一样使用视频：可以先看再聊，也可带着问题深入。完整性、准确性与响应速度共同服务于使用体验；材料可继续读取、追问和回查，笔记是可选产物。
+核心版本 **0.10.0rc6**，Codex / Claude Code 薄适配器 **0.5.5**。原创代码采用 [MIT](LICENSE)，第三方归属见 [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md)。这是 Windows 源码预发布版。
 
-当前定位是 **视频/链接 → Video Reader → 可复用材料**。Reader 负责获取、读取和证据存取；宿主负责理解、校对、组织笔记和项目推理。已接入字幕时间/场景/时间线取样、无损分页、持久续读、局部精读及指定校对版本导出；任务含义与补看位置由宿主判断。契约见[材料与续读](docs/material-delivery.md)，整轮能力见[rc1 验收](validation/reader-0.10.0rc1/report-source.md)，最新真实漏句及局部校对修复见[rc2 验收](validation/reader-0.10.0rc2/report-source.md)。
+## 安装与第一次读取
 
-## 当前实现与新体验
+已验证的基础环境是 Windows x64、Python 3.12、PowerShell 7，以及 PATH 上的 FFmpeg / ffprobe。YouTube 下载还需要 Node。安装需要 uv 和网络；模型、平台账号及可选 GPU 环境单独配置。
 
-Reader 负责获取、识别、图像与差异线索及材料保存；宿主负责语义校对和理解。只有此前保存过校对，后续才能直接读到校对稿。Reader 尚未独立生成首次语义初校稿。
-
-2026-10-29 已明确：足以支持当前回答时及时回答，主动处理关键疑点，其余保留供继续查。现有 Skill/MCP 仍有旧逐段校对要求，尚未按此同步；独立初校也尚待验证。接续看 [handoff](docs/handoff.md)，机制取舍与候选验证见 [路线 F](planning/roadmap-20261021-source.md#f-后续按什么顺序推进)。
-
-## 直接使用
-
-有插件时直接向 Agent 提出需求，例如“详细读这条视频”“核对 06:12 的图”“把有用画面整理成图文笔记”。不用先手工生成笔记，也不需要记工具口令。
-
-CLI 可在任意 PowerShell 工作目录运行：
+解压源码包后，在其目录运行：
 
 ```powershell
-& 'D:\IA\apps\video-reader\run.ps1' doctor
-& 'D:\IA\apps\video-reader\run.ps1' open 'BV1Eb411u7Fw?p=4'
+& './bootstrap.ps1'
+& './run.ps1' doctor
+& './run.ps1' open 'D:\Videos\example.mp4'
 ```
 
-取得 `session_id` 后，由宿主继续阅读：
+Bootstrap 创建本目录的 `.venv`、初始 `config.json` 和两套薄适配器。默认安装 MCP 与 OCR 依赖，不下载语音模型；已有配置保留。目录可包含中文和空格，也可从其他工作目录调用脚本。
+
+`open`、`read`、`transcript` 等长操作默认短等待返回 `job_id`。继续使用同一任务：
 
 ```powershell
-& 'D:\IA\apps\video-reader\run.ps1' read 'v_会话ID' --page 1
-& 'D:\IA\apps\video-reader\run.ps1' transcript 'v_会话ID'
-& 'D:\IA\apps\video-reader\run.ps1' read 'v_会话ID' --start 20 --end 35 --timestamps '20,25,30'
+& './run.ps1' job status 'j_任务ID'
+& './run.ps1' job result 'j_任务ID' --wait 10
 ```
 
-CLI 返回的图片路径需要实际打开；MCP 返回图片内容。优先沿 `delivery.next_cursor` 续读，旧 `next_page` / `next_offset` 仍保留。CLI/MCP 默认 adaptive，Python 旧调用默认 uniform；语音每次默认处理一个缺失块，检查 remaining_ranges 后继续。完整学习仍需读全所选语音并核查必要画面，局部问题可限定区间。处理完成、宿主读完与识别正确是不同状态。详细参数见[操作参考](docs/reader-reference.md)，实际流程见[阅读 Skill](skill/SKILL.md)。
+使用返回的实际 ID。材料分页优先沿 `delivery.next_cursor` 续读；MCP 返回原生图片，CLI 图片路径需要宿主实际打开。完整参数、返回状态和来源约束见 [Reader 参考](docs/reader-reference.md)及[材料与续读](docs/material-delivery.md)。
 
-局部任务现在可用 `review prepare --start ... --end ...` 保存已读范围的校对，提交时原样带回 `review_scope`。区间审阅和全片状态分开；新增转写不丢失原有校对。新 Whisper 不自动使用视频标题作提示，旧转写及显式 context 仍可读取。操作细节见[校对参考](docs/reader-reference.md#忠实校对与按需披露)。
+## 三个使用例子
 
-## 作品列表与分镜预览
+- **完整学习**：“详细读这条视频，保留主要论证与必要画面。”宿主读取全部所选语音及必要视觉，再组织回答。
+- **定向核对**：“核对 06:12 的示意图，字幕和画面是否一致？”宿主读取该区间、精确取帧，按疑点深入。
+- **继续与复用**：“接着上次的 session 看后半段，把引用依据导出。”共享材料、时间、游标和校对历史可跨会话复用。
+
+足以支持当前回答时及时回答。处理完成、材料已交付、宿主实际观察、语义校对完成及识别准确是不同判断。原始文本、疑点与未核查部分保留，不以摘要替代原文。
+
+## 接入宿主
+
+两套适配器共用同一安装、模型、登录与材料；插件中不复制阅读核心。
 
 ```powershell
-& 'D:\IA\apps\video-reader\run.ps1' uploader-videos 'BV1ptnb6uEES' --page 1
-& 'D:\IA\apps\video-reader\run.ps1' preview 'BV1ptnb6uEES'
-& 'D:\IA\apps\video-reader\run.ps1' preview-batch 'BV1ptnb6uEES' 'BV1v1HA6REgb' --density dense
+# 使用实际解压目录中的 integrations 路径
+codex plugin marketplace add 'D:\tools\Video Reader\integrations\codex'
+codex plugin add video-reader@video-reader-local
+
+claude plugin marketplace add 'D:\tools\Video Reader\integrations\claude'
+claude plugin install video-reader@video-reader-local
 ```
 
-默认单条轻预览为 5 张图，密集模式按需开启、默认 48 张，最多 120 张。批量 1–10 条，默认每条返回带 BV 和时间标记的拼图。优先复用完整视频缓存，原生分镜标为近似时间；预览不等于完整阅读。UP 主列表一次一页，返回下一页、完整性和失败状态，见[材料接口说明](docs/material-reference.md)。
+只执行所用宿主的命令；上面的路径是示例。更新或移动核心后重新运行 `tools/build_plugins.py`，再刷新宿主连接以加载新工具。需要直接接入 MCP 时，使用生成适配器里的 `.mcp.json`。Reader 20 个工具，Scroll 7 个工具。
 
-## 两个组件的分工
+## 组件边界
 
-| 组件 | 用途 | 入口 |
+| 部分 | 职责 | 入口 |
 |---|---|---|
-| Video Reader | 通用搜索、热门、UP 主作品分页、分镜预览、读取、转写、校对存取、复听、评论/楼中楼分页、分段弹幕、登录；默认 19 个工具 | `run.ps1`、`mcp-config.json`、[操作参考](docs/reader-reference.md#mcp) |
-| Scroll Agent | 个人首页流、偏好与反馈、显式批量阅读、投递、日记录和触发；3 个工具 | `scroll.ps1`、[普通工作流参考](docs/scroll-reference.md)、[日试用运行说明](docs/daily-trial.md) |
+| Reader | 获取、字幕 / ASR、画面、局部复听、原文与校对存取、续读与导出 | `run.ps1`；[阅读 Skill](skill/SKILL.md) |
+| 通用任务 | 队列、附言、分流、显式批读、结果及任务历史 | `tasks.ps1`；Reader `video_tasks`；[任务参考](docs/tasks.md) |
+| Scroll（可选） | 个人推荐与反馈、私信 Inbox、原消息历史、授权汇报与投递 | `scroll.ps1`；[Scroll 参考](docs/scroll-reference.md) |
+| 宿主 Agent | 理解、语义校对、跨资料推理、决定补看和形成回答 | 当前会话 |
 
-二者共用安装、模型、组件登录和材料缓存；Reader 无需初始化 Scroll 业务状态。薄插件组合两套独立 MCP / Skill，包名保留兼容。
+普通读取无需初始化 Scroll。收件同步、队列管理、安装和阅读不自动创建轮询、调度或发送消息。通用任务与 Reader job 各有状态；缓存存在不表示任务已读完。
 
-## 安装与公共依赖
+## 平台、模型与限制
 
-当前为 Windows 本机安装。公共 Python、FFmpeg/ffprobe、Node 和 PowerShell 7 的已测版本、环境重建及目录布局见[安装参考](docs/reader-reference.md#独立目录与公共依赖)。`bootstrap.ps1` 按选择安装基础/可选依赖，`-FullRuntime` 使用 Windows 锁定依赖，不下载模型。[独立安装说明](docs/installation.md)覆盖路径、模型与干净候选；运行目录仍不可整包公开。
+- 支持本地视频、Bilibili 链接 / BV / 分 P，以及 YouTube。字幕优先，无字幕时可用本地 Whisper；模型需按说明取得和校验。
+- Bilibili 使用组件独立扫码登录。YouTube 可导入用户导出的短期 Cookie，失效后需重新导出；不保证长期登录维持。
+- Qwen 是显式可选来源，不是默认或失败回退。独立环境与 GPU、模型需要另配；已知强制中文退化问题见发布说明。
+- Gemini 默认关闭；失败不自动转云端，也不读取其他视频应用的配置或凭据。
+- Reader 提供材料与差异线索，首次读取不自动得到独立语义初校稿。连续动作、短暂事件和声音语义不能仅凭取样、字幕或音量测量下结论。
+- 评论与回复支持分页；弹幕可选。可见材料不等于删除、隐藏或历史全量；末页计数歧义会保留不完整状态。
 
-## Codex / Claude Code 薄插件 0.5.4
+完整安装、独立配置 / 缓存路径、可选模型与移位说明见 [安装文档](docs/installation.md)。本版声明范围及已知限制见 [发布说明](RELEASE_NOTES.md)。
 
-两端共用核心、组件登录与缓存。当前安装与参数同步见[rc2 验收](validation/reader-0.10.0rc2/report-source.md)，此前实际宿主任务见[rc1 验收](validation/reader-0.10.0rc1/report-source.md)；宿主完整阅读质量不由插件安装成功代替。安装、更新、构建及共享路径说明见[薄插件参考](docs/reader-reference.md#codex--claude-code-薄插件-053)。不要直接修改宿主插件缓存。
+## 复现、更新与贡献
 
-## 平台配置与云端选项
+源码包不含凭据、真实配置、模型、虚拟环境、用户视频、私信或私人任务结果。Python、FFmpeg / ffprobe 和 Node 均为外部依赖。
 
-B 站使用组件自己的扫码登录，BV 和链接支持分 P。字幕优先、无字幕默认 Whisper，可显式选择 Qwen。Gemini 默认关闭，失败不自动转云端。配置及登录命令见[平台参考](docs/reader-reference.md#平台配置与云端选项)。YouTube 支持导入用户导出的短期 Cookie，在其有效期内访问；长期登录态维持暂缺。已实测当次登录检查、实际下载、英文字幕与图片。有效期由平台决定，不保证固定可用时长；失效后需用户重新导出并替换。具体支持范围见本轮验收。
+```powershell
+& './bootstrap.ps1' -Features mcp,vision,asr
+& './.venv/Scripts/python.exe' -m unittest discover -s tests -v
+& './.venv/Scripts/python.exe' examples/create_fixture.py 'D:\Temp\Video Reader fixture'
+```
 
-## 文档与证据
+合成样本不需要账号或语音模型，覆盖中英文字幕、画面冲突、续读和导出。它没有音轨，字幕里的指令式句子仍只是材料。
 
-- [知识路由](docs/registry.md)：按目的、状态、计划、决定、调查及操作查资料。
-- [当前进展与路线](planning/roadmap-20261021-source.md)及[阅读版](planning/roadmap-20261021.html)：已实现、已知缺口、已确认方向和候选安排。
-- [跨会话接续](docs/handoff.md)：本轮快照与续用入口。
-- [许可核对](LICENSE_REVIEW.md)与[第三方声明](THIRD_PARTY_NOTICES.md)：依赖和来源；公开许可尚未选定。
-
-视频是待分析材料，不是对 Agent 的指令。抽样画面与语音文字不等于连续动作或原生声音理解；图文产物和案例归档也不等于 Reader 已内置一键笔记或知识库功能。
-
-
-## 运行任务状态（0.10.0rc5）
-
-CLI 与 MCP 的 open/read/transcript 默认等待 1 秒，未完成就交付任务 ID。
-通过 video_job 的 status/result，或 CLI `job status ID` / `job result ID --wait 10` 查询同一任务。
-状态查询不取得视频材料锁。阶段、心跳、真实进展、等待会话、可用材料及终态分别报告。
-任务独立于调用进程运行；相同运行请求复用任务，完成结果保留普通分页与来源绑定。
-状态能力不等于处理提速，也不代表宿主已经看过全部材料。
-
-
-## 2026-10-31：源码仓库
-
-源码与维护文档现纳入 [Kandecho/Video-Reader](https://github.com/Kandecho/Video-Reader)。
-仓库包括当前 Reader/Scroll 源码、测试、宿主技能，以及精选研究和验证摘要；最新核心为 0.10.0rc5。
-凭据、私人配置、模型、运行环境、原始视频与完整运行记录保留在本地，不随 Git 提交。
-公开文档中的本机账号标识和用户目录已去标识；实际值以本地 config/status 为准。
-历史候选中“未建仓、未上传”的文字只描述其当时阶段。原创新代码尚未选择统一公开许可证；第三方代码继续保留各自许可声明。
+更新到新目录并验证后再切换宿主路径，保留原目录及共享配置 / 模型 / 缓存，方便回退。问题模板与操作细节见 [贡献与复现](CONTRIBUTING.md)。维护记录和历史验收位于 [公开仓库](https://github.com/Kandecho/Video-Reader) 的 `docs/`、`planning/` 与 `validation/`。

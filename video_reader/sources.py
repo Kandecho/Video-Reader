@@ -9,7 +9,7 @@ import sys
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
 
-from .common import ReaderError, digest, run, write_json
+from .common import ReaderError, digest, run, write_json, read_json
 from .vendor.transcribe import normalize_segments, parse_vtt
 
 BV = re.compile(r"BV[a-zA-Z0-9]{10}")
@@ -39,7 +39,7 @@ def file_identity(path):
     return {"path": str(path), "size": stat.st_size, "mtime_ns": stat.st_mtime_ns}
 
 
-def resolve(source, subtitle_path=None):
+def resolve(source, subtitle_path=None, *, shortlink_resolver=None):
     source = source.strip()
     bare = re.fullmatch(r"(BV[a-zA-Z0-9]{10})(?:\?p=(\d+))?", source)
     if bare:
@@ -60,8 +60,13 @@ def resolve(source, subtitle_path=None):
         raise ReaderError("Expected an HTTP(S) video URL without embedded credentials")
     host = parsed.hostname.lower()
     if host == "b23.tv":
-        with urlopen(Request(source, headers={"User-Agent": "Mozilla/5.0"}), timeout=20) as response:
-            target = response.url
+        if parsed.port not in (None, 443) or not re.fullmatch(r'/[A-Za-z0-9]+/?', parsed.path):
+            raise ReaderError('Invalid Bilibili short link')
+        canonical = 'https://b23.tv/' + parsed.path.strip('/')
+        if shortlink_resolver is None:
+            return {'platform': 'bilibili', 'canonical': canonical, 'shortlink': True,
+                    'identity': {'canonical': canonical}}
+        target = shortlink_resolver(canonical)
         if urlparse(target).hostname not in ("www.bilibili.com", "m.bilibili.com", "bilibili.com"):
             raise ReaderError("Bilibili short link did not resolve to bilibili.com")
         return resolve(target, subtitle_path)
@@ -142,12 +147,53 @@ def ytdlp_base(profile, directory):
     return args
 
 
+class AcquisitionError(ReaderError):
+    def __init__(self, message, *, code='SOURCE_METADATA_FAILED', details=None):
+        super().__init__(message)
+        self.code, self.details = code, details or {}
+
+
+def metadata_info(command, profile):
+    from .jobs import report
+    import time
+    attempts = []
+    for attempt in range(2):
+        report('extracting_source_metadata' if not attempt else 'retrying_source_metadata',
+               progress={'attempt': attempt+1, 'max_attempts': 2})
+        began = time.monotonic()
+        try:
+            value = json.loads(run(command, timeout=150))
+            attempts.append({'attempt': attempt+1, 'status': 'success', 'seconds': round(time.monotonic()-began, 3)})
+            return value, {'retry_count': attempt, 'attempts': attempts}
+        except ReaderError as error:
+            message = str(error)
+            transient = ('Unable to download webpage' in message and any(value in message.lower()
+                for value in ('timed out', 'timeout', 'remote end closed', 'connection reset', 'connection aborted')))
+            restricted = any(value in message.lower() for value in ('platform_paused', 'budget_exhausted',
+                'http error 401', 'http error 403', 'http error 412', 'http error 429', 'rate limit', 'login required'))
+            attempts.append({'attempt': attempt+1, 'status': 'failed', 'seconds': round(time.monotonic()-began, 3),
+                             'type': type(error).__name__, 'message': message, 'transient_webpage_error': transient})
+            spec = profile.get('_network_budget')
+            blocked = None
+            if spec:
+                state_path = Path(spec['directory']) / 'network.json'
+                state = read_json(state_path) if state_path.is_file() else {}
+                if state.get('paused'):
+                    blocked = 'platform_paused'
+                elif state.get('count', 0) >= spec['options']['daily_requests']:
+                    blocked = 'platform_daily_budget_exhausted'
+            if not attempt and transient and not restricted and not blocked:
+                continue
+            raise AcquisitionError(message, details={'stage': 'source_metadata', 'attempts': attempts,
+                'retry_count': attempt, 'recovery_blocked_by': blocked, 'transient_webpage_error': transient}) from error
+
+
 def acquire(source, directory, profile):
     directory.mkdir(parents=True, exist_ok=True)
     warnings = []
-    def platform_json(url, cookie_path=None):
+    def platform_json(url, cookie_path=None, *, fresh=False):
         platform = profile.get('_platform')
-        return platform.request(url, ttl=platform.config['preview']['material_ttl_seconds']) if platform else request_json(url, cookie_path)
+        return platform.request(url, ttl=0 if fresh else platform.config['preview']['material_ttl_seconds']) if platform else request_json(url, cookie_path)
     if source["platform"] == "local":
         return {"media_path": source["canonical"], "title": source["title"],
                 "subtitle_path": source.get("subtitle_path"), "caption_track": None, "warnings": []}
@@ -167,7 +213,7 @@ def acquire(source, directory, profile):
         bili.update(uploader=owner.get('name'), uploader_id=str(owner['mid']) if owner.get('mid') else None,
                     uploader_url=f"https://space.bilibili.com/{owner['mid']}" if owner.get('mid') else None)
     base = ytdlp_base(profile, directory)
-    info = json.loads(run([*base, "--skip-download", "--dump-single-json", "--", source["canonical"]], timeout=150))
+    info, acquisition_diagnostics = metadata_info([*base, "--skip-download", "--dump-single-json", "--", source["canonical"]], profile)
     if info.get("_type") in ("playlist", "multi_video") or "entries" in info:
         raise ReaderError("Expected one video; choose a Bilibili part or a single video URL")
     expected_ids = {str(bili.get("cid")), f"{source.get('bvid')}_p{source.get('page')}"}
@@ -176,12 +222,22 @@ def acquire(source, directory, profile):
     if bili and str(info.get("id")) not in expected_ids:
         # Current yt-dlp uses BVID_pN; some versions use the selected CID.
         raise ReaderError("Bilibili part mismatch between platform metadata and yt-dlp; refusing wrong media")
+    if bili and acquisition_diagnostics['retry_count']:
+        current = platform_json("https://api.bilibili.com/x/web-interface/view?" + urlencode({"bvid": source['bvid']}),
+                                profile.get('cookies_file'), fresh=True)
+        current_parts = (current.get('data') or {}).get('pages') or []
+        if current.get('code') != 0 or index >= len(current_parts) or current_parts[index].get('cid') != bili['cid']:
+            raise AcquisitionError('Bilibili selected part changed or could not be revalidated during metadata recovery; reopen the source',
+                                   code='SOURCE_PART_CHANGED', details={'stage': 'part_identity_recheck'})
+        acquisition_diagnostics['part_identity_rechecked'] = True
     # Signed download URLs are only in this private cache, never returned to the host agent.
     info_path = directory / "download.info.json"
     write_json(info_path, info)
     record = directory / "download-path.jsonl"
     record.unlink(missing_ok=True)
     height = int(profile.get("height", 720))
+    from .jobs import report
+    report('downloading_media')
     run([*base, "--load-info-json", str(info_path), "-f", f"bv*[height<={height}]+ba/b[height<={height}]/b",
          "--merge-output-format", "mp4", "--no-write-subs", "--no-write-auto-subs", "--no-write-info-json",
          "--print-to-file", "after_move:%(filepath)j", str(record).replace("%", "%%")], timeout=1800)
@@ -194,6 +250,7 @@ def acquire(source, directory, profile):
     subtitle = source.get("subtitle_path")
     track = None
     subtitle_status = "unknown"
+    report('fetching_captions')
     if not subtitle and bili:
         try:
             player = platform_json("https://api.bilibili.com/x/player/wbi/v2?" + urlencode({"bvid": source["bvid"], "cid": bili["cid"]}), profile.get("cookies_file"))
@@ -233,7 +290,8 @@ def acquire(source, directory, profile):
                 track = None
     return {"media_path": str(media), "subtitle_path": subtitle, "caption_track": track,
             "title": bili.get("title") or info.get("title"), "platform_metadata": bili,
-            "warnings": warnings, "subtitle_status": "ready" if subtitle else subtitle_status}
+            "warnings": warnings, "subtitle_status": "ready" if subtitle else subtitle_status,
+            'acquisition_diagnostics': acquisition_diagnostics}
 
 
 def load_subtitles(path):

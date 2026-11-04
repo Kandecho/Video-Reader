@@ -129,3 +129,14 @@ def stamp(t):
     m, rem = divmod(rem, 60000)
     s, ms = divmod(rem, 1000)
     return (f"{h:02d}:" if h else "") + f"{m:02d}:{s:02d}.{ms:03d}"
+
+
+def error_details(error):
+    chain, current, seen = [], error, set()
+    while current is not None and id(current) not in seen and len(chain) < 8:
+        seen.add(id(current))
+        chain.append({'type': type(current).__name__, 'message': str(current),
+                      'code': getattr(current, 'code', None), 'details': getattr(current, 'details', None)})
+        current = current.__cause__ or (None if current.__suppress_context__ else current.__context__)
+    return {'type': type(error).__name__, 'message': str(error),
+            'category': getattr(error, 'category', 'operation_failed'), 'chain': chain}

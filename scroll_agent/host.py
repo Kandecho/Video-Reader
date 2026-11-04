@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tomllib
+import uuid
 
 from video_reader.common import ReaderError, write_json
 
@@ -15,6 +16,42 @@ SCHEMA = {
         'required': ['url', 'recommend', 'reason', 'needs_deep_read'],
         'properties': {'url': {'type': 'string'}, 'recommend': {'type': 'boolean'},
                        'reason': {'type': 'string'}, 'needs_deep_read': {'type': 'boolean'}}}}}}
+
+
+def diagnostics(path):
+    """Extract error events from a bounded log tail, never the prompt or auth config."""
+    path = Path(path)
+    if not path.is_file():
+        return {'log_path': str(path), 'message': None, 'events': []}
+    with path.open('rb') as stream:
+        stream.seek(max(0, path.stat().st_size - 65536))
+        lines = stream.read().decode('utf-8', errors='replace').splitlines()
+    events = []
+    for line in lines:
+        try:
+            item = json.loads(line)
+        except ValueError:
+            continue
+        if not isinstance(item, dict):
+            continue
+        if item.get('type') == 'turn.failed':
+            message = (item.get('error') or {}).get('message')
+        elif item.get('type') == 'error':
+            message = item.get('message')
+        else:
+            continue
+        if isinstance(message, str):
+            events.append({'type': item['type'], 'message': message[:2000]})
+    return {'log_path': str(path), 'message': events[-1]['message'] if events else None, 'events': events[-8:]}
+
+
+class HostError(ReaderError):
+    def __init__(self, message, log_path, *, returncode=None, timeout=False):
+        self.details = {**diagnostics(log_path), 'returncode': returncode, 'timed_out': timeout}
+        cause = self.details['message']
+        self.category = ('host_timeout' if timeout else 'host_transport' if cause and any(
+            word in cause.lower() for word in ('timed out', 'connection', 'websocket', 'transport', 'dns')) else 'host_failed')
+        super().__init__(message + (f': {cause}' if cause else '') + f'; log: {log_path}')
 
 
 def model_options(options):
@@ -51,12 +88,20 @@ def resolve_executable(options):
     raise ReaderError('Codex CLI not found; configure agent.host.executable or finish this round through the host tools')
 
 
-def decide(packet, directory, options):
+def decide(packet, directory, options, *, progress=None):
     executable = resolve_executable(options)
     directory = Path(directory).resolve()
     work = directory / 'host'
     work.mkdir(exist_ok=True)
     schema, output = work / 'schema.json', work / 'decision.json'
+    previous = [path for path in (work / 'host.log', output, schema) if path.is_file()]
+    if previous:
+        history = work / 'history' / uuid.uuid4().hex
+        history.mkdir(parents=True)
+        for path in previous:
+            shutil.copy2(path, history / path.name)
+        if progress:
+            progress(previous_host_artifacts=str(history))
     write_json(schema, SCHEMA)
     output.unlink(missing_ok=True)
     prompt = (
@@ -87,19 +132,25 @@ def decide(packet, directory, options):
         process = subprocess.Popen(command, cwd=work, stdin=subprocess.PIPE, stdout=log, stderr=log,
                                    text=True, encoding='utf-8', creationflags=creationflags)
         try:
+            if progress:
+                progress(host_pid=process.pid, waiting_for='host_response', host_log=str(work / 'host.log'))
             process.communicate(prompt, timeout=options['timeout_seconds'])
-        except subprocess.TimeoutExpired:
+        except BaseException as error:
             if os.name == 'nt':
                 subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'], capture_output=True, timeout=15,
                                creationflags=creationflags)
             else:
                 process.kill()
             process.wait(timeout=15)
-            raise ReaderError('Ephemeral host timed out; see the local run log') from None
+            log.flush()
+            if isinstance(error, subprocess.TimeoutExpired):
+                raise HostError('Ephemeral host timed out', work / 'host.log', timeout=True) from None
+            raise
     if process.returncode or not output.is_file():
-        raise ReaderError('Ephemeral host failed; see the local run log')
+        raise HostError('Ephemeral host failed', work / 'host.log', returncode=process.returncode)
     try:
         result = json.loads(output.read_text(encoding='utf-8'))
-    except ValueError:
-        raise ReaderError('Ephemeral host did not return valid decision JSON') from None
+    except ValueError as error:
+        raise HostError('Ephemeral host did not return valid decision JSON', work / 'host.log',
+                        returncode=process.returncode) from error
     return result

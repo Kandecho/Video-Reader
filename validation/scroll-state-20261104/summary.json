@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-04",
+  "scope": "scroll_round_status_and_archive_only_recovery",
+  "core_version": "0.10.0rc6",
+  "tests": {"passed": 73, "new_runtime_tests": 16, "seconds": 27.045},
+  "real_cli_statuses": ["interrupted", "failed"],
+  "real_mcp_statuses": ["interrupted", "failed"],
+  "cli_query_seconds": [0.453, 0.454],
+  "mcp_query_seconds": [0.031, 0.031],
+  "business_records_unchanged": true,
+  "production_recoveries": 0,
+  "production_messages_sent": 0,
+  "scheduler_changed": false,
+  "inbox_implemented": false,
+  "continuous_background_reading_implemented": false,
+  "external_host_transport_fixed": false,
+  "report": "report-source.md"
+}

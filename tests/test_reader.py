@@ -149,7 +149,7 @@ class ReaderTests(unittest.TestCase):
                 async with ClientSession(read, write) as client:
                     await client.initialize()
                     tools = await client.list_tools()
-                    self.assertEqual({t.name for t in tools.tools}, {"video_open", "video_read", "video_transcript", "video_review", "video_relisten", "bilibili_login", "video_search", "video_discover", "video_preview", "video_uploader_videos", "video_preview_batch", "video_continue", "video_frame", "video_sound", "video_export", "video_youtube_status", "video_comments", "video_danmaku", "video_job"})
+                    self.assertEqual({t.name for t in tools.tools}, {"video_open", "video_read", "video_transcript", "video_review", "video_relisten", "bilibili_login", "video_search", "video_discover", "video_preview", "video_uploader_videos", "video_preview_batch", "video_continue", "video_frame", "video_sound", "video_export", "video_youtube_status", "video_comments", "video_danmaku", "video_job", "video_tasks"})
                     read_schema = next(tool.inputSchema for tool in tools.tools if tool.name == 'video_read')
                     self.assertTrue({'source', 'context', 'view', 'verify'} <= set(read_schema['properties']))
                     review_schema = next(tool.inputSchema for tool in tools.tools if tool.name == 'video_review')

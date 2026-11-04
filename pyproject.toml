@@ -1,11 +1,14 @@
 [build-system]
-requires = ["setuptools>=75"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-video-reader"
-version = "0.10.0rc5"
+version = "0.10.0rc6"
 description = "Video as readable source material for multimodal agents"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "licenses/upstream/watch-MIT.txt"]
 requires-python = ">=3.11"
 dependencies = ["Pillow>=12,<13", "filelock>=3.20,<5", "yt-dlp==2026.08.19", "yt-dlp-ejs==0.8.0", "qrcode==8.2", "cryptography>=45,<51"]
 
@@ -17,9 +20,10 @@ vision = ["rapidocr-onnxruntime==1.4.4"]
 [project.scripts]
 video-reader = "video_reader.cli:main"
 video-reader-mcp = "video_reader.mcp_server:main"
+video-tasks = "reading_tasks.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["video_reader*", "scroll_agent*"]
+include = ["video_reader*", "scroll_agent*", "reading_tasks*"]
 
 [tool.setuptools.package-data]
 video_reader = ["defaults.json"]

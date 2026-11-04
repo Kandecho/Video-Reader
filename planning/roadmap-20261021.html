@@ -734,28 +734,28 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>Video Reader：当前能力与下一步讨论</h1><p class="am-sub">2026-10-30 · 目的与响应体验已澄清 · 独立初校待验证</p><div class="am-intro am-md"><div class="am-md"><p>身份：当前状态、缺口和后续方向的主维护源，同名 HTML 为派生阅读版。重要取舍及授权见 <a href="../docs/decisions.md">决定记录</a>。旧逐轮状态见 <a href="../docs/history/roadmap-through-20261028.md">整理前快照</a>，已完成实施契约仍可回查。</p>
+<header class="am-head"><h1>Video Reader：当前能力与下一步讨论</h1><p class="am-sub">2026-11-04 · 六项任务已清理 · 通用任务独立 · 架构中高项已修复</p><div class="am-intro am-md"><div class="am-md"><p>身份：当前状态、缺口和后续方向的主维护源，同名 HTML 为派生阅读版。重要取舍及授权见 <a href="../docs/decisions.md">决定记录</a>。旧逐轮状态见 <a href="../docs/history/roadmap-through-20261028.md">整理前快照</a>，已完成实施契约仍可回查。</p>
 </div></div></header>
 <div class="am-doc-layout">
-<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 最终要得到什么</a><a href="#panel-B">B · 当前职责与目标差距</a><a href="#panel-C">C · 当前完成到哪一步</a><a href="#panel-D">D · 实现与使用证据在哪里</a><a href="#panel-E">E · 哪些还不能算完成</a><a href="#panel-F">F · 后续按什么顺序推进</a><a href="#panel-G">G · 查阅入口</a></nav><div class="am-doc-body">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 最终要得到什么</a><a href="#panel-B">B · 当前职责与目标差距</a><a href="#panel-C">C · 当前完成到哪一步</a><a href="#panel-D">D · 实现与使用证据在哪里</a><a href="#panel-E">E · 哪些还不能算完成</a><a href="#panel-F">F · 后续讨论与候选方向</a><a href="#panel-G">G · 查阅入口</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>最终要得到什么</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>让现有 Agent 像读图片、文字一样使用视频。用户给链接、BV、本地文件或主题，可以先看再聊，也可以带着问题深入。笔记是可选产物，Reader 提供通用、可继续读取、可回查的材料。</p>
 <p>完整性、准确性、响应速度与成本共同服务于这个体验。已足以回答与全部内容已核查可以分开。优先复用已有材料，主动核查影响当前答案的疑点，及时回答并保留其余未核查内容。不截断必要正文、不降低必要清晰度，不把未核查内容写成定论。</p>
-<p>Reader / Scroll 分工、默认本地及公开准备边界继续保留。当前先讨论初校机制应承担到什么程度，不因旧路线有待办就继续扩展功能。</p>
+<p>Reader / Scroll 分工、默认本地及公开准备边界继续保留。Reader 初校机制仍待讨论；Scroll 已完成状态、Inbox/队列和显式粗读原型，后台消费尚未接入。两者分开，不因旧路线有待办就自动扩展功能。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-B">
 <header class="am-panel-head"><span class="am-panel-id">B</span><h2>当前职责与目标差距</h2></header>
-<div class="am-panel-body"><figure class="am-diagram am-flow"><svg viewBox="0 0 828 342" width="828" height="342" role="img" aria-label="流程图：用户需求或开放阅读、宿主Agent、Reader、可复用材料、用户、Scroll个人工作流" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M370.9,49 L370.9,60.5 Q370.9,72 370.9,83.5 L370.9,95" marker-end="url(#am1-arrow)"/></g><g data-step="1"><path class="am-edge" d="M415.3,121.4 L517.3,141.7 Q619.3,162 592.1,178 L565,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="551" y="153" width="136.5" height="18" rx="3"/><text x="619.3" y="162" text-anchor="middle" dominant-baseline="central">获取、定位、续读与补证</text></g></g><g data-step="2"><path class="am-edge" d="M500.3,206.9 L327.8,184.5 Q155.3,162 240.9,142.3 L326.5,122.7" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="75.5" y="153" width="159.5" height="18" rx="3"/><text x="155.3" y="162" text-anchor="middle" dominant-baseline="central">图像、语音文字、差异和来源</text></g></g><g data-step="3"><path class="am-edge" d="M404.7,130 L435.6,146 Q466.5,162 488.7,178 L511,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="404" y="153" width="125" height="18" rx="3"/><text x="466.5" y="162" text-anchor="middle" dominant-baseline="central">语义修正与未解决疑点</text></g></g><g data-step="4"><path class="am-edge" d="M535.3,229 L535.3,245 Q535.3,261 455.6,280.2 L375.8,299.3" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="467.1" y="252" width="136.5" height="18" rx="3"/><text x="535.3" y="261" text-anchor="middle" dominant-baseline="central">原文、校对、证据和修订</text></g></g><g data-step="5"><path class="am-edge" d="M282.8,302.1 L168.7,281.6 Q54.5,261 54.5,236.3 Q54.5,211.5 54.5,186.8 Q54.5,162 190.5,140.7 L326.5,119.4" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="15" y="202.5" width="79" height="18" rx="3"/><text x="54.5" y="211.5" text-anchor="middle" dominant-baseline="central">后续直接读取</text></g></g><g data-step="6"><path class="am-edge" d="M352.7,130 L336.1,146 Q319.5,162 317.1,178 L314.6,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="257" y="153" width="125" height="18" rx="3"/><text x="319.5" y="162" text-anchor="middle" dominant-baseline="central">理解、讨论与所需产物</text></g></g><g data-step="7"><path class="am-edge" d="M749,130 L749,146 Q749,162 659.7,182.7 L570.4,203.4" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="709.5" y="153" width="79" height="18" rx="3"/><text x="749" y="162" text-anchor="middle" dominant-baseline="central">复用同一组件</text></g></g></g><g><g class="am-node am-node--rect" data-key="用户需求或开放阅读" data-step="0"><rect class="am-node-shape" x="298.4" y="14" width="145" height="35" rx="3"/><text x="370.9" y="31.5" text-anchor="middle" dominant-baseline="central">用户需求或开放阅读</text></g><g class="am-node am-node--rect" data-key="宿主Agent" data-step="0"><rect class="am-node-shape" x="326.5" y="95" width="88.8" height="35" rx="3"/><text x="370.9" y="112.5" text-anchor="middle" dominant-baseline="central">宿主Agent</text></g><g class="am-node am-node--rect" data-key="Reader" data-step="1"><rect class="am-node-shape" x="500.3" y="194" width="70.1" height="35" rx="3"/><text x="535.3" y="211.5" text-anchor="middle" dominant-baseline="central">Reader</text></g><g class="am-node am-node--rect" data-key="可复用材料" data-step="4"><rect class="am-node-shape" x="282.8" y="293" width="93" height="35" rx="3"/><text x="329.3" y="310.5" text-anchor="middle" dominant-baseline="central">可复用材料</text></g><g class="am-node am-node--rect" data-key="用户" data-step="6"><rect class="am-node-shape" x="279.9" y="194" width="64" height="35" rx="3"/><text x="311.9" y="211.5" text-anchor="middle" dominant-baseline="central">用户</text></g><g class="am-node am-node--rect" data-key="Scroll个人工作流" data-step="7"><rect class="am-node-shape" x="684.6" y="95" width="128.9" height="35" rx="3"/><text x="749" y="112.5" text-anchor="middle" dominant-baseline="central">Scroll个人工作流</text></g></g></svg></figure>
+<div class="am-panel-body"><figure class="am-diagram am-flow"><svg viewBox="0 0 962 441" width="962" height="441" role="img" aria-label="流程图：用户需求或开放阅读、宿主Agent、Reader、可复用材料、用户、Scroll个人工作流、通用任务与记录" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M312.3,49 L312.3,60.5 Q312.3,72 312.3,83.5 L312.3,95" marker-end="url(#am1-arrow)"/></g><g data-step="1"><path class="am-edge" d="M356.7,116.9 L586.8,139.4 Q817,162 817,186.8 Q817,211.5 817,236.3 Q817,261 698.8,282.6 L580.5,304.1" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="748.8" y="202.5" width="136.5" height="18" rx="3"/><text x="817" y="211.5" text-anchor="middle" dominant-baseline="central">获取、定位、续读与补证</text></g></g><g data-step="2"><path class="am-edge" d="M510.4,306.1 L332.8,283.5 Q155.3,261 155.3,236.3 Q155.3,211.5 155.3,186.8 Q155.3,162 211.5,144.3 L267.8,126.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="75.5" y="202.5" width="159.5" height="18" rx="3"/><text x="155.3" y="211.5" text-anchor="middle" dominant-baseline="central">图像、语音文字、差异和来源</text></g></g><g data-step="3"><path class="am-edge" d="M356.7,123.7 L433,142.8 Q509.3,162 509.3,186.8 Q509.3,211.5 509.3,236.3 Q509.3,261 520.9,277 L532.6,293" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="446.8" y="202.5" width="125" height="18" rx="3"/><text x="509.3" y="211.5" text-anchor="middle" dominant-baseline="central">语义修正与未解决疑点</text></g></g><g data-step="4"><path class="am-edge" d="M545.4,328 L545.4,344 Q545.4,360 455,379.7 L364.6,399.4" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="477.2" y="351" width="136.5" height="18" rx="3"/><text x="545.4" y="360" text-anchor="middle" dominant-baseline="central">原文、校对、证据和修订</text></g></g><g data-step="5"><path class="am-edge" d="M271.6,400.8 L163,380.4 Q54.5,360 54.5,335.3 Q54.5,310.5 54.5,285.8 Q54.5,261 54.5,236.3 Q54.5,211.5 54.5,186.8 Q54.5,162 161.2,141.5 L267.8,121" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="15" y="252" width="79" height="18" rx="3"/><text x="54.5" y="261" text-anchor="middle" dominant-baseline="central">后续直接读取</text></g></g><g data-step="6"><path class="am-edge" d="M338.2,130 L362,146 Q385.8,162 385.8,178 L385.8,194" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="323.3" y="153" width="125" height="18" rx="3"/><text x="385.8" y="162" text-anchor="middle" dominant-baseline="central">理解、讨论与所需产物</text></g></g><g data-step="7"><path class="am-edge" d="M883.3,130 L883.3,146 Q883.3,162 801.5,180.1 L719.8,198.3" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="838" y="153" width="90.5" height="18" rx="3"/><text x="883.3" y="162" text-anchor="middle" dominant-baseline="central">收件引用与结果</text></g></g><g data-step="8"><path class="am-edge" d="M286.3,130 L262.5,146 Q238.8,162 419.8,183.3 L600.8,204.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="176.3" y="153" width="125" height="18" rx="3"/><text x="238.8" y="162" text-anchor="middle" dominant-baseline="central">手动任务、历史与结果</text></g></g><g data-step="9"><path class="am-edge" d="M660.3,229 L660.3,245 Q660.3,261 620.4,278.2 L580.5,295.4" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="609.3" y="252" width="102" height="18" rx="3"/><text x="660.3" y="261" text-anchor="middle" dominant-baseline="central">复用公开材料接口</text></g></g></g><g><g class="am-node am-node--rect" data-key="用户需求或开放阅读" data-step="0"><rect class="am-node-shape" x="239.8" y="14" width="145" height="35" rx="3"/><text x="312.3" y="31.5" text-anchor="middle" dominant-baseline="central">用户需求或开放阅读</text></g><g class="am-node am-node--rect" data-key="宿主Agent" data-step="0"><rect class="am-node-shape" x="267.8" y="95" width="88.8" height="35" rx="3"/><text x="312.3" y="112.5" text-anchor="middle" dominant-baseline="central">宿主Agent</text></g><g class="am-node am-node--rect" data-key="Reader" data-step="1"><rect class="am-node-shape" x="510.4" y="293" width="70.1" height="35" rx="3"/><text x="545.4" y="310.5" text-anchor="middle" dominant-baseline="central">Reader</text></g><g class="am-node am-node--rect" data-key="可复用材料" data-step="4"><rect class="am-node-shape" x="271.6" y="392" width="93" height="35" rx="3"/><text x="318.1" y="409.5" text-anchor="middle" dominant-baseline="central">可复用材料</text></g><g class="am-node am-node--rect" data-key="用户" data-step="6"><rect class="am-node-shape" x="353.8" y="194" width="64" height="35" rx="3"/><text x="385.8" y="211.5" text-anchor="middle" dominant-baseline="central">用户</text></g><g class="am-node am-node--rect" data-key="Scroll个人工作流" data-step="7"><rect class="am-node-shape" x="818.8" y="95" width="128.9" height="35" rx="3"/><text x="883.3" y="112.5" text-anchor="middle" dominant-baseline="central">Scroll个人工作流</text></g><g class="am-node am-node--rect" data-key="通用任务与记录" data-step="7"><rect class="am-node-shape" x="600.8" y="194" width="119" height="35" rx="3"/><text x="660.3" y="211.5" text-anchor="middle" dominant-baseline="central">通用任务与记录</text></g></g></svg></figure>
 <div class="am-md"><p>Reader 已承担平台适配、登录、字幕/ASR、取帧、OCR 差异、局部复听、缓存、分页与导出。语义校对仍由宿主负责；复听和 OCR 返回候选，不自动覆盖原文。<code>review</code> 负责准备材料和保存提交，并不另跑校对语言模型。</p>
-<p>已有校对稿可直接复用；首次读取没有自动生成语义初校稿。现有 Skill/MCP 仍要求相应范围的逐段校对，尚未按“足以回答便及时回答”同步行为。Reader 独立初校是待验证方向，不能把材料整理或疑点检测写成校对已经完成。</p>
+<p>已有校对稿可直接复用；首次读取没有自动生成语义初校稿。源码 Skill、MCP 与生成薄适配器已同步及时回答；默认阅读只复用已有核验，新 OCR 按需请求。Reader 独立初校是待验证方向，不能把材料整理或疑点检测写成校对已经完成。</p>
 <p>adaptive 利用字幕时间、场景变化与时间线检查选初始帧。任务文字由宿主解释，组件自身不按问题语义找齐证据；后续定位、补帧和裁切由宿主选择。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-C">
 <header class="am-panel-head"><span class="am-panel-id">C</span><h2>当前完成到哪一步</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>核心 0.10.0rc4，薄插件 0.5.3；Reader 18 工具、Scroll 3 工具。2026-10-29 新增评论/楼中楼分页、按分 P 分段弹幕及同段冻结续读，沿用组件登录与限流；不承诺隐藏/删除或历史全量内容，特殊弹幕专包和互动弹幕未纳入。此前文档整理与阅读机制讨论仍按原范围保留。</p>
+<div class="am-panel-body"><div class="am-md"><p>核心 0.10.0rc6，薄插件 0.5.5；Reader 20 工具、Scroll 7 工具。2026-11-04 新增 scroll_inbox / scroll_queue，负责显式收件、待办与历史；另有显式 scroll_triage 轻预览及宿主判断原型，不随同步自动触发。此前评论/楼中楼分页、按分 P 分段弹幕及同段冻结续读沿用组件登录与限流；不承诺隐藏/删除或历史全量内容，特殊弹幕专包和互动弹幕未纳入。</p>
 <div class="am-table-wrap"><table>
 <thead>
 <tr>
@@ -793,7 +793,7 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </tr>
 <tr>
 <td>Scroll</td>
-<td>显式批量队列、确认重放和一次两片实质比较；SQLite/FTS5 记忆与现有首页首条日试用</td>
+<td>既有显式批量读取、SQLite/FTS5 记忆、首页首条日试用及单轮状态恢复保留。新增主号来信显式同步、队列/消息及操作历史、去重排序和人工状态；另有六项真实粗读分流试跑。未接后台消费者、新模型或持续轮询</td>
 </tr>
 <tr>
 <td>接入与候选</td>
@@ -824,8 +824,24 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <td>无损交付、精读、平台/宿主与源码候选；51 页旧批次只证明交付连续</td>
 </tr>
 <tr>
-<td><a href="../validation/docs-20261029/summary.json">文档整理记录</a></td>
-<td>本次文档改动、历史归档、链接与一致性检查；不充当新功能测试</td>
+<td><a href="../validation/docs-20261029/summary.json">此前文档整理</a>、<a href="../validation/docs-20261103/summary.json">本轮整理</a></td>
+<td>文档改动、历史归档、链接与一致性检查；不充当新功能测试</td>
+</tr>
+<tr>
+<td><a href="../validation/diagnosis-repairs-20261031/report-source.md">rc6 修复及真实复验</a></td>
+<td>坏缓存、识别候选保全、一次网页恢复、首屏投影及状态 IO 修复；不代替默认核查深度或识别策略优化</td>
+</tr>
+<tr>
+<td><a href="../validation/reading-pair-20261103/report-source.md">11 月 3 日双片观察</a>、<a href="../validation/guide-image-selection-20261103/report-source.md">攻略选图复验</a></td>
+<td>读取、锁等待和宿主选图的真实范围；本轮未修改核心</td>
+</tr>
+<tr>
+<td><a href="../validation/scroll-state-20261103/report-source.md">Scroll 状态观察</a></td>
+<td>当天失败及遗留 preparing 的只读快照，网络原因尚未确认</td>
+</tr>
+<tr>
+<td><a href="../validation/inbox-queue-20261104/report-source.md">Inbox 与队列验收</a></td>
+<td>主号真实历史同步/分页/重放、CLI/新 MCP 和隔离队列操作；未读视频或调用模型</td>
 </tr>
 <tr>
 <td><a href="../docs/history-index.md">研究与历史索引</a></td>
@@ -909,7 +925,7 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <tr>
 <td>VR-MCP-20261030-04</td>
 <td>首包前默认 OCR 核验重、正文与图片后置。独立冷处理 259.694 秒，两类 OCR 占约 98.2%；普通宿主取全材料需 50 次调用，首图片第 33 次返回</td>
-<td>运行状态由 06 修复；处理深度与分页未优化。46 页视觉链只附首批 60/195 段，剩余语音另续 3 页；详见 <a href="../validation/runtime-jobs-20261030/report-source.md">独立验证 C/D</a>。历史首次故障证据仍保留</td>
+<td>运行状态由 06 修复；rc6 新阅读首包提供可读文字与原图，原证据继续保留。默认 OCR 深度未优化。46 页视觉链只附首批 60/195 段，剩余语音另续 3 页；详见 <a href="../validation/runtime-jobs-20261030/report-source.md">独立验证 C/D</a>。历史首次故障证据仍保留</td>
 </tr>
 <tr>
 <td>VR-RUNTIME-20261030-05</td>
@@ -927,13 +943,73 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <td>宿主接入边界待定位。保留原始记录，不把启动/终端等待计入 Reader 处理；没有将其根因与 05 权限错误或 MCP 协议失败合并，见 <a href="../validation/runtime-jobs-20261030/consumption/technical-report.md">消费报告</a></td>
 </tr>
 </tbody></table></div>
+<h3>2026-10-31 独立诊断复核</h3>
+<p>以新增诊断中的样本定位，独立验证缓存、真实请求和识别结果；未继承原归因。详见 <a href="../validation/independent-diagnosis-20261031/report-source.md">复核记录</a>。</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>已核实的问题或边界</th>
+<th>状态及下一步</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VR-PREVIEW-20261031-08</td>
+<td>code=0 但 index=[] 的响应被缓存，默认 TTL 86400 秒；旧缓存持续造成原生预览 0 帧，正常新索引可生成 5 帧</td>
+<td>rc6 已修复缓存与恢复路径：入缓存前验证语义、旧坏缓存在线旁路、同账号有界重取。真实坏缓存恢复为 156 索引/5 帧，离线复用通过。上游为何偶发空索引仍未知，未换账号或清空预算</td>
+</tr>
+<tr>
+<td>VR-ASR-20261031-09</td>
+<td>同一 0–120 秒重新识别重复得到 3 个可疑段及低置信标记；报告的全片无口播/幻觉结论缺乏听觉真值</td>
+<td>rc6 已修复状态与材料保全：3 段 Whisper 保留原文并显示 unverified_candidate；Qwen 原始“爱，”和 298s 零时长对齐公开保留，300–360s 显示 alignment_unresolved，处理完成但校对未完成。未改拒绝阈值，未取得听觉真值，不宣称已提高该例识别准确率</td>
+</tr>
+<tr>
+<td>VR-TRANSPORT-20261031-10</td>
+<td>两次历史 open 的 yt-dlp 网页获取分别超时、远端关闭；后来相同通路成功</td>
+<td>rc6 已对明确网页超时/断连加一次恢复，保留阶段和每次尝试，成功后核对 CID。历史签名故障注入后同账号真实元数据恢复通过；正常默认头与组件头均成功，具体外部网络根因仍未确认。限制/暂停/预算不自动恢复</td>
+</tr>
+</tbody></table></div>
+<p>补充语义：open 会调用 read，首包无图不等于工具不提供图；renewal=unavailable 是本次操作状态而非永久能力缺失；verifying_speech 不等于宿主语义校对。独立诊断当时未改运行逻辑；随后按用户授权实施 rc6 修复，见 <a href="../validation/diagnosis-repairs-20261031/report-source.md">实施与验收</a>。另补修 Windows 状态 JSON 查询与原子替换冲突，主 worker 和启动失败兜底共用短时状态 IO 锁；不等待视频材料锁。</p>
 <p>成功范围：597 条去重根评、71 楼的 1,162 条回复、当前池 28 条弹幕与 7 页无损组合交付；不是平台全量覆盖或泛化效果验收。本轮登记不自动启动修复。</p>
+<h3>ASR 同窗追查（2026-10-31，rc6 后续调查）</h3>
+<p>VR-ASR-20261031-09 新增根因证据：与旧任务 SHA-256 完全相同的 298–362s 音频，Qwen 自动语言产生 3 token 的空结果；组件硬编码 Chinese 则重复生成打满 128 token 诊断上限，官方后处理折为“爱，”，aligner 复现本地 0–0s。强制语言退化和后处理遮蔽已定位，识别策略修复尚未实施；rc6 对候选保全/状态的修复继续有效。Whisper 开头得到可复现但跨模型逐词冲突的英文；存在人声/歌词候选，不能据中段空结果判全片无人声。宿主音频输入不可用，尚未取得直接听辨真值。详见 <a href="../validation/asr-followup-20261031/report-source.md">联网依据与同窗复验</a>。本轮原 ASR 缓存与续期不改。</p>
+<p>2026-11-03 新增同类实测：BV1gaxb6NEXz 默认 open 用时 1024.917 秒，temporal_ocr 与 verifying_speech 合计约 98%；同 session 的补帧 job 等材料锁 600 秒后失败，源 job 正常完成，锁释放后关闭这两类深检查的精确补帧 1.901 秒完成。共享状态可查询，但“已有材料及时消费、必要补读不被默认深检查长时间阻塞”仍是 VR-MCP-20261030-04 的未解决部分。第二条及宿主参数错误另作区分，详见 <a href="../validation/reading-pair-20261103/report-source.md">双片阅读观察</a>。仅登记，不启动修复。</p>
+<h3>2026-11-03 攻略选图复验</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>已核实的问题或边界</th>
+<th>状态及下一步</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VR-VISUAL-20261103-11</td>
+<td>BV1Cxxt6JEqP 首版把已出手的帧用作投放图，把轨迹或空场景用来说明结果；57 个已观察请求帧未保证成稿选图正确。精确补取找到 A 长 37.90s 爆开光晕与 A 点反闪 73.40s 实际受闪。adaptive 抽样、字幕时间不保证短事件与图片用途匹配；主要存在宿主选图责任，同时仍需大量邻域试探与分页观察</td>
+<td>本个案攻略已重选出手前准星帧、原像素局部及同次动作结果；C 长清楚目标受闪结果未核实，保留缺口。缓存媒体与帧/裁切接续有效，不等于组件独立选图验收。后续按“瞄准—出手—二段—爆开—受闪”观察局部时序，候选帧对照与减少重复交付待验证；本轮未改核心。详见 <a href="../validation/guide-image-selection-20261103/report-source.md">选图复验记录</a></td>
+</tr>
+</tbody></table></div>
+<h3>2026-11-03 Scroll 运行状态登记</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>编号</th>
+<th>观察与影响</th>
+<th>状态及后续核查</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SCROLL-STATE-20261103-01</td>
+<td>11 月 3 日日推 failed / not_sent，宿主最终报 workspace routing discovery timed out，已有 1 条预览；这是宿主路由发现阶段超时，未进一步定位本地网络或服务端原因。11 月 1 日仅保存准备开始记录，无候选/预览，现无执行者持有任务</td>
+<td>2026-11-04 已修复现有单轮的阶段/心跳/进展、执行者、错误链、材料/判断检查点、历史事件与显式留档恢复。状态查询把失去执行者的任务投影为 interrupted，保留原 preparing 快照；缺少候选拒绝原地恢复。发送中断结合账本保留 uncertain/平台接受，不自动重试。真实 CLI/新 MCP 查询及中断恢复测试通过；未恢复生产轮次、未补发、未修复外部传输超时。见 <a href="../validation/scroll-state-20261103/report-source.md">原观察</a>与<a href="../validation/scroll-state-20261104/report-source.md">本批验收</a></td>
+</tr>
+</tbody></table></div>
 </div></div>
 </section>
 <section class="am-panel" id="panel-F">
-<header class="am-panel-head"><span class="am-panel-id">F</span><h2>后续按什么顺序推进</h2></header>
-<div class="am-panel-body"><div class="am-md"><h3>1. 先完成机制讨论</h3>
-<p>当前接续点是把初校职责和回答时机确定清楚。用户不需要重复确认已说明的目的；执行者应基于既有样本说明可行范围，再讨论会改变体验或责任的取舍。本次文档维护不授权启动新模型或自动初校开发。</p>
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>后续讨论与候选方向</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>1. Reader 初校与回答时机</h3>
+<p>Reader 分支仍需把初校职责和回答时机确定清楚。用户不需要重复确认已说明的目的；执行者应基于既有样本说明可行范围，再讨论会改变体验或责任的取舍。本次文档维护不授权启动新模型或自动初校开发。</p>
 <p>需确定的机制包括：Reader 独立承担哪些基础处理；首次材料未准备好时怎样及时给出有依据的回答；哪些疑点现在查、哪些保留；宿主何时需要提交校对。旧 Skill 的完整语境要求与 API 的处理范围约束应分清，不能只改话术就声称等待减少。</p>
 <h3>2. 已有改进方向合并进入验证</h3>
 <p>以下是讨论后的候选验证内容，不是本轮已开始实施的清单：</p>
@@ -968,11 +1044,33 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <p>本地语言模型只是可能方案，尚无选型与收益对照；现有 Qwen ASR 不等于这类语义模型。对新流程的判断同时看准确性和响应速度，不能以宿主后来补救成功代替组件独立能力。</p>
 <h3>3. 保留的后续方向</h3>
 <ul>
-<li>对外复用仍需补无开发环境积累的 Windows 安装及可选模型依赖证据。优先路径、依赖、来源与许可；只声明已验范围。建仓、上传和原创代码许可证另行决定。</li>
+<li>对外复用仍需补无开发环境积累的 Windows 安装及可选模型依赖证据。优先路径、依赖、来源与许可；只声明已验范围。首次建仓推送已于 10 月 31 日完成；后续发布及原创代码许可证仍单独决定。</li>
 <li>Scroll 的轻量标签、二值反馈关联和有限主动探索仍后置。复用已有 SQLite/FTS5；不把 Agent 标签当用户偏好，不自动替换首页首条或新增投递。</li>
 <li>连续动作、原生声音语义、校对后逐词对齐及大规模准确率研究按实际阻碍再评估。YouTube 长期登录保持已知取舍，不自动启用浏览器服务。</li>
 </ul>
 <p>已完成批次的原阶段与保全契约见 <a href="roadmap-20261028-implemented.md">实施快照</a>。模型、账号、旧数据、默认本地和日推规则继续保留；不为检查重复发送或重做已完成阅读。</p>
+<h3>4. Inbox、队列与历史（已实现；后台消费另行接入）</h3>
+<p><strong>已确认的用途。</strong> 用户向组件小号转发视频，自动按收件顺序入队；资源/额度有余量时后台阅读，紧张时保留待办。在现有会话查询“读了哪些”、同步最新队列、指定某条先读及继续讨论，不做专门前端。产物沿用附言和会话中的具体任务；弹幕继续作为可选材料。Inbox 与原消息历史归 Scroll，通用队列与任务历史归 reading_tasks，实际材料读取复用 Reader。</p>
+<p><strong>本批授权与边界。</strong> 用户要求“接下来做 inbox 和队列，先不接入读视频部分，重点作队列和历史”，并选择“旧消息保留为历史，启用后的新视频自动入队”。收件暂以会话主动同步为入口，只读已配置主号与小号的一对一会话。没有常驻轮询、后台阅读或新调度，日试用规则不变。</p>
+<p><strong>当前实现。</strong> Inbox 持久保存原消息、序列/时间、卡片或文字链接、同条消息附言、解析状态和修订；每页原子保存消息、队列关联和游标。新消息扫描与旧历史补入分开，失败可继续。队列按优先级/收件顺序，支持去重、不同任务分开、置顶、暂停/恢复、人工完成、取消/归档、搜索与分页历史。已有本账号材料和相关任务主动提示，但不推定已读。状态与单轮恢复继续复用前一批成果。</p>
+<p><strong>真实初始化。</strong> 北京时间 2026-11-04 13:51:00 启用，保存 15 条历史来信，其中 6 条含视频，未自动加入待办；当次待办为空。分段同步、原游标继续及重复同步已验证，CLI/新 MCP 一致。细节与限制见<a href="../docs/inbox-queue.md">Inbox/队列参考</a>及<a href="../validation/inbox-queue-20261104/report-source.md">验收</a>。运行状态以实际查询为准，不根据这个快照假定以后没有新消息。</p>
+<p><strong>保留的后台阅读目标（未实施）：</strong></p>
+<ul>
+<li><strong>持久状态与恢复：</strong> 已收件、待处理、材料就绪、宿主实际读完及结果可用分开；关联原消息、视频/分 P、附言、Reader job、消费检查点和结果位置。CLI、MCP、后台与会话查询共用状态；中断不丢件，不把已下载或仅已交付算作已读。阶段、最近进展、执行者、等待条件、底层错误链、成果和恢复条件需可回查，保留当前状态与历史事件。问题证据在 E 节 SCROLL-STATE-20261103-01，不在此重复日志。</li>
+<li><strong>用户响应与资源：</strong> 查询及时返回现有结果、进度、排队/额度/登录/暂停原因；同步或点读说明动作的实际状态。会话指定视频可提高优先级，避免重复领取；不把查询变成重复处理。后台给日常会话保留余量，B 站请求预算、本地处理资源与宿主模型额度分别判断，未知不可当充足。</li>
+<li><strong>重复和已有材料提示：</strong> 同一私信重复同步不重复建任务；入队/选择时主动提示已有材料及产物，区分重复提交与带新要求的重读，允许复用或补读，不能仅按 BV 全局丢弃。BV1Cxxt6JEqP 已有材料及 v2 攻略，用户确认跳过；本轮只读 BV1gaxb6NEXz、BV1g3t96kEEF，后续接续先复用这些成果。</li>
+</ul>
+<p><strong>后续建议，尚未授权：</strong> 后台宿主消费、完整阅读结果接续、标签/反馈和探索仍需另定范围。后续 F.5 已授权所选六项显式粗读，但不能因存在 pending 项自动调用 Reader、batch-next、round.run 或模型。人工 done 只表示用户标记，不证明宿主读完。</p>
+<p><strong>后续需要确定的机制：</strong> 是否改为自动同步及运行窗口；若另行授权接读，再确定模型余量入口、未知时策略、前后台分配、消费检查点、实际结果和后台恢复。收件范围与旧消息处理已确认，不必重问。现有单轮 recover 仍为显式留档续做，不把后续建议当作实施计划。</p>
+<h3>5. 显式粗读建议分流与整体架构（原型已试跑）</h3>
+<p>用户将六条历史视频明确入队并关联可确定的评论，随后授权粗读试验。新 scroll_triage 复用 Reader 轻预览，由宿主观察原生图片与相关字幕，提交类型、意图、证据和理由。原文保留；在 assessment.intent 区分 comment/request/uncertain，旧 task 仍兼容。明确要求等待用户；类型不清、意图不明或未配置默认方案则待定；支持的清晰类型给出方案与理由，不执行。</p>
+<p>实际六项结果：3 suggested（动画教程、12 个网站、Vespera），1 awaiting_user（AIRI 评论区辨别要求），2 undetermined（观点分析未配方案、雨声音源证据不足）。21 页冻结预览、约 30 帧、1096 条可用字幕，宿主仅抽查足以分流的部分。全部仍 pending；未 full open、ASR/OCR、执行建议或投递。分片预览实际集成缺陷已通过 Reader 公开 restore 修复，未新增私有缓存耦合。相关 126 项测试通过，新 MCP 验证 Reader/Scroll 19/6 工具和原生图片。见<a href="../docs/triage.md">操作</a>与<a href="../validation/triage-architecture-20261104/report-source.md">验证</a>。</p>
+<p>按用户要求检查整个项目架构，发现短链解析绕过 offline/预算（模拟确认）、默认深检查/长会话锁、收件借投递配置、Inbox/Queue 内部存储、Reader 私有缓存扫描、task 混用、分散工作流契约等问题。见<a href="../docs/architecture-20261104.md">架构检查</a>，区分缺陷、推断、已处理和未实施。未把审查变成全局重构或持续后台授权。</p>
+<h3>6. 六项任务清理与架构修复（已完成）</h3>
+<p>用户明确各条产物后，已交付完整观点笔记、AIRI 简述/评论档案与问题评价、动画指南、12 站资源清单、Vespera 简报和雨声项目想法。五条平台字幕共 1096 段已通读，雨声依简介与视觉提取想法；AIRI 保存 95 条不重复可见评论及来源，末页计数歧义保留 partial。六项 done、pending=0，原附言、7 个消息关联、旧分流和新任务结果均可回查。产物在本地 data/reading-results/20261104，不随 Git 公开。</p>
+<p>按已确认方向，独立 reading_tasks，提供 tasks.ps1 与 Reader video_tasks，旧 Scroll 工具兼容。Inbox 拥有原消息/同步历史，任务保存来源快照及结果，沿用共享 SQLite 原子事务。库身份不随登录变化；材料绑定仍受 Reader 管理。scroll_report 已接通是否入队、初分流和结果预览，显式发送复用原发送接口与幂等账本，本批未真实发信。</p>
+<p>中高项处理：短链受控解析、默认深 OCR 按需、补帧独立锁/记录、Inbox/投递配置拆分、表与公开事务接口、公开材料目录/语音身份索引、原附言意图及共享行为契约。完整 330 项通过；最后新增来源账号与库分离的回归及相关 45 项通过。低项保留 Windows MCP OCR 预导入的已知启动约束，独立任务 CLI 绕开；连接层已抽出，未新增服务。Qwen 和历史 Windows I/O 根因不据本批架构变化宣称解决。</p>
+<p>见<a href="../docs/architecture.md">当前架构</a>、<a href="../docs/tasks.md">任务操作</a>和<a href="../validation/architecture-fixes-20261104/report-source.md">本批验收</a>。没有新后台消费者、额度策略或调度；后续目标依然需明确范围。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-G">
@@ -999,10 +1097,10 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <div class="am-lightbox-canvas am-diagram"></div>
 </div>
 </div>
-<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-10-30 23:01</footer>
+<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-11-04 16:42</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: Video Reader：当前能力与下一步讨论
-subtitle: 2026-10-30 · 目的与响应体验已澄清 · 独立初校待验证
+subtitle: 2026-11-04 · 六项任务已清理 · 通用任务独立 · 架构中高项已修复
 template: doc
 theme: paper
 lang: zh
@@ -1016,7 +1114,7 @@ lang: zh
 
 完整性、准确性、响应速度与成本共同服务于这个体验。已足以回答与全部内容已核查可以分开。优先复用已有材料，主动核查影响当前答案的疑点，及时回答并保留其余未核查内容。不截断必要正文、不降低必要清晰度，不把未核查内容写成定论。
 
-Reader / Scroll 分工、默认本地及公开准备边界继续保留。当前先讨论初校机制应承担到什么程度，不因旧路线有待办就继续扩展功能。
+Reader / Scroll 分工、默认本地及公开准备边界继续保留。Reader 初校机制仍待讨论；Scroll 已完成状态、Inbox/队列和显式粗读原型，后台消费尚未接入。两者分开，不因旧路线有待办就自动扩展功能。
 
 ## B 当前职责与目标差距
 
@@ -1028,18 +1126,20 @@ Reader -&gt; 宿主Agent: 图像、语音文字、差异和来源
 Reader -&gt; 可复用材料: 原文、校对、证据和修订
 可复用材料 -&gt; 宿主Agent: 后续直接读取
 宿主Agent -&gt; 用户: 理解、讨论与所需产物
-Scroll个人工作流 -&gt; Reader: 复用同一组件
+Scroll个人工作流 -&gt; 通用任务与记录: 收件引用与结果
+宿主Agent -&gt; 通用任务与记录: 手动任务、历史与结果
+通用任务与记录 -&gt; Reader: 复用公开材料接口
 ```
 
 Reader 已承担平台适配、登录、字幕/ASR、取帧、OCR 差异、局部复听、缓存、分页与导出。语义校对仍由宿主负责；复听和 OCR 返回候选，不自动覆盖原文。`review` 负责准备材料和保存提交，并不另跑校对语言模型。
 
-已有校对稿可直接复用；首次读取没有自动生成语义初校稿。现有 Skill/MCP 仍要求相应范围的逐段校对，尚未按“足以回答便及时回答”同步行为。Reader 独立初校是待验证方向，不能把材料整理或疑点检测写成校对已经完成。
+已有校对稿可直接复用；首次读取没有自动生成语义初校稿。源码 Skill、MCP 与生成薄适配器已同步及时回答；默认阅读只复用已有核验，新 OCR 按需请求。Reader 独立初校是待验证方向，不能把材料整理或疑点检测写成校对已经完成。
 
 adaptive 利用字幕时间、场景变化与时间线检查选初始帧。任务文字由宿主解释，组件自身不按问题语义找齐证据；后续定位、补帧和裁切由宿主选择。
 
 ## C 当前完成到哪一步
 
-核心 0.10.0rc4，薄插件 0.5.3；Reader 18 工具、Scroll 3 工具。2026-10-29 新增评论/楼中楼分页、按分 P 分段弹幕及同段冻结续读，沿用组件登录与限流；不承诺隐藏/删除或历史全量内容，特殊弹幕专包和互动弹幕未纳入。此前文档整理与阅读机制讨论仍按原范围保留。
+核心 0.10.0rc6，薄插件 0.5.5；Reader 20 工具、Scroll 7 工具。2026-11-04 新增 scroll_inbox / scroll_queue，负责显式收件、待办与历史；另有显式 scroll_triage 轻预览及宿主判断原型，不随同步自动触发。此前评论/楼中楼分页、按分 P 分段弹幕及同段冻结续读沿用组件登录与限流；不承诺隐藏/删除或历史全量内容，特殊弹幕专包和互动弹幕未纳入。
 
 | 能力 | 当前状态与边界 |
 |---|---|
@@ -1050,7 +1150,7 @@ adaptive 利用字幕时间、场景变化与时间线检查选初始帧。任�
 | 无损交付与复用 | 按实际返回大小分页，游标绑定来源/修订，跨进程冻结页重放，显式版本导出及相对图像资源 |
 | 已修复真实缺陷 | rc2 去掉新 Whisper 隐式标题提示，修复该例漏句；已处理区间可以独立保存校对 |
 | 列表与预览 | UP 主作品有界分页；单条轻预览默认 5 帧，可选密集和 1–10 条批量拼图；原生时间可为近似 |
-| Scroll | 显式批量队列、确认重放和一次两片实质比较；SQLite/FTS5 记忆与现有首页首条日试用 |
+| Scroll | 既有显式批量读取、SQLite/FTS5 记忆、首页首条日试用及单轮状态恢复保留。新增主号来信显式同步、队列/消息及操作历史、去重排序和人工状态；另有六项真实粗读分流试跑。未接后台消费者、新模型或持续轮询 |
 | 接入与候选 | Codex/Claude 薄插件共用核心；Windows 同机隔离路径基础安装已验；本地源码候选未发布 |
 
 ## D 实现与使用证据在哪里
@@ -1060,7 +1160,11 @@ adaptive 利用字幕时间、场景变化与时间线检查选初始帧。任�
 | [2026-10-28 真实阅读](../validation/task-reading-20261028/report-source.md)及[接续材料](../validation/task-reading-20261028/resume-check.md) | 数学、软件小字/短状态、32 分钟英文访谈与两片比较；人工复核和独立聊天理解仍待体验 |
 | [rc2 修复验收](../validation/reader-0.10.0rc2/report-source.md) | 213 项回归、真实漏句原因与区间校对、旧数据保全和两端插件参数 |
 | [rc1 整轮验收](../validation/reader-0.10.0rc1/report-source.md) | 无损交付、精读、平台/宿主与源码候选；51 页旧批次只证明交付连续 |
-| [文档整理记录](../validation/docs-20261029/summary.json) | 本次文档改动、历史归档、链接与一致性检查；不充当新功能测试 |
+| [此前文档整理](../validation/docs-20261029/summary.json)、[本轮整理](../validation/docs-20261103/summary.json) | 文档改动、历史归档、链接与一致性检查；不充当新功能测试 |
+| [rc6 修复及真实复验](../validation/diagnosis-repairs-20261031/report-source.md) | 坏缓存、识别候选保全、一次网页恢复、首屏投影及状态 IO 修复；不代替默认核查深度或识别策略优化 |
+| [11 月 3 日双片观察](../validation/reading-pair-20261103/report-source.md)、[攻略选图复验](../validation/guide-image-selection-20261103/report-source.md) | 读取、锁等待和宿主选图的真实范围；本轮未修改核心 |
+| [Scroll 状态观察](../validation/scroll-state-20261103/report-source.md) | 当天失败及遗留 preparing 的只读快照，网络原因尚未确认 |
+| [Inbox 与队列验收](../validation/inbox-queue-20261104/report-source.md) | 主号真实历史同步/分页/重放、CLI/新 MCP 和隔离队列操作；未读视频或调用模型 |
 | [研究与历史索引](../docs/history-index.md) | 其他版本、账号/校对/参考项目与真实缺陷的按需入口 |
 
 现有实测发现：局部复听能恢复漏否定，但该疑点由宿主发现；术语提示曾改善部分词并引入新错字；OCR 稳定一致仍可能出错。材料处理完成不能证明内容无误，既有宿主修订也不是独立盲测真值。
@@ -1088,18 +1192,48 @@ BV1DtHF6zEPA 的具体观察及原始材料见 [社区压力测试记录](../val
 | VR-COMMUNITY-20261030-01 | 评论计数与分页结束信号不一致。第 30 页 17 条，第 31 页为空仍返回 next_page=32；报告总数不能直接当根评论数量，宿主难以判断继续或结束 | 待定位。核对平台计数口径、实际根评尾页与续读/停止提示；当前保留 partial、retry_page 和覆盖缺口，不宣称全量 |
 | VR-DANMAKU-20261030-02 | 一次 MCP 组合读取返回笼统的 danmaku_unavailable，同一核心的授权进程重读成功；缺少可操作的错误原因 | 待定位。保留失败与成功材料，比较运行环境、配置及锁/权限等差异；未确认根因，未修复 |
 | VR-OUTPUT-20261030-03 | 内容讨论材料混入本产品采集统计、内部字段与故障记录，削弱材料用途 | 本个案已整理，持续遵循输出边界。产品问题与测试证据留在产品文档；讨论材料仅保留内容、来源与影响判断的必要限定 |
-| VR-MCP-20261030-04 | 首包前默认 OCR 核验重、正文与图片后置。独立冷处理 259.694 秒，两类 OCR 占约 98.2%；普通宿主取全材料需 50 次调用，首图片第 33 次返回 | 运行状态由 06 修复；处理深度与分页未优化。46 页视觉链只附首批 60/195 段，剩余语音另续 3 页；详见 [独立验证 C/D](../validation/runtime-jobs-20261030/report-source.md)。历史首次故障证据仍保留 |
+| VR-MCP-20261030-04 | 首包前默认 OCR 核验重、正文与图片后置。独立冷处理 259.694 秒，两类 OCR 占约 98.2%；普通宿主取全材料需 50 次调用，首图片第 33 次返回 | 运行状态由 06 修复；rc6 新阅读首包提供可读文字与原图，原证据继续保留。默认 OCR 深度未优化。46 页视觉链只附首批 60/195 段，剩余语音另续 3 页；详见 [独立验证 C/D](../validation/runtime-jobs-20261030/report-source.md)。历史首次故障证据仍保留 |
 | VR-RUNTIME-20261030-05 | 另一项目沙箱运行 CLI，写 auth/bilibili/.lock 被拒；获批后成功 | 已确认环境权限差异。提供所需状态目录权限与明确诊断，不删除锁或凭据；MCP 同案最终成功，不将其混为登录失败 |
 | VR-JOB-20261030-06 | 普通 open/read 曾完成后才返回，缺少跨 CLI/MCP 的运行任务状态与接续 | 0.10.0rc5 / 薄插件 0.5.4 已修复：共享任务、短等待返回、阶段/心跳/真实进展/锁等待、查询与结果接续、同参数活跃任务复用。独立调用与原生宿主已验证；文案残留、启动未知与并发观察者竞态亦补修并复核，见 [验收](../validation/runtime-jobs-20261030/report-source.md) |
 | VR-HOST-20261030-07 | 独立客户端在普通沙箱启动时无输出，持久 PTY 第二次输入无法继续；更换宿主客户端通路后可续同一 Reader job 并取全材料 | 宿主接入边界待定位。保留原始记录，不把启动/终端等待计入 Reader 处理；没有将其根因与 05 权限错误或 MCP 协议失败合并，见 [消费报告](../validation/runtime-jobs-20261030/consumption/technical-report.md) |
 
+### 2026-10-31 独立诊断复核
+
+以新增诊断中的样本定位，独立验证缓存、真实请求和识别结果；未继承原归因。详见 [复核记录](../validation/independent-diagnosis-20261031/report-source.md)。
+
+| 编号 | 已核实的问题或边界 | 状态及下一步 |
+|---|---|---|
+| VR-PREVIEW-20261031-08 | code=0 但 index=[] 的响应被缓存，默认 TTL 86400 秒；旧缓存持续造成原生预览 0 帧，正常新索引可生成 5 帧 | rc6 已修复缓存与恢复路径：入缓存前验证语义、旧坏缓存在线旁路、同账号有界重取。真实坏缓存恢复为 156 索引/5 帧，离线复用通过。上游为何偶发空索引仍未知，未换账号或清空预算 |
+| VR-ASR-20261031-09 | 同一 0–120 秒重新识别重复得到 3 个可疑段及低置信标记；报告的全片无口播/幻觉结论缺乏听觉真值 | rc6 已修复状态与材料保全：3 段 Whisper 保留原文并显示 unverified_candidate；Qwen 原始“爱，”和 298s 零时长对齐公开保留，300–360s 显示 alignment_unresolved，处理完成但校对未完成。未改拒绝阈值，未取得听觉真值，不宣称已提高该例识别准确率 |
+| VR-TRANSPORT-20261031-10 | 两次历史 open 的 yt-dlp 网页获取分别超时、远端关闭；后来相同通路成功 | rc6 已对明确网页超时/断连加一次恢复，保留阶段和每次尝试，成功后核对 CID。历史签名故障注入后同账号真实元数据恢复通过；正常默认头与组件头均成功，具体外部网络根因仍未确认。限制/暂停/预算不自动恢复 |
+
+补充语义：open 会调用 read，首包无图不等于工具不提供图；renewal=unavailable 是本次操作状态而非永久能力缺失；verifying_speech 不等于宿主语义校对。独立诊断当时未改运行逻辑；随后按用户授权实施 rc6 修复，见 [实施与验收](../validation/diagnosis-repairs-20261031/report-source.md)。另补修 Windows 状态 JSON 查询与原子替换冲突，主 worker 和启动失败兜底共用短时状态 IO 锁；不等待视频材料锁。
+
 成功范围：597 条去重根评、71 楼的 1,162 条回复、当前池 28 条弹幕与 7 页无损组合交付；不是平台全量覆盖或泛化效果验收。本轮登记不自动启动修复。
 
-## F 后续按什么顺序推进
+### ASR 同窗追查（2026-10-31，rc6 后续调查）
 
-### 1. 先完成机制讨论
+VR-ASR-20261031-09 新增根因证据：与旧任务 SHA-256 完全相同的 298–362s 音频，Qwen 自动语言产生 3 token 的空结果；组件硬编码 Chinese 则重复生成打满 128 token 诊断上限，官方后处理折为“爱，”，aligner 复现本地 0–0s。强制语言退化和后处理遮蔽已定位，识别策略修复尚未实施；rc6 对候选保全/状态的修复继续有效。Whisper 开头得到可复现但跨模型逐词冲突的英文；存在人声/歌词候选，不能据中段空结果判全片无人声。宿主音频输入不可用，尚未取得直接听辨真值。详见 [联网依据与同窗复验](../validation/asr-followup-20261031/report-source.md)。本轮原 ASR 缓存与续期不改。
 
-当前接续点是把初校职责和回答时机确定清楚。用户不需要重复确认已说明的目的；执行者应基于既有样本说明可行范围，再讨论会改变体验或责任的取舍。本次文档维护不授权启动新模型或自动初校开发。
+2026-11-03 新增同类实测：BV1gaxb6NEXz 默认 open 用时 1024.917 秒，temporal_ocr 与 verifying_speech 合计约 98%；同 session 的补帧 job 等材料锁 600 秒后失败，源 job 正常完成，锁释放后关闭这两类深检查的精确补帧 1.901 秒完成。共享状态可查询，但“已有材料及时消费、必要补读不被默认深检查长时间阻塞”仍是 VR-MCP-20261030-04 的未解决部分。第二条及宿主参数错误另作区分，详见 [双片阅读观察](../validation/reading-pair-20261103/report-source.md)。仅登记，不启动修复。
+
+### 2026-11-03 攻略选图复验
+
+| 编号 | 已核实的问题或边界 | 状态及下一步 |
+|---|---|---|
+| VR-VISUAL-20261103-11 | BV1Cxxt6JEqP 首版把已出手的帧用作投放图，把轨迹或空场景用来说明结果；57 个已观察请求帧未保证成稿选图正确。精确补取找到 A 长 37.90s 爆开光晕与 A 点反闪 73.40s 实际受闪。adaptive 抽样、字幕时间不保证短事件与图片用途匹配；主要存在宿主选图责任，同时仍需大量邻域试探与分页观察 | 本个案攻略已重选出手前准星帧、原像素局部及同次动作结果；C 长清楚目标受闪结果未核实，保留缺口。缓存媒体与帧/裁切接续有效，不等于组件独立选图验收。后续按“瞄准—出手—二段—爆开—受闪”观察局部时序，候选帧对照与减少重复交付待验证；本轮未改核心。详见 [选图复验记录](../validation/guide-image-selection-20261103/report-source.md) |
+
+### 2026-11-03 Scroll 运行状态登记
+
+| 编号 | 观察与影响 | 状态及后续核查 |
+|---|---|---|
+| SCROLL-STATE-20261103-01 | 11 月 3 日日推 failed / not_sent，宿主最终报 workspace routing discovery timed out，已有 1 条预览；这是宿主路由发现阶段超时，未进一步定位本地网络或服务端原因。11 月 1 日仅保存准备开始记录，无候选/预览，现无执行者持有任务 | 2026-11-04 已修复现有单轮的阶段/心跳/进展、执行者、错误链、材料/判断检查点、历史事件与显式留档恢复。状态查询把失去执行者的任务投影为 interrupted，保留原 preparing 快照；缺少候选拒绝原地恢复。发送中断结合账本保留 uncertain/平台接受，不自动重试。真实 CLI/新 MCP 查询及中断恢复测试通过；未恢复生产轮次、未补发、未修复外部传输超时。见 [原观察](../validation/scroll-state-20261103/report-source.md)与[本批验收](../validation/scroll-state-20261104/report-source.md) |
+
+## F 后续讨论与候选方向
+
+### 1. Reader 初校与回答时机
+
+Reader 分支仍需把初校职责和回答时机确定清楚。用户不需要重复确认已说明的目的；执行者应基于既有样本说明可行范围，再讨论会改变体验或责任的取舍。本次文档维护不授权启动新模型或自动初校开发。
 
 需确定的机制包括：Reader 独立承担哪些基础处理；首次材料未准备好时怎样及时给出有依据的回答；哪些疑点现在查、哪些保留；宿主何时需要提交校对。旧 Skill 的完整语境要求与 API 的处理范围约束应分清，不能只改话术就声称等待减少。
 
@@ -1119,11 +1253,49 @@ BV1DtHF6zEPA 的具体观察及原始材料见 [社区压力测试记录](../val
 
 ### 3. 保留的后续方向
 
-- 对外复用仍需补无开发环境积累的 Windows 安装及可选模型依赖证据。优先路径、依赖、来源与许可；只声明已验范围。建仓、上传和原创代码许可证另行决定。
+- 对外复用仍需补无开发环境积累的 Windows 安装及可选模型依赖证据。优先路径、依赖、来源与许可；只声明已验范围。首次建仓推送已于 10 月 31 日完成；后续发布及原创代码许可证仍单独决定。
 - Scroll 的轻量标签、二值反馈关联和有限主动探索仍后置。复用已有 SQLite/FTS5；不把 Agent 标签当用户偏好，不自动替换首页首条或新增投递。
 - 连续动作、原生声音语义、校对后逐词对齐及大规模准确率研究按实际阻碍再评估。YouTube 长期登录保持已知取舍，不自动启用浏览器服务。
 
 已完成批次的原阶段与保全契约见 [实施快照](roadmap-20261028-implemented.md)。模型、账号、旧数据、默认本地和日推规则继续保留；不为检查重复发送或重做已完成阅读。
+
+### 4. Inbox、队列与历史（已实现；后台消费另行接入）
+
+**已确认的用途。** 用户向组件小号转发视频，自动按收件顺序入队；资源/额度有余量时后台阅读，紧张时保留待办。在现有会话查询“读了哪些”、同步最新队列、指定某条先读及继续讨论，不做专门前端。产物沿用附言和会话中的具体任务；弹幕继续作为可选材料。Inbox 与原消息历史归 Scroll，通用队列与任务历史归 reading_tasks，实际材料读取复用 Reader。
+
+**本批授权与边界。** 用户要求“接下来做 inbox 和队列，先不接入读视频部分，重点作队列和历史”，并选择“旧消息保留为历史，启用后的新视频自动入队”。收件暂以会话主动同步为入口，只读已配置主号与小号的一对一会话。没有常驻轮询、后台阅读或新调度，日试用规则不变。
+
+**当前实现。** Inbox 持久保存原消息、序列/时间、卡片或文字链接、同条消息附言、解析状态和修订；每页原子保存消息、队列关联和游标。新消息扫描与旧历史补入分开，失败可继续。队列按优先级/收件顺序，支持去重、不同任务分开、置顶、暂停/恢复、人工完成、取消/归档、搜索与分页历史。已有本账号材料和相关任务主动提示，但不推定已读。状态与单轮恢复继续复用前一批成果。
+
+**真实初始化。** 北京时间 2026-11-04 13:51:00 启用，保存 15 条历史来信，其中 6 条含视频，未自动加入待办；当次待办为空。分段同步、原游标继续及重复同步已验证，CLI/新 MCP 一致。细节与限制见[Inbox/队列参考](../docs/inbox-queue.md)及[验收](../validation/inbox-queue-20261104/report-source.md)。运行状态以实际查询为准，不根据这个快照假定以后没有新消息。
+
+**保留的后台阅读目标（未实施）：**
+
+- **持久状态与恢复：** 已收件、待处理、材料就绪、宿主实际读完及结果可用分开；关联原消息、视频/分 P、附言、Reader job、消费检查点和结果位置。CLI、MCP、后台与会话查询共用状态；中断不丢件，不把已下载或仅已交付算作已读。阶段、最近进展、执行者、等待条件、底层错误链、成果和恢复条件需可回查，保留当前状态与历史事件。问题证据在 E 节 SCROLL-STATE-20261103-01，不在此重复日志。
+- **用户响应与资源：** 查询及时返回现有结果、进度、排队/额度/登录/暂停原因；同步或点读说明动作的实际状态。会话指定视频可提高优先级，避免重复领取；不把查询变成重复处理。后台给日常会话保留余量，B 站请求预算、本地处理资源与宿主模型额度分别判断，未知不可当充足。
+- **重复和已有材料提示：** 同一私信重复同步不重复建任务；入队/选择时主动提示已有材料及产物，区分重复提交与带新要求的重读，允许复用或补读，不能仅按 BV 全局丢弃。BV1Cxxt6JEqP 已有材料及 v2 攻略，用户确认跳过；本轮只读 BV1gaxb6NEXz、BV1g3t96kEEF，后续接续先复用这些成果。
+
+**后续建议，尚未授权：** 后台宿主消费、完整阅读结果接续、标签/反馈和探索仍需另定范围。后续 F.5 已授权所选六项显式粗读，但不能因存在 pending 项自动调用 Reader、batch-next、round.run 或模型。人工 done 只表示用户标记，不证明宿主读完。
+
+**后续需要确定的机制：** 是否改为自动同步及运行窗口；若另行授权接读，再确定模型余量入口、未知时策略、前后台分配、消费检查点、实际结果和后台恢复。收件范围与旧消息处理已确认，不必重问。现有单轮 recover 仍为显式留档续做，不把后续建议当作实施计划。
+
+### 5. 显式粗读建议分流与整体架构（原型已试跑）
+
+用户将六条历史视频明确入队并关联可确定的评论，随后授权粗读试验。新 scroll_triage 复用 Reader 轻预览，由宿主观察原生图片与相关字幕，提交类型、意图、证据和理由。原文保留；在 assessment.intent 区分 comment/request/uncertain，旧 task 仍兼容。明确要求等待用户；类型不清、意图不明或未配置默认方案则待定；支持的清晰类型给出方案与理由，不执行。
+
+实际六项结果：3 suggested（动画教程、12 个网站、Vespera），1 awaiting_user（AIRI 评论区辨别要求），2 undetermined（观点分析未配方案、雨声音源证据不足）。21 页冻结预览、约 30 帧、1096 条可用字幕，宿主仅抽查足以分流的部分。全部仍 pending；未 full open、ASR/OCR、执行建议或投递。分片预览实际集成缺陷已通过 Reader 公开 restore 修复，未新增私有缓存耦合。相关 126 项测试通过，新 MCP 验证 Reader/Scroll 19/6 工具和原生图片。见[操作](../docs/triage.md)与[验证](../validation/triage-architecture-20261104/report-source.md)。
+
+按用户要求检查整个项目架构，发现短链解析绕过 offline/预算（模拟确认）、默认深检查/长会话锁、收件借投递配置、Inbox/Queue 内部存储、Reader 私有缓存扫描、task 混用、分散工作流契约等问题。见[架构检查](../docs/architecture-20261104.md)，区分缺陷、推断、已处理和未实施。未把审查变成全局重构或持续后台授权。
+
+### 6. 六项任务清理与架构修复（已完成）
+
+用户明确各条产物后，已交付完整观点笔记、AIRI 简述/评论档案与问题评价、动画指南、12 站资源清单、Vespera 简报和雨声项目想法。五条平台字幕共 1096 段已通读，雨声依简介与视觉提取想法；AIRI 保存 95 条不重复可见评论及来源，末页计数歧义保留 partial。六项 done、pending=0，原附言、7 个消息关联、旧分流和新任务结果均可回查。产物在本地 data/reading-results/20261104，不随 Git 公开。
+
+按已确认方向，独立 reading_tasks，提供 tasks.ps1 与 Reader video_tasks，旧 Scroll 工具兼容。Inbox 拥有原消息/同步历史，任务保存来源快照及结果，沿用共享 SQLite 原子事务。库身份不随登录变化；材料绑定仍受 Reader 管理。scroll_report 已接通是否入队、初分流和结果预览，显式发送复用原发送接口与幂等账本，本批未真实发信。
+
+中高项处理：短链受控解析、默认深 OCR 按需、补帧独立锁/记录、Inbox/投递配置拆分、表与公开事务接口、公开材料目录/语音身份索引、原附言意图及共享行为契约。完整 330 项通过；最后新增来源账号与库分离的回归及相关 45 项通过。低项保留 Windows MCP OCR 预导入的已知启动约束，独立任务 CLI 绕开；连接层已抽出，未新增服务。Qwen 和历史 Windows I/O 根因不据本批架构变化宣称解决。
+
+见[当前架构](../docs/architecture.md)、[任务操作](../docs/tasks.md)和[本批验收](../validation/architecture-fixes-20261104/report-source.md)。没有新后台消费者、额度策略或调度；后续目标依然需明确范围。
 
 ## G 查阅入口
 

@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-04",
+  "version": "0.10.0rc6",
+  "adapter_version": "0.5.5",
+  "original_code_license": "MIT",
+  "release_state": "validated_candidate",
+  "tag": "v0.10.0rc6",
+  "platform_scope": "Windows x64 / Python 3.12.13 / PowerShell 7; same-machine clean isolation",
+  "installation": {
+    "fresh_environment": true,
+    "fresh_dependency_cache": true,
+    "different_drive": true,
+    "chinese_and_space_path": true,
+    "production_configuration_or_credentials_reused": false,
+    "models_bundled_or_downloaded": false,
+    "base_without_asr_model_passed": true,
+    "full_suite_requires_asr_extra": true
+  },
+  "tests": {"full_passed": 334, "full_seconds": 56.463},
+  "representative_tasks": {
+    "bilingual_caption_pagination": true,
+    "exact_frame_conflict_observed": true,
+    "source_instruction_preserved_as_data": true,
+    "cross_process_cli_job_result": true,
+    "cursor_replay": true,
+    "moved_export_relative_assets": true,
+    "no_audio_claim": true
+  },
+  "host_adapters": {
+    "codex": {"reader_tools": 20, "scroll_tools": 7, "real_stdio_calls": true, "native_images": true},
+    "claude": {"reader_tools": 20, "scroll_tools": 7, "real_stdio_calls": true, "native_images": true}
+  },
+  "release_files": ["video-reader-0.10.0rc6-source.zip", "SHA256SUMS.txt"],
+  "messages_sent": 0,
+  "schedules_changed": false,
+  "new_cloud_or_semantic_model": false
+}

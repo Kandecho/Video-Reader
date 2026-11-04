@@ -1,0 +1,120 @@
+{
+  "date": "2026-11-04",
+  "working_tree": true,
+  "published": false,
+  "tests": {
+    "full": {
+      "count": 330,
+      "passed": true
+    },
+    "final_related": {
+      "count": 45,
+      "passed": true,
+      "includes_later_regressions": true
+    }
+  },
+  "interfaces": {
+    "reader": {
+      "tool_count": 20,
+      "tools": [
+        "bilibili_login",
+        "video_comments",
+        "video_continue",
+        "video_danmaku",
+        "video_discover",
+        "video_export",
+        "video_frame",
+        "video_job",
+        "video_open",
+        "video_preview",
+        "video_preview_batch",
+        "video_read",
+        "video_relisten",
+        "video_review",
+        "video_search",
+        "video_sound",
+        "video_tasks",
+        "video_transcript",
+        "video_uploader_videos",
+        "video_youtube_status"
+      ],
+      "done_tasks": 6,
+      "result_query": true
+    },
+    "scroll": {
+      "tool_count": 7,
+      "tools": [
+        "scroll_batch",
+        "scroll_inbox",
+        "scroll_memory",
+        "scroll_queue",
+        "scroll_report",
+        "scroll_round",
+        "scroll_triage"
+      ],
+      "report_preview": true,
+      "messages_sent": 0,
+      "report_characters": 181
+    },
+    "cli": {
+      "standalone": true,
+      "legacy_bridge": true,
+      "login_disabled_query": true
+    },
+    "source_candidate": {
+      "version": "0.10.0rc6",
+      "files": 125,
+      "generic_task_import": true,
+      "credential_and_model_files_included": false,
+      "published": false
+    }
+  },
+  "tasks": {
+    "done": 6,
+    "pending": 0,
+    "origin_links": 7,
+    "original_notes_preserved": true,
+    "results_linked": 6,
+    "messages_sent": 0
+  },
+  "architecture": {
+    "python_files": 64,
+    "source_index_sha256": "5752f0a9c1206ea9c7c0a8d0a500957487ac4c5295bc4f85d34a7a438607e102",
+    "generic_tasks_depend_on_scroll": false,
+    "original_high_medium_findings_fixed": 7,
+    "low_connection_layer_fixed": true,
+    "windows_ocr_preimport_retained_with_reason": true
+  },
+  "document_links": {
+    "files_checked": 12,
+    "errors": []
+  },
+  "page_check": {
+    "desktop": {
+      "panels": [
+        "结果入口",
+        "完整观点笔记",
+        "AIRI 简述、评论与问题评价",
+        "动画视频制作指南",
+        "12 站资源清单",
+        "Vespera 项目简报",
+        "雨声项目想法",
+        "架构修复与当前入口"
+      ],
+      "overflow": false,
+      "localLinks": 9
+    },
+    "mobile": {
+      "width": 390,
+      "documentWidth": 390,
+      "overflow": false
+    },
+    "errors": []
+  },
+  "source_limits": {
+    "airi_comments_saved": 95,
+    "comment_tail_empty": true,
+    "comment_count_ambiguity_retained": true,
+    "rain_audio_not_heard": true
+  }
+}

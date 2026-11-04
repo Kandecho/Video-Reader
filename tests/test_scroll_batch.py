@@ -23,7 +23,7 @@ class BatchTests(unittest.TestCase):
 
     def setUp(self):
         self.reader = Reader(self.config)
-        self.auth = patch('scroll_agent.batch.credentials', return_value={'account_marker': 'fixture'})
+        self.auth = patch('reading_tasks.batch.credentials', return_value={'account_marker': 'fixture'})
         self.auth.start()
         self.addCleanup(self.auth.stop)
         self.batch = Batch(self.reader, offline=True)
@@ -99,12 +99,12 @@ class BatchTests(unittest.TestCase):
         batch_id = self.batch.start([str(self.root / 'missing.mp4'), self.sid])['batch_id']
         _, final = self.drain(batch_id)
         self.assertEqual([item['status'] for item in final['items']], ['failed', 'delivered'])
-        with patch('scroll_agent.batch.credentials', return_value={'account_marker': 'other'}):
+        with patch('reading_tasks.batch.credentials', return_value={'account_marker': 'other'}):
             with self.assertRaisesRegex(ReaderError, 'account scope'):
                 Batch(self.reader).status(batch_id)
 
     def test_local_batch_requires_no_platform_login_but_keeps_account_queues_separate(self):
-        with patch('scroll_agent.batch.credentials', side_effect=PlatformError('login_required')):
+        with patch('reading_tasks.batch.credentials', side_effect=PlatformError('login_required')):
             batch = Batch(self.reader, offline=True)
             batch_id = batch.start([self.sid])['batch_id']
             _, final = self.drain(batch_id, batch.next(batch_id))
@@ -123,7 +123,7 @@ class IncrementalBatchTests(unittest.TestCase):
     def test_decode_one_chunk_per_step_and_deliver_only_matching_new_prefix(self):
         self.data['metadata']['has_video'] = False
         self.reader.save(self.data)
-        with patch('scroll_agent.batch.credentials', return_value={'account_marker':'fixture'}), \
+        with patch('reading_tasks.batch.credentials', return_value={'account_marker':'fixture'}), \
              patch('video_reader.speech.decode', side_effect=self.decode) as decoder:
             batch = Batch(self.reader, offline=True)
             batch_id = batch.start([self.sid], source='asr')['batch_id']

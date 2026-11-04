@@ -12,18 +12,20 @@
 
 只改变选片策略。通用阅读、可选深读、显式偏好、反馈记忆和原有普通选片入口保留。个人判断、已预览和完整读过仍分开。
 
-## 两个组件，不是一个绑死的 MCP
+## 三类职责，两套 MCP
 
 | 组件 | 职责 | MCP |
 |---|---|---|
-| Video Reader | 通用搜索、热门、轻预览、读取、转写、校对、复听及组件登录 | `video-reader`，16 个工具 |
-| Scroll Agent | 消费 Reader 的个人工作流：账号流策略、记忆、日记录、投递和触发 | `scroll-agent`，`scroll_round` / `scroll_memory` / `scroll_batch` |
+| Video Reader | 通用搜索、热门、轻预览、读取、转写、校对、复听及组件登录 | `video-reader`，20 个工具，含 video_tasks |
+| Scroll Agent | 个人工作流：账号流策略、记忆、Inbox、日记录和投递，通用任务保留兼容适配 | `scroll-agent`，`scroll_round` / `scroll_memory` / `scroll_batch` / `scroll_inbox` / `scroll_queue` / `scroll_triage` / `scroll_report` |
 
 “帮我挑两条视频”是通用自然语言请求，不需要固定品牌口令。普通主题选片可直接用 Reader；个人首页、偏好与日常投递由 Scroll Agent 编排，Reader 是其默认组件。
 
-源码中的 `scroll_agent/` 单向依赖 `video_reader/`。Reader MCP、预览及 transport 不导入 Scroll Agent，不创建其 SQLite；读取组件的 transport 默认只读，只有 Scroll Agent 显式允许私信端点。两个 MCP 都使用同一 `.venv`、配置、模型、凭据及材料，不把自身作为远程 MCP 再绕调用一层。
+通用队列/任务历史在 reading_tasks，私信历史留在 Scroll Inbox；源码中的 scroll_agent 依赖 reading_tasks 与 video_reader。Reader MCP、预览及 transport 不导入 Scroll Agent，不创建其 SQLite；读取组件的 transport 默认只读，只有 Scroll Agent 显式允许私信端点。两个 MCP 都使用同一 `.venv`、配置、模型、凭据及材料，不把自身作为远程 MCP 再绕调用一层。
 
-当前薄插件 0.5.1 将两个独立 MCP 与两个明确分工的 Skill 组合安装，每端 5 个小文件。可单独使用 Reader，不要求启用个人工作流。旧 `video_agent` / `video_memory` 已从 Reader MCP 移除，改由 Scroll MCP 提供；旧 `run.ps1 agent ...` 仅保留惰性 CLI 兼容桥，日常入口为 `scroll.ps1`。
+当前薄插件 0.5.5 将两个独立 MCP 与两个明确分工的 Skill 组合安装，每端 5 个小文件。可单独使用 Reader，不要求启用个人工作流。旧 `video_agent` / `video_memory` 已从 Reader MCP 移除，改由 Scroll MCP 提供；旧 `run.ps1 agent ...` 仅保留惰性 CLI 兼容桥，日常入口为 `scroll.ps1`。
+
+2026-11-04 新增的[Inbox/队列](inbox-queue.md)由会话显式同步主号来信，不在本日推任务中轮询、不启动读取或叠加触发器。上方“不监听私信”仍是日试用规则；它不禁止用户另行授权的显式 Inbox 同步。
 
 ## 外部依赖与运行条件
 
@@ -49,6 +51,7 @@
 - 任务入口：`tools/run_scroll_daily.ps1` → `launch_scroll.py daily --deliver --scheduled`。
 - 手动普通选片：`scroll.ps1 run`，默认仅留档。
 - 查状态：`scroll.ps1 status` 或 `scroll_round(action="status")`。包含当天候选、判断、投递结果、最近日记录及任务最后退出码。
+- 指定轮次：`scroll.ps1 status ROUND_ID --offline` 或 `scroll_round(action="status", run_id=...)`，查看阶段、执行者、检查点、错误链与事件。显式 `recover ROUND_ID` 只留档续做，不能用于自动补发；见[单轮恢复](scroll-reference.md#单轮状态与显式恢复2026-11-04)。
 - 运行日志：`data/agent/task/YYYY-MM-DD.log` 和 `last.json`；每轮完整记录仍在 `data/agent/rounds/<账号域>/<轮次>/`。
 - 暂停：将 `agent.daily.enabled=false`，并可禁用同名 Windows 任务。不会影响通用 Reader。
 
@@ -57,6 +60,10 @@
 反馈直接在当前会话说，例如“昨天那条太长”“今天这个不错”。Agent 从日记录定位对应视频，把你的实际意见记为 feedback；不会把自己的评价或未回复当作你的兴趣。没有私信常驻监听。
 
 材料缓存统一位于 `data/preview/`。原 `data/agent/materials` 是指向它的兼容目录联接，保留旧绝对帧路径，不复制材料。完整媒体仍在 `data/cache/`，登录仍在 `auth/bilibili/`，SQLite 仍沿用 `data/agent/memory.sqlite3`。
+
+## 运行证据快照（2026-11-04）
+
+本次只读接续核对：11 月 3 日为宿主 workspace routing discovery timed out，保留 1 条预览；11 月 1 日 preparing 已无执行者，缺少候选检查点，查询投影为 interrupted，原记录不改。CLI 与新 MCP 查询均通过，业务记录、发送账本和原文件保持不变；未恢复生产任务或补发。详见[状态与恢复验收](../validation/scroll-state-20261104/report-source.md)。本次没有改变上方日试用规则和调度。
 
 ## 运行证据快照（2026-10-28）
 

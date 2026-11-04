@@ -2,6 +2,7 @@
 from bisect import bisect_right
 from io import BytesIO
 import json
+import math
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -39,7 +40,9 @@ def candidates(platform, query='', limit=10, *, fresh=False):
 
 def snapshot_positions(snapshot, desired):
     indices = snapshot.get('index') or []
-    if not indices or indices != sorted(indices):
+    if (not isinstance(indices, list) or not indices
+            or any(isinstance(t, bool) or not isinstance(t, (int, float)) or not math.isfinite(t) or t < 0 for t in indices)
+            or indices != sorted(indices)):
         raise PlatformError('snapshot_index_unavailable')
     indices = indices[1:] if indices[:2] == [0, 0] else indices
     columns, rows = int(snapshot['img_x_len']), int(snapshot['img_y_len'])
@@ -52,6 +55,46 @@ def snapshot_positions(snapshot, desired):
         positions.append({'requested_time': target, 'time': indices[index], 'sprite': sprite,
                           'column': tile % columns, 'row': tile // columns})
     return positions
+
+
+def validate_snapshot(snapshot):
+    """A code=0 response is not usable without its timeline and image grid."""
+    if not isinstance(snapshot, dict):
+        raise PlatformError('snapshot_invalid_data')
+    try:
+        positions = snapshot_positions(snapshot, [0])
+        images = snapshot.get('image')
+        if not isinstance(images, list) or not images or any(not isinstance(url, str) or not url for url in images):
+            raise PlatformError('snapshot_images_unavailable')
+        width, height = int(snapshot['img_x_size']), int(snapshot['img_y_size'])
+        if not 0 < width <= 4096 or not 0 < height <= 4096:
+            raise PlatformError('snapshot_tile_size_invalid')
+        if positions[0]['sprite'] >= len(images):
+            raise PlatformError('snapshot_grid_invalid')
+        count = len(snapshot['index']) - (1 if snapshot['index'][:2] == [0, 0] else 0)
+        if count > int(snapshot['img_x_len'])*int(snapshot['img_y_len'])*len(images):
+            raise PlatformError('snapshot_grid_invalid')
+    except (KeyError, TypeError, ValueError, OverflowError):
+        raise PlatformError('snapshot_grid_invalid') from None
+
+
+def snapshot_material(platform, params, ttl):
+    """One bounded refresh, same account/budget. Invalid payloads are never cached."""
+    errors = []
+    trace_start = len(getattr(platform, 'trace', []))
+    for attempt in range(2):
+        try:
+            snapshot = platform.json('/x/player/videoshot', params,
+                                     ttl=ttl, validate=validate_snapshot)
+            return snapshot, {'attempts': attempt+1, 'prior_errors': errors,
+                'invalid_cache_bypassed': any(item.get('cache') == 'invalid'
+                    for item in getattr(platform, 'trace', [])[trace_start:])}
+        except PlatformError as error:
+            # Restrictions, budgets, offline misses and transport errors are not
+            # an invitation to change identity or resume a paused transport.
+            if platform.offline or not error.code.startswith('snapshot_') or attempt:
+                raise
+            errors.append(error.code)
 
 
 def controls(density='light', max_frames=None):
@@ -130,7 +173,7 @@ def preview(platform, source, *, density='light', max_frames=None, make_sheet=Fa
     count = controls(density, max_frames)
     if not isinstance(make_sheet, bool):
         raise ReaderError('contact_sheet must be true or false')
-    resolved = resolve(source)
+    resolved = resolve(source, shortlink_resolver=platform.resolve_shortlink)
     if resolved['platform'] != 'bilibili':
         raise ReaderError('Light preview currently supports Bilibili BV/URL sources')
     bvid, part_number = resolved['bvid'], resolved['page']
@@ -179,7 +222,7 @@ def preview(platform, source, *, density='light', max_frames=None, make_sheet=Fa
     except PlatformError as error:
         result['gaps'].append('caption:' + error.code)
     try:
-        snapshot = platform.json('/x/player/videoshot', {'bvid': bvid, 'cid': cid, 'index': 1}, ttl=ttl)
+        snapshot, result['visual_recovery'] = snapshot_material(platform, {'bvid': bvid, 'cid': cid, 'index': 1}, ttl)
         result['frames'] = native_frames(platform, snapshot, duration, directory, count=count,
                                          max_sprites=2 if density == 'light' else 8)
     except (PlatformError, OSError, ValueError, KeyError) as error:
@@ -193,7 +236,7 @@ def preview(platform, source, *, density='light', max_frames=None, make_sheet=Fa
 
 
 def comments(platform, bvid):
-    resolved = resolve(bvid)
+    resolved = resolve(bvid, shortlink_resolver=platform.resolve_shortlink)
     info = platform.json('/x/web-interface/view', {'bvid': resolved['bvid']}, ttl=86400)
     data = platform.json('/x/v2/reply', {'type': 1, 'oid': info['aid'], 'sort': 2, 'ps': 10, 'pn': 1}, ttl=600)
     return {'source': 'hot_comments_sample', 'is_full_population': False,

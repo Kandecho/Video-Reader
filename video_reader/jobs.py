@@ -69,6 +69,14 @@ class Jobs:
         with FileLock(str(self.root / (job_id + '.status.lock')), timeout=2):
             return self._status(job_id)
 
+    def write_state(self, job_id, value):
+        self.path(job_id)
+        # Windows may deny opening/replacing a file during an overlapping
+        # atomic replacement. Observers and writers share this short IO lock;
+        # it never guards video processing or waits for the media lock.
+        with FileLock(str(self.root / (job_id + '.status.lock')), timeout=10):
+            write_json(self.path(job_id), value)
+
     def _status(self, job_id):
         path = self.path(job_id)
         if not path.is_file():
@@ -154,7 +162,7 @@ class Jobs:
                          'created_at': now, 'updated_at': now, 'heartbeat_at': now,
                          'progress_at': now, 'stage_started_at': now, 'stage_seconds': {},
                          'session_id': parameters.get('session'), 'materials': {}, 'waiting_for': None}
-                write_json(self.path(job_id), value)
+                self.write_state(job_id, value)
                 active[key] = job_id
                 write_json(index_path, active)
                 command = [sys.executable, '-I', str(Path(__file__).with_name('job_worker.py')),
@@ -172,7 +180,7 @@ class Jobs:
                 except OSError as exc:
                     value.update(status='failed', stage='worker_start_failed', finished_at=time.time(),
                                  error={'type': type(exc).__name__, 'message': str(exc)})
-                    write_json(self.path(job_id), value)
+                    self.write_state(job_id, value)
                 reused = False
         result = self.result(job_id, wait_seconds)
         if result.get('job'):
@@ -227,13 +235,13 @@ class Running:
             if materials:
                 self.value['materials'].update(materials)
             self.value.update(details, updated_at=now, heartbeat_at=now, progress_at=now)
-            write_json(self.store.path(self.job_id), self.value)
+            self.store.write_state(self.job_id, self.value)
 
     def heartbeat(self):
         while not self.stop.wait(2):
             with self.lock:
                 self.value.update(heartbeat_at=time.time(), updated_at=time.time())
-                write_json(self.store.path(self.job_id), self.value)
+                self.store.write_state(self.job_id, self.value)
 
     def run(self):
         owner = FileLock(str(self.store.root / (self.job_id + '.owner.lock')))
@@ -250,7 +258,7 @@ class Running:
             except BaseException as exc:
                 self.update('failed', status='failed', finished_at=time.time(), waiting_for=None,
                             error={'type': type(exc).__name__, 'code': getattr(exc, 'code', None),
-                                   'message': str(exc)})
+                                   'message': str(exc), 'details': getattr(exc, 'details', None)})
             finally:
                 self.stop.set()
                 if thread.is_alive():

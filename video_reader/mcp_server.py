@@ -11,11 +11,17 @@ from mcp.types import ImageContent, TextContent
 from .common import UNTRUSTED
 from .reader import Reader
 from .mcp_content import pack
+from .reading_policy import READING_POLICY
 
-mcp = FastMCP("Video Reader", instructions=(
+mcp = FastMCP("Video Reader", instructions=(READING_POLICY + ' ' +
     "open/read/transcript may return a running job after a short wait; use video_job status/result with job_id, "
     "not a duplicate CLI open. CLI and MCP share job state. A completed job only delivers its first material page; "
     "follow delivery.next_cursor and actually inspect images. "
+    "Oversized reading pages may start with reading_projection (source sentences and original images); "
+    "continue canonical material_parts for full evidence and unplaced candidates. Projection counters are snapshot-local. "
+    "text_status=unverified_candidate retains suspect decoding, not verified speech. "
+    "alignment_unresolved preserves raw Qwen text without assigning a fabricated utterance time; "
+    "processing coverage or empty output does not prove silence, and unplaced candidates prevent complete review. "
     "This is the general Video Reader component. video_preview provides light images and captions without "
     "full-media download. It prefers owned cached media frames; otherwise native snapshots have approximate times. "
     "Light defaults to 5 frames; choose density=dense (48, max120) for style/storyboard/layout comparisons. "
@@ -33,7 +39,7 @@ mcp = FastMCP("Video Reader", instructions=(
     "Adaptive reading combines speech cues, scene changes and sparse timeline checks; it is an initial observation plan, not proof of task completeness. "
     "For whole-video learning, read the entire chosen speech track and necessary visual context; for a local question, bound the interval and expand when insufficient. "
     "Inspect every delivered image. Prefer video_continue with delivery.next_cursor and speech.next_cursor; cursors bind source, context, view and revision. "
-    "Oversized text/evidence uses lossless material_parts with JSON pointers and Unicode character spans. Read every fragment, never substitute a summary. "
+    "Oversized text/evidence uses lossless material_parts with JSON pointers and Unicode character spans. Follow relevant fragments for the current task; full-material claims require all fragments. "
     "Transcription returns after max_chunks=1 by default. Read ready material, then repeat the same range/source/context to process missing intervals. "
     "max_chunks=null explicitly restores a blocking full-range request. Processing, delivery, host observation, review and correctness are separate. "
     "Use video_frame for a same-session frame/cell ID or a source-pixel region; use dense/uniform/scene or exact timestamps when the task needs them. "
@@ -43,14 +49,14 @@ mcp = FastMCP("Video Reader", instructions=(
     "Use source=qwen to explicitly select the optional local Chinese Qwen GPU decoder; use the same source for transcript/read/review. "
     "New Whisper decoding has no implicit title hint; only explicit context supplies one. Old cached title-prompt tracks/reviews remain readable via their original context. "
     "auto still prefers captions; Qwen errors never switch engines or providers. "
-    "After reading the task's required speech and visuals, use video_review prepare and commit minimal faithful corrections, with evidence and reviewed IDs for every page. "
+    "Correct material transcription errors that affect the answer. Use video_review to save inspected corrections with evidence; do not require whole-transcript commits before discussion. "
     "For a local task pass review start/end and copy returned review_scope into the commit. scope_review describes that interval; review.complete still means the entire source. "
-    "Proofreading is the host agent's responsibility; do not stop at flagged errors. Never summarize, drop utterances or blindly copy OCR. "
+    "Semantic review is the host's responsibility. Review flags do not prove accuracy. Never replace raw utterances with summaries or blindly copy OCR into corrections. "
     "video_relisten genuinely re-decodes a short audio interval with a deadline and separate provenance, bypassing the baseline cache. "
     "Default reading discloses only text/times and quality flags. view=evidence retrieves originals, edits, word evidence and OCR for a requested interval; view=raw selects original text. "
     "Use progressive disclosure for follow-ups: reading text, then local evidence, then frames/relisten if unresolved. Word timestamps always refer to raw text. "
-    "Keep source/context/view consistent across video_read and video_transcript. Automatic speech OCR only computes "
-    "pending segments; reviewed text and exact-frame follow-ups reuse cached checks. Explicit verify=True or view=evidence "
+    "Keep source/context/view consistent across video_read and video_transcript. Default speech OCR reuses "
+    "cached checks without computing missing ones. Explicit verify=True or view=evidence "
     "requests missing checks. Skipped OCR is not a verified match; keep uncertainty visible. "
     "Numerical/formula snapshots include local stability evidence; exact timestamps keep their original pixels. "
     "For unresolved detail, video_read returns closer timestamps or higher resolution from the same cached video. "
@@ -341,6 +347,26 @@ def video_danmaku(source: str, segment_index: int = 1, offset: int = 0, limit: i
     and interactive overlays. Never claim all historical danmaku. Uses managed login/cache/limits; no media download.
     """
     return reader.danmaku(source, segment_index, offset, limit, offline, snapshot_id)
+
+
+@mcp.tool(structured_output=False)
+def video_tasks(action: str, item_id: str = '', parameters_json: str = '{}') -> list[TextContent | ImageContent]:
+    """Generic local tasks without Scroll/login requirements for queue and history.
+    Actions: queue-list/show/add/update/first/history/result, triage-prepare/material/content/submit/show/history,
+    batch-start/next/status/retry. item_id is a task/batch ID, or source for queue-add.
+    parameters_json uses the shared task API: state,query,limit,cursor,task,title,new_task,priority,reason,
+    revision,payload,refresh,index,offline,complete,assessment,result,sources,source.
+    queue-result needs result={summary,artifacts:[absolute_file_paths],task_scope,coverage}; complete is explicit.
+    Initial triage is a preview plus host judgment; never mark full reading from delivery.
+    These operations never send, schedule, learn preferences or install source-mentioned tools.
+    """
+    from reading_tasks.api import execute
+    parameters=json.loads(parameters_json)
+    if not isinstance(parameters,dict): raise ValueError('parameters_json must be an object')
+    result=execute(Reader(),action,item_id,**parameters)
+    if 'material' in result:
+        return [TextContent(type='text',text=json.dumps({k:v for k,v in result.items() if k!='material'},ensure_ascii=False))]+pack(result['material'])
+    return pack(result)
 
 
 def main():

@@ -34,25 +34,32 @@ def configure(config_path, payload):
 
 
 def dispatch(reader, args):
-    if args.action.startswith('batch-'):
-        from .batch import Batch
-        batch = Batch(reader, offline=args.offline)
-        if args.action == 'batch-start':
-            if not args.payload:
-                raise ReaderError('batch-start requires --payload with sources, optional task/source')
-            return batch.start(**read_json(args.payload))
-        if args.action == 'batch-next':
-            return batch.next(args.value, args.cursor)
-        if args.action == 'batch-retry':
-            return batch.retry(args.value, args.index)
-        return batch.status(args.value)
+    if args.action in ('report','report-send'):
+        from .reports import build,send
+        options=read_json(args.payload) if args.payload else {}
+        if args.value:
+            options['item_ids' if args.value.startswith('q_') else 'message_id']=([args.value] if args.value.startswith('q_') else args.value)
+        report=build(reader,**options)
+        if args.action=='report-send':
+            if not args.deliver: raise ReaderError('Explicit report sending requires --deliver')
+            return send(reader,report)
+        return report
+    from reading_tasks.api import ACTIONS,from_namespace
+    if args.action in ACTIONS:
+        return from_namespace(reader,args)
+    if args.action.startswith('inbox-'):
+        return dispatch_inbox_queue(reader,args)
     if args.action == 'config':
         if not args.payload:
             return {'settings': reader.config['agent']}
         return configure(args.config, read_json(args.payload))
     agent = Agent(reader, offline=args.offline)
     if args.action == 'status':
-        return agent.status()
+        return agent.status(args.value or None)
+    if args.action == 'recover':
+        if args.deliver:
+            raise ReaderError('Recovery is archive-only; it never sends messages')
+        return agent.recover(args.value)
     if args.action == 'resume':
         return agent.platform.resume()
     if args.action == 'candidates':
@@ -105,6 +112,35 @@ def dispatch(reader, args):
         return {'status': 'watch_stopped'}
 
 
+from reading_tasks.api import ACTIONS as TASK_ACTIONS
+from reading_tasks.cli import task_options
+QUEUE_ACTIONS=(*TASK_ACTIONS,'inbox-status','inbox-sync','inbox-history','inbox-enqueue')
+
+
+def queue_arguments(parser):
+    task_options(parser)
+    parser.add_argument('--max-pages',type=int,default=3)
+    parser.add_argument('--page-size',type=int,default=50)
+
+
+def dispatch_inbox_queue(reader, args):
+    from .queue import Queue
+    from .inbox import Inbox, configured_sender
+    if args.deliver:
+        raise ReaderError('Inbox and queue operations do not send messages or start reading')
+    queue = Queue.from_settings(reader.config, reader.config_path)
+    inbox = Inbox(queue, configured_sender(reader), config=reader.config)
+    if args.action == 'inbox-sync':
+        if args.offline:
+            raise ReaderError('Inbox sync requires the configured conversation; offline queries use inbox-history/status')
+        return inbox.sync(max_pages=args.max_pages, page_size=args.page_size)
+    if args.action == 'inbox-history':
+        return inbox.history(message_id=args.value or None, query=args.query, limit=args.limit, cursor=args.cursor)
+    if args.action == 'inbox-enqueue':
+        return inbox.enqueue(args.value, index=args.index or 0, task=args.task)
+    return inbox.status()
+
+
 def main():
     from video_reader.vendor.runtime import configure_stdio
     configure_stdio()
@@ -114,8 +150,8 @@ def main():
     parser = argparse.ArgumentParser(description='Scroll Agent: personal video workflows using Video Reader')
     parser.add_argument('--config')
     parser.add_argument('action', choices=('status', 'config', 'candidates', 'preview', 'prepare', 'finish',
-                        'run', 'daily', 'deliver', 'test-message', 'memory', 'forget', 'tick', 'watch', 'resume',
-                        'batch-start', 'batch-next', 'batch-status', 'batch-retry'))
+                        'run', 'daily', 'deliver', 'test-message', 'memory', 'forget', 'tick', 'watch', 'resume', 'recover', 'report', 'report-send',
+                        'batch-start', 'batch-next', 'batch-status', 'batch-retry', *QUEUE_ACTIONS))
     parser.add_argument('value', nargs='?', default='')
     parser.add_argument('--query', default='')
     parser.add_argument('--payload')
@@ -128,11 +164,12 @@ def main():
     parser.add_argument('--poll-seconds', type=float, default=30)
     parser.add_argument('--cursor')
     parser.add_argument('--index', type=int)
+    queue_arguments(parser)
     args = parser.parse_args()
     try:
         result = dispatch(Reader(args.config), args)
         print(json.dumps(result, ensure_ascii=False, allow_nan=False))
-        if result.get('status') in ('failed', 'acquisition_failed') or result.get('delivery', {}).get('status') in ('rejected', 'uncertain'):
+        if result.get('status') in ('failed', 'interrupted', 'acquisition_failed') or result.get('delivery', {}).get('status') in ('rejected', 'uncertain'):
             return 1
         return 0
     except (ReaderError, OSError, ValueError) as error:

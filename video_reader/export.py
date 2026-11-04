@@ -62,7 +62,7 @@ def export(reader, session, destination, revision, source='auto', context=None, 
         canonical = data['source']['canonical'] if data['source']['platform'] != 'local' else Path(data['source']['canonical']).name
         record = portable({'schema': 1, 'session_id': session, 'title': data['title'], 'source': canonical,
             'platform': data['source']['platform'], 'metadata': data['metadata'],
-            'speech_source': {k: speech.get(k) for k in ('source', 'track', 'profile', 'coverage', 'quality')},
+            'speech_source': {k: speech.get(k) for k in ('source', 'track', 'profile', 'coverage', 'quality', 'recognition_assessment', 'unplaced_candidates')},
             'snapshot_id': snapshot, 'material_snapshot_id': review.material_id(speech), 'revision': revision, 'review': coverage,
             'segments': evidence, 'review_state': selected_state, 'reads': reads, 'source_content_policy': UNTRUSTED})
         if include_danmaku:
@@ -78,7 +78,7 @@ def export(reader, session, destination, revision, source='auto', context=None, 
         write_json(destination / 'evidence.json', record)
         rows = []
         for segment in record['segments']:
-            rows.append(f'<article id="{html.escape(segment["segment_id"])}"><p><b>{segment["start"]:.3f}–{segment["end"]:.3f}s</b> · {html.escape(segment["review_status"])}<br>{html.escape(segment["text"])}</p>' +
+            rows.append(f'<article id="{html.escape(segment["segment_id"])}"><p><b>{segment["start"]:.3f}–{segment["end"]:.3f}s</b> · {html.escape(segment["review_status"])} · {html.escape(segment.get("text_status", "source_text"))}<br>{html.escape(segment["text"])}</p>' +
                 (f'<details><summary>原文与修订证据</summary><pre>{html.escape(json.dumps(segment, ensure_ascii=False, indent=2))}</pre></details>' if segment.get('correction') or segment.get('screen_verification') else '') + '</article>')
         images = []
         for read in record['reads']:
@@ -87,6 +87,9 @@ def export(reader, session, destination, revision, source='auto', context=None, 
                     images.append(f'<figure><img loading="lazy" src="{html.escape(frame["path"])}"><figcaption>{html.escape(frame["id"])} · {html.escape(str(frame.get("time", frame.get("timestamp_seconds"))))}</figcaption></figure>')
         page = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Video evidence</title><style>body{max-width:1050px;margin:32px auto;padding:0 20px;font:17px/1.65 system-ui}img{max-width:100%}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{border-bottom:1px solid #ddd}figure{margin:24px 0}</style>'
         page += f'<h1>{html.escape(data["title"])}</h1><p>Snapshot {snapshot} · revision {revision} · {html.escape(source)}</p><p>完整材料：<a href="evidence.json">evidence.json</a>。取样画面不代表连续覆盖，已交付不代表已观察，已校对不保证绝对准确。</p>'
+        for candidate in record['speech_source'].get('unplaced_candidates') or []:
+            rows.append('<article><b>Unplaced model candidate · timing unresolved</b><pre>' +
+                        html.escape(candidate['raw_text']) + '</pre><p>This is not confirmed speech within the requested interval.</p></article>')
         audience = []
         if include_danmaku:
             audience.append('<h2>观众弹幕（可选材料，非旁白）</h2>')
