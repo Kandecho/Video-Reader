@@ -1,5 +1,7 @@
 # DSH 接入与发现路径考察
 
+阶段说明：本页保留实施前的合约与源码考察。其后已完成本机 DSH 升级、手动接入实测和 About/topics 修改，当前状态见[实测](../../validation/dsh-integration-20261104/report-source.md)及[呈现与检索](../dsh-presentation-20261104/report-source.md)。下文“尚未”描述的是前一阶段。
+
 日期：2026-11-04。结论：**现有 Reader 可以沿官方 MCP 客户端设计薄接入；若希望被 DSH 的插件检索发现，还需要可安装的 bundle 和索引收录。** 本轮完成源码核查、Reader 端合约测量和配置草案，尚未在 DSH 中安装或完成端到端验收。
 
 ## 依据与适用版本

@@ -4,7 +4,9 @@
 
 ## 当前从哪里继续
 
-最新任务为面向人类整理 README 等入口，并先考察 DSH 适配，再讨论 Agent 如何检索本仓库。README、文档首页、首次使用和安装参考已按使用路径整理；命令与诊断细节保留在参考文档。DSH [本批考察](../research/dsh-adaptation-20261104/report-source.md)固定官方源码，核对本机 0.2.1-rc.5 包并完成 Reader 端合约测量。当前建议为 Reader-only stdio 薄接入；正式 bundle、DSH 端到端验收、索引收录和通用 GEO 动作尚未实施。后续先讨论目标检索入口及成功标准，不把研究草案当成已安装功能。
+最新任务为仓库对外呈现、真实检索基线与 DSH 正式验证。About/topics 已更新并读回；限定本仓库的默认 bilibili mcp 查询由未命中变为命中，宽泛 B 站/YouTube 查询仍未进当次前 30。回查旧清单并复查 10 个 dsh-* 仓库，固定深读 5 个的首页、包和分发入口，见[呈现与检索](../research/dsh-presentation-20261104/report-source.md)。后续讨论短演示、可安装薄 bundle 和目标索引，不自动发布 npm 或提交目录。
+
+本机 DSH 已从 0.2.1-rc.5 升至官方 next 0.2.2-rc.1，组件内保存启动文件/配置备份与旧版回退命令。独立 headless profile 接现有 Reader-only stdio，三次实测均退出 0：AIRI 阅读、随机码读图与字幕分页、同一 DSH/Reader 会话精确帧续读。详见[实测](../validation/dsh-integration-20261104/report-source.md)及[手动接入](dsh.md)。未改生产 web patch，没有正式 bundle 或索引收录；web/desktop GUI 和其它模型未验收。前期[官方源码考察](../research/dsh-adaptation-20261104/report-source.md)保留当时证据，不作为当前未集成状态。
 
 本轮按用户要求完成原定发布收尾与候选验收，原创代码已选择 MIT。[v0.10.0rc6 源码预发布版](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6) 已公开，标签源码为 84e151c，附 142 文件源码 ZIP 和 SHA256SUMS，服务端摘要一致。当前入口统一在 README；完整 334 项及最终分发回归通过，范围和证据见 [发布验收](../validation/release-20261104/report-source.md)。首版沿用干净隔离环境、代表任务及已测宿主适配范围，不追加跨机、独立初校或后台消费门槛。当前授权已收尾，后续问题按用户新任务接续。
 

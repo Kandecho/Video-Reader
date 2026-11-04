@@ -201,7 +201,9 @@ Reader 分支仍需把初校职责和回答时机确定清楚。用户不需要�
 
 README 按用途、开始使用和查阅路径整理，首次安装与自然语言使用单列指南，命令参数和诊断保留在参考文档。见 [文档首页](../docs/README.md)。本轮为文档维护与研究，不改已发布 rc6 的资产或支持声明。
 
-DSH 官方源码固定为 8bd0733，核对本机 0.2.1-rc.5 包；Reader 端实际测量 20 工具、6,971 字节服务指令及规范 JPEG 输出，符合所查 MCP 客户端约束。尚未安装 DSH 适配器或完成宿主模型看图等端到端验收。接入建议为共享核心的 Reader-only stdio 配置；DSH 插件发现另需可安装 bundle、SemVer 版本及目标索引收录。详见 [考察](../research/dsh-adaptation-20261104/report-source.md)。后续先讨论目标检索入口与成功标准，不自动实施 bundle 发布、索引提交或 GitHub 元数据修改。
+前期 DSH 官方源码固定为 8bd0733，核对本机 0.2.1-rc.5 包；Reader 端实际测量 20 工具、6,971 字节服务指令及规范 JPEG 输出。后经用户授权，本机升至官方 next 0.2.2-rc.1，独立 headless profile 的 Reader-only stdio 完成 AIRI 阅读、随机码原生读图、普通 job、字幕游标、会话恢复和精确取帧。三次运行均退出 0。见 [接入指南](../docs/dsh.md)、[实测](../validation/dsh-integration-20261104/report-source.md)和[机制考察](../research/dsh-adaptation-20261104/report-source.md)。尚无 DSH npm bundle、web/desktop GUI 验收、跨系统/其它模型验收或目标索引收录。
+
+About/topics 已按同意的草案修改；保留 7 条真实 GitHub 查询前后基线。限定默认字段查询由未命中变为命中；宽泛 B 站和 YouTube 查询均未进返回的前 30。另回查 10 个 dsh-* 仓库的对外呈现，5 个固定提交深读，核对 npm 与 Release，见 [呈现与检索](../research/dsh-presentation-20261104/report-source.md)。后续讨论短演示、可安装薄 bundle 和一个具体目标索引；建议不自动授权发布、目录提交或社区推广。
 
 ## G 查阅入口
 

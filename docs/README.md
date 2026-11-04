@@ -8,6 +8,7 @@
 |---|---|
 | 安装依赖、配置模型、平台登录、调整目录 | [安装与配置](installation.md) |
 | 查命令或工具参数、跟进长任务 | [CLI 与 MCP 参考](reader-reference.md) |
+| 在 DSH 中试用手动 MCP 接入 | [DSH 接入](dsh.md) |
 | 了解分页、续读、原文与校对、材料导出 | [材料与续读](material-delivery.md) |
 | 作品列表、分镜预览和批量预览 | [列表与预览](material-reference.md) |
 | 管理队列、附言、任务结果及历史 | [队列与历史](tasks.md) |
@@ -27,6 +28,6 @@
 
 维护者可继续查 [架构](architecture.md)、[知识路由](registry.md)、[交接](handoff.md)及[有效决定](decisions.md)。带日期的研究和验收记录用于回查当时事实，不作为首次使用步骤。
 
-[DSH 接入与发现路径考察](https://github.com/Kandecho/Video-Reader/blob/main/research/dsh-adaptation-20261104/report-source.md)记录当前接入条件与索引机制，尚未列为已集成能力。
+[DSH 实测](https://github.com/Kandecho/Video-Reader/blob/main/validation/dsh-integration-20261104/report-source.md)记录本机接入范围；[同类仓库的呈现与传播考察](https://github.com/Kandecho/Video-Reader/blob/main/research/dsh-presentation-20261104/report-source.md)记录 About/topics、安装入口和真实检索基线。手动接入通过不等于 npm bundle 或市场收录已完成。
 
 返回 [项目首页](../README.md)。

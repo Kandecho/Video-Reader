@@ -1,0 +1,283 @@
+{
+  "date": "2026-11-04",
+  "origin": "Revisit 2026-10-31 dsh-video-ecosystem study; outward presentation only",
+  "metadata_rechecked": 10,
+  "source_samples": [
+    {
+      "repository": "Sacredbluedragon/dsh-bili-watch",
+      "description": "DSH 插件 / CLI 工具：把 B 站视频解析成模型可消费的结构化内容（元数据、评论、弹幕、AI 字幕、本地 ASR 转写、抽帧 OCR）",
+      "topics": [
+        "asr",
+        "bilibili",
+        "dsh-plugin",
+        "ocr",
+        "video"
+      ],
+      "pin": "2a81a45abb05a5de9dec2be94e20a3b8b7667357",
+      "files_sha256": {
+        "README.md": "317bc7a178e6b4eb42bbdc4d22d7733d8838cfee6e67a16fec124bb9e07ad4d4",
+        "package.json": "f4a9c67483c0e6e9b0f229f523bfc6a712ab2f6e197111e09cb5ac48bd9862cc"
+      },
+      "source_urls": [
+        "https://github.com/Sacredbluedragon/dsh-bili-watch/blob/2a81a45abb05a5de9dec2be94e20a3b8b7667357/README.md",
+        "https://github.com/Sacredbluedragon/dsh-bili-watch/blob/2a81a45abb05a5de9dec2be94e20a3b8b7667357/package.json"
+      ]
+    },
+    {
+      "repository": "Aurum807/dsh-bilibili-video-summary",
+      "description": "A DeepSeek Harness plugin that auto-summarizes a Bilibili video when you send nothing but its link",
+      "topics": [
+        "bilibili",
+        "deepseek-harness",
+        "dsh-plugin",
+        "transcript",
+        "video-summary",
+        "yt-dlp"
+      ],
+      "pin": "e3103a36857d4d8e7d43e6f308d6035c1bacdc07",
+      "files_sha256": {
+        "README.md": "d45f50b15dd923df098e23687f7ebd597ca44c45d746841e7bb28a97f79172b3",
+        "package.json": "159dbc72ec4a8ef7d460569fb30e3afc4651aa93884f10ec469ec8ff8ae64718"
+      },
+      "source_urls": [
+        "https://github.com/Aurum807/dsh-bilibili-video-summary/blob/e3103a36857d4d8e7d43e6f308d6035c1bacdc07/README.md",
+        "https://github.com/Aurum807/dsh-bilibili-video-summary/blob/e3103a36857d4d8e7d43e6f308d6035c1bacdc07/package.json"
+      ]
+    },
+    {
+      "repository": "CZX2244/dsh-bilibili",
+      "description": null,
+      "topics": [
+        "dsh-plugin"
+      ],
+      "pin": "c53af9dee30cf04ee759ac6857d5803196fb2a95",
+      "files_sha256": {
+        "README.md": "250699ac30b7b3e5767de18caf047732f46712b19afce65fdad9bee4eca049d9",
+        "package.json": "38982df0cf3121f20e6ab4dc76751d46948687d7057ce0b7a53375043755c183"
+      },
+      "source_urls": [
+        "https://github.com/CZX2244/dsh-bilibili/blob/c53af9dee30cf04ee759ac6857d5803196fb2a95/README.md",
+        "https://github.com/CZX2244/dsh-bilibili/blob/c53af9dee30cf04ee759ac6857d5803196fb2a95/package.json"
+      ]
+    },
+    {
+      "repository": "rudyz666/dsh-bili-asr",
+      "description": "解析 B站视频链接，提取完整脚本/字幕：优先字幕轨，无字幕用本地 whisper 转写，导出 SRT/TXT/JSON。DeepSeek Harness 插件，跨平台 Windows/macOS/Linux（纯 Node）。",
+      "topics": [
+        "asr",
+        "bilibili",
+        "deepseek-harness",
+        "dsh-plugin",
+        "subtitle",
+        "transcript",
+        "whisper"
+      ],
+      "pin": null
+    },
+    {
+      "repository": "moxingovo/dsh-bilibili",
+      "description": "DeepSeek Harness plugin: Bilibili video search, metadata, and subtitle transcripts (bilibili_search / bilibili_video / bilibili_subtitles) · DeepSeek Harness 插件:B 站视频检索、元数据与字幕文稿,匿名可用,可选 SESSDATA 解锁登录字幕",
+      "topics": [
+        "agent-tool",
+        "bilibili",
+        "deepseek-harness",
+        "dsh-plugin",
+        "subtitles",
+        "video"
+      ],
+      "pin": null
+    },
+    {
+      "repository": "xiaoguangningyu/dsh-bilibili-kit",
+      "description": "Bilibili 字幕/简介读取 DSH 插件：扫码登录保存登录态，视频标题、简介、分P、字幕一次性取回；设置页内置面板",
+      "topics": [],
+      "pin": null
+    },
+    {
+      "repository": "vlln/dsh-video2text",
+      "description": "视频链接转文案的 dsh 侧栏工作台：播放器 + 逐字稿 + 发布导出，自带 video2text skill",
+      "topics": [
+        "asr",
+        "bilibili",
+        "douyin",
+        "dsh",
+        "dsh-plugin",
+        "transcript",
+        "video",
+        "xiaohongshu"
+      ],
+      "pin": "66f1e34551aa2d931472fddeff674845f90b8360",
+      "files_sha256": {
+        "README.md": "87690350b8d73e2c84833552afdfeb04991f7e29a403d35cbc5524177294d88f",
+        "package.json": "d15c12ff275c1da6c0f69631c4faac40b3841c5b537458d35a4aac2424518637"
+      },
+      "source_urls": [
+        "https://github.com/vlln/dsh-video2text/blob/66f1e34551aa2d931472fddeff674845f90b8360/README.md",
+        "https://github.com/vlln/dsh-video2text/blob/66f1e34551aa2d931472fddeff674845f90b8360/package.json"
+      ]
+    },
+    {
+      "repository": "zz12hui/dsh-bili-video-summary",
+      "description": "B 站视频一键总结 DSH 插件：本地 faster-whisper 转写，自动生成解析 md 与一图读懂 PNG。",
+      "topics": [
+        "asr",
+        "bilibili",
+        "bilibili-api",
+        "cordis",
+        "deepseek-harness",
+        "dsh",
+        "dsh-plugin",
+        "faster-whisper",
+        "infographic",
+        "python",
+        "summary",
+        "whisper"
+      ],
+      "pin": null
+    },
+    {
+      "repository": "c1overzz/dsh-bili-scroll",
+      "description": "DSH 插件：每天替你刷一轮 B站，读字幕挑出值得的、写一份日报，值得的 @ 你",
+      "topics": [
+        "dsh-plugin"
+      ],
+      "pin": "f883d79fa536a2d1610dbb89796e6f48266103d7",
+      "files_sha256": {
+        "README.md": "8896033d41f9c46bc09238b3145164a3ba59a6d72d4fab7a2aa8936b61b7d56f",
+        "package.json": "4f3ce93761d225518634931dbcf0ff08eee47fd71072b658ada72aaa40bf43c3"
+      },
+      "source_urls": [
+        "https://github.com/c1overzz/dsh-bili-scroll/blob/f883d79fa536a2d1610dbb89796e6f48266103d7/README.md",
+        "https://github.com/c1overzz/dsh-bili-scroll/blob/f883d79fa536a2d1610dbb89796e6f48266103d7/package.json"
+      ]
+    },
+    {
+      "repository": "icyaaaww/dsh-bili-vision",
+      "description": "DSH Bilibili video understanding plugin: timestamped frames, local ASR/OCR, and optional independent vision model.",
+      "topics": [
+        "bilibili",
+        "deepseek-harness",
+        "dsh-plugin",
+        "video-understanding"
+      ],
+      "pin": null
+    }
+  ],
+  "search": {
+    "page_size": 30,
+    "page": 1,
+    "rows": [
+      {
+        "query": "repo:Kandecho/Video-Reader bilibili mcp",
+        "before_returned": 0,
+        "after_returned": 1,
+        "before_own_position": null,
+        "after_own_position": 1
+      },
+      {
+        "query": "repo:Kandecho/Video-Reader bilibili mcp in:readme",
+        "before_returned": 1,
+        "after_returned": 1,
+        "before_own_position": 1,
+        "after_own_position": 1
+      },
+      {
+        "query": "bilibili mcp video is:public",
+        "before_returned": 30,
+        "after_returned": 30,
+        "before_own_position": null,
+        "after_own_position": null
+      },
+      {
+        "query": "youtube mcp video is:public",
+        "before_returned": 30,
+        "after_returned": 30,
+        "before_own_position": null,
+        "after_own_position": null
+      },
+      {
+        "query": "\"video reader\" mcp is:public",
+        "before_returned": 7,
+        "after_returned": 8,
+        "before_own_position": null,
+        "after_own_position": 5
+      },
+      {
+        "query": "B站 视频 mcp is:public",
+        "before_returned": 30,
+        "after_returned": 30,
+        "before_own_position": null,
+        "after_own_position": null
+      },
+      {
+        "query": "bilibili timestamp frames is:public",
+        "before_returned": 0,
+        "after_returned": 0,
+        "before_own_position": null,
+        "after_own_position": null
+      }
+    ],
+    "note": "Positions are within the returned first page at observation time, not global or stable ranks."
+  },
+  "web_baseline": {
+    "queries": [
+      "\"Kandecho/Video-Reader\"",
+      "\"MCP\" \"Bilibili\" \"timestamped\" \"Video Reader\"",
+      "\"Video-Reader\" \"B站\""
+    ],
+    "own_repo_in_combined_returned_results": false,
+    "per_query_rank_not_measured": true
+  },
+  "topics": [
+    "mcp-server",
+    "video-reader",
+    "bilibili",
+    "youtube",
+    "ai-agents",
+    "local-first"
+  ],
+  "description": "MCP video reader for Bilibili, YouTube and local files: timestamped transcripts, frame inspection and resumable reading, with local processing.",
+  "npm_snapshot": [
+    {
+      "package": "dsh-bili-watch",
+      "metadata": {
+        "version": "0.4.6",
+        "repository.url": "git+https://github.com/Sacredbluedragon/dsh-bili-watch.git",
+        "dist-tags": {
+          "beta": "0.2.2",
+          "latest": "0.4.6"
+        }
+      }
+    },
+    {
+      "package": "dsh-bilibili-video-summary",
+      "metadata": {
+        "version": "0.3.4",
+        "repository.url": "git+https://github.com/Aurum807/dsh-bilibili-video-summary.git",
+        "dist-tags": {
+          "latest": "0.3.4"
+        }
+      }
+    },
+    {
+      "package": "dsh-video2text",
+      "metadata": {
+        "version": "0.2.2",
+        "repository.url": "git+https://github.com/vlln/dsh-video2text.git",
+        "dist-tags": {
+          "latest": "0.2.2"
+        }
+      }
+    },
+    {
+      "package": "dsh-bili-scroll",
+      "metadata": {
+        "version": "2.5.0",
+        "repository.url": "git+https://github.com/c1overzz/dsh-bili-scroll.git",
+        "dist-tags": {
+          "latest": "2.5.0"
+        }
+      }
+    }
+  ]
+}

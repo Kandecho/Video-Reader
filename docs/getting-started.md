@@ -52,7 +52,7 @@ claude plugin install video-reader@video-reader-local
 
 完成后让助手重新加载插件和 MCP 连接，再开始视频讨论。接入文件会指向这次安装的 Reader；模型和材料仍留在同一安装中。
 
-如果使用其他支持 MCP 的助手，或需要检查接入细节，见 [操作与接入参考](reader-reference.md)。DSH 的接入目前在考察阶段，尚未列为正式支持。
+如果使用其他支持 MCP 的助手，或需要检查接入细节，见 [操作与接入参考](reader-reference.md)。DSH 可按 [手动 MCP 接入指南](dsh.md)试用；已验证本机 0.2.2-rc.1 的 CLI 读图与续读，尚未提供一条命令安装的 DSH bundle。
 
 ## 4. 读第一条视频
 
