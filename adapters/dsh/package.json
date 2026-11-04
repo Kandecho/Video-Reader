@@ -1,0 +1,21 @@
+{
+  "name": "dsh-video-reader",
+  "version": "0.1.0",
+  "description": "Video Reader + Scroll Agent for DSH: timestamped video reading, independent Bilibili account workflows, inbox, queues and history via one shared local installation.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Kandecho",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kandecho/Video-Reader.git",
+    "directory": "adapters/dsh"
+  },
+  "homepage": "https://github.com/Kandecho/Video-Reader#readme",
+  "bugs": { "url": "https://github.com/Kandecho/Video-Reader/issues" },
+  "keywords": ["dsh", "dsh-plugin", "deepseek-harness", "mcp", "bilibili", "youtube", "video-reader", "scroll-agent", "queue", "history"],
+  "engines": { "node": ">=22", "dsh": ">=0.2.2-rc.1 <0.3.0-0" },
+  "os": ["win32"],
+  "exports": { "./locale/*.json": "./locale/*.json", "./package.json": "./package.json" },
+  "files": ["cordis.patch.yml", "locale/*.json", "README.md", "LICENSE"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}

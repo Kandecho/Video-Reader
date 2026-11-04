@@ -14,7 +14,8 @@
 | 当前接续 | [handoff](handoff.md) | 下一次任务先读；六项任务已清理，架构中高项修复及结果汇报已接通；后台消费尚未接入 |
 | 整体架构与边界检查 | [当前架构](architecture.md)及[修复前检查](architecture-20261104.md) | Reader/通用任务/Scroll 的当前职责、状态与存储，以及修复和保留项 |
 | 面向使用者的文档 | [文档首页](README.md)、[首次使用](getting-started.md) | 清楚区分人类使用步骤、参数参考和开发维护入口 |
-| DSH 接入与 Agent 发现 | [手动接入](dsh.md)、[实测](../validation/dsh-integration-20261104/report-source.md)、[同类呈现与检索](../research/dsh-presentation-20261104/report-source.md) | 查本机 DSH 升级、读图/接续、About/topics 与检索基线；薄 bundle 和索引收录尚未实施；机制来源见[前期考察](../research/dsh-adaptation-20261104/report-source.md) |
+| DSH 接入与 Agent 发现 | [整包薄适配](dsh.md)、[薄包验证](../validation/dsh-bundle-20261104/report-source.md)、[前期实测](../validation/dsh-integration-20261104/report-source.md)、[呈现与检索](../research/dsh-presentation-20261104/report-source.md) | 查整包安装、Reader/队列/Scroll 调用与检索基线；索引收录和 npm 尚未实施 |
+| 对外能力状态与相关实现 | [能力状态](capabilities.md)、[相关项目](related-projects.md) | 真实可用、试用与未完成分别说明；独立 B 站账号和授权私信已用，不作整体稳定性或竞品排名承诺 |
 
 ## 操作与运行
 

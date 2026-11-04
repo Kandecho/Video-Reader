@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "视频阅读 Video Reader + Scroll",
+    "description": "读取 B 站、YouTube 和本地视频，带时间点追问文字与画面。整包接入通用队列/历史、Scroll 独立 B 站账号、私信收件与授权投递。复用已安装核心；定时工作流仍在试用。"
+  }
+}

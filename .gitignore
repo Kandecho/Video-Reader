@@ -25,6 +25,7 @@ research/asr-engine-20261021/audio/
 *.mp3
 *.wav
 *.zip
+*.tgz
 *.safetensors
 *.onnx
 .video-reader-install.json

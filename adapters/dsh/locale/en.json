@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Video Reader + Scroll Agent",
+    "description": "Read Bilibili, YouTube and local videos with timestamped text and images. Includes shared queues/history and Scroll's independent Bilibili account, inbox and authorized delivery workflows. Reuses an existing local installation; scheduled workflows remain in trial."
+  }
+}

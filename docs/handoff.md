@@ -4,9 +4,13 @@
 
 ## 当前从哪里继续
 
-最新任务为仓库对外呈现、真实检索基线与 DSH 正式验证。About/topics 已更新并读回；限定本仓库的默认 bilibili mcp 查询由未命中变为命中，宽泛 B 站/YouTube 查询仍未进当次前 30。回查旧清单并复查 10 个 dsh-* 仓库，固定深读 5 个的首页、包和分发入口，见[呈现与检索](../research/dsh-presentation-20261104/report-source.md)。后续讨论短演示、可安装薄 bundle 和目标索引，不自动发布 npm 或提交目录。
+最新确认：发布仍按整包，包含 Reader、独立 reading_tasks 和 Scroll，不因部分自动化试用而排除 Scroll。DSH 0.1.0 薄包已完成 tgz 本地安装及两个 MCP 实际调用、队列查询、原生读图和中文/空格核心路径验证；同一 Release 提供整包源码与薄包，见[安装指南](dsh.md)及[本批证据](../validation/dsh-bundle-20261104/report-source.md)。当前核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5，原发布资产不覆盖。
 
-本机 DSH 已从 0.2.1-rc.5 升至官方 next 0.2.2-rc.1，组件内保存启动文件/配置备份与旧版回退命令。独立 headless profile 接现有 Reader-only stdio，三次实测均退出 0：AIRI 阅读、随机码读图与字幕分页、同一 DSH/Reader 会话精确帧续读。详见[实测](../validation/dsh-integration-20261104/report-source.md)及[手动接入](dsh.md)。未改生产 web patch，没有正式 bundle 或索引收录；web/desktop GUI 和其它模型未验收。前期[官方源码考察](../research/dsh-adaptation-20261104/report-source.md)保留当时证据，不作为当前未集成状态。
+README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](capabilities.md)区分可用、试用与尚未接入；[相关项目](related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；未发布 npm 或提交插件索引。
+
+About/topics 已更新；限定本仓库的默认 bilibili mcp 查询由未命中变为命中，宽泛 B 站/YouTube 查询仍未进当次前 30。复查 10 个 dsh-* 仓库并固定深读 5 个，见[呈现与检索](../research/dsh-presentation-20261104/report-source.md)。短演示与目标索引仍待讨论。
+
+本机 DSH 已从 0.2.1-rc.5 升至官方 next 0.2.2-rc.1，组件内保存启动文件/配置备份与回退命令；前期 Reader 手动接入、精确帧和同一会话恢复见[实测](../validation/dsh-integration-20261104/report-source.md)。本批整包安装使用独立验证 profile，未改生产 web patch；web/desktop GUI 和其它模型未验收。
 
 本轮按用户要求完成原定发布收尾与候选验收，原创代码已选择 MIT。[v0.10.0rc6 源码预发布版](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6) 已公开，标签源码为 84e151c，附 142 文件源码 ZIP 和 SHA256SUMS，服务端摘要一致。当前入口统一在 README；完整 334 项及最终分发回归通过，范围和证据见 [发布验收](../validation/release-20261104/report-source.md)。首版沿用干净隔离环境、代表任务及已测宿主适配范围，不追加跨机、独立初校或后台消费门槛。当前授权已收尾，后续问题按用户新任务接续。
 

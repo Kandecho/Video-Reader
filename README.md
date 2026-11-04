@@ -2,9 +2,9 @@
 
 把 Bilibili、YouTube 和本地视频交给你正在用的 AI 助手阅读：整理内容、核对画面，或带着时间点继续追问。
 
-Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Claude Code；理解和回答由助手完成。你可以直接贴链接提问，不必先生成笔记。
+Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Claude Code 和 DSH；理解和回答由助手完成。你可以直接贴链接提问，不必先生成笔记。
 
-**[开始使用](docs/getting-started.md) · [下载 0.10.0rc6](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6) · [文档](docs/README.md)**
+**[开始使用](docs/getting-started.md) · [下载整包](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0) · [文档](docs/README.md)**
 
 ## 可以用来做什么
 
@@ -13,6 +13,8 @@ Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Cl
 - **接着讨论或保存**：“继续上次没看完的部分，把引用的画面和原话一起导出。”
 
 还可以按主题找 B 站视频、预览分镜，以及按需读取评论、回复和弹幕。长视频可以分次阅读，已取得的材料可继续使用。
+
+整包还包含**通用队列与历史**、**Scroll 个人工作流**。Scroll 可给组件单独登录 B 站小号，使用小号首页推荐，与主号收发授权私信、接收转发视频并入队。这些能力已有真实使用；定时工作流等仍在试用，常驻收件和持续后台阅读尚未接入。详见[能力状态](docs/capabilities.md)。
 
 ## 开始使用
 
@@ -40,13 +42,15 @@ Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Cl
 | 你想做什么 | 从这里开始 |
 |---|---|
 | 第一次安装、接入助手、读一条视频 | [首次使用](docs/getting-started.md) |
+| 在 DSH 中安装整包薄适配 | [DSH 接入](docs/dsh.md) |
+| 区分可用能力、试用部分与未完成项 | [能力状态](docs/capabilities.md) |
 | 设置模型、登录或调整文件位置 | [安装与配置](docs/installation.md) |
 | 查命令、工具参数、续读和导出 | [CLI 与 MCP 参考](docs/reader-reference.md) |
 | 管理待读视频、附言和结果 | [队列与历史](docs/tasks.md) |
 | 使用个人推荐、私信收件和授权投递 | [Scroll](docs/scroll-reference.md) |
 | 报告问题或参与开发 | [贡献与复现](CONTRIBUTING.md) |
 
-Scroll 是可选的个人工作流，普通读片无需配置它。[文档首页](docs/README.md)还列出了完整参考和维护入口。
+Scroll 可按需使用，普通读片无需配置个人投递。[文档首页](docs/README.md)列出完整入口；与 dsh-bili-scroll 等实现的不同侧重见[相关项目](docs/related-projects.md)。
 
 ## 许可
 

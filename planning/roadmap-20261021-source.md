@@ -205,6 +205,12 @@ README 按用途、开始使用和查阅路径整理，首次安装与自然语�
 
 About/topics 已按同意的草案修改；保留 7 条真实 GitHub 查询前后基线。限定默认字段查询由未命中变为命中；宽泛 B 站和 YouTube 查询均未进返回的前 30。另回查 10 个 dsh-* 仓库的对外呈现，5 个固定提交深读，核对 npm 与 Release，见 [呈现与检索](../research/dsh-presentation-20261104/report-source.md)。后续讨论短演示、可安装薄 bundle 和一个具体目标索引；建议不自动授权发布、目录提交或社区推广。
 
+### 8. DSH 整包薄适配与能力状态（2026-11-04）
+
+用户明确按整包发布，Reader、独立通用队列/历史及 Scroll 全部纳入，成熟度通过说明区分。新增 adapters/dsh 0.1.0 配置型 bundle，连接现有两个 MCP；队列仍归 reading_tasks，经 Reader video_tasks 暴露。实装 tgz、双命名空间调用、随机码原生图像、字幕分页及中文/空格核心路径通过；源码分发与原宿主适配 8 项回归通过。源码与薄包同一 Release，核心仍为 rc6，旧发布资产不覆盖。见[DSH 接入](../docs/dsh.md)和[本批证据](../validation/dsh-bundle-20261104/report-source.md)。
+
+对外说明明确独立 B 站账号、小号首页和主号授权私信已有真实使用；定时日试用仍有故障记录，常驻收件、持续后台消费和独立初校仍未接入。见[能力状态](../docs/capabilities.md)及[相关项目](../docs/related-projects.md)。没有新调度或发送；npm 与目标索引收录仍未实施。上节记录的是 Reader-only 实测阶段，整包接入由本节更新。
+
 ## G 查阅入口
 
 使用者从 [README](../README.md)、[首次使用](../docs/getting-started.md)或[文档首页](../docs/README.md)开始。开发接续从 [handoff](../docs/handoff.md) 开始，详细资料由 [registry](../docs/registry.md) 按需定位。历史正文中的“当前”“下一步”仅适用于当时。

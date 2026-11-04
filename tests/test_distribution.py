@@ -23,6 +23,11 @@ class SourceDistributionTests(unittest.TestCase):
             self.assertIn('MIT License', (output / 'LICENSE').read_text(encoding='utf-8'))
             self.assertTrue((output / 'docs/reader-reference.md').is_file())
             self.assertTrue((output / 'reading_tasks/cli.py').is_file())
+            self.assertTrue((output / 'scroll_agent/mcp_server.py').is_file())
+            bundle = json.loads((output / 'adapters/dsh/package.json').read_text(encoding='utf-8'))
+            self.assertEqual(bundle['dsh']['bundle']['patch'], './cordis.patch.yml')
+            self.assertTrue((output / 'adapters/dsh/cordis.patch.yml').is_file())
+            self.assertEqual((output / 'adapters/dsh/LICENSE').read_bytes(), (ROOT / 'LICENSE').read_bytes())
             manifest = json.loads((output / 'candidate-manifest.json').read_text(encoding='utf-8'))
             self.assertEqual(manifest['original_code_license'], 'MIT')
             forbidden = {'config.json', '.venv', 'data', 'auth', 'models', 'integrations', '.git'}

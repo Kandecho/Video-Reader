@@ -4,6 +4,14 @@ Windows 源码预发布版，薄适配器 0.5.5。原创代码采用 MIT，第�
 
 ## 本版变化
 
+### 2026-11-04：DSH 整包接入 0.1.0
+
+[本次发布](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)同时提供当前整包源码与 DSH tgz 薄适配。核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5；DSH 适配器独立使用 SemVer 0.1.0，原 v0.10.0rc6 发布资产不覆盖。
+
+整包包含 Reader、独立通用队列/历史及 Scroll。DSH 连接两个 MCP，共用现有安装，安装不会自动启用调度或投递。已完成真实 tgz 安装、两个命名空间调用、队列/Scroll 状态和原生图像读取；详见 [DSH 指南](docs/dsh.md)。Scroll 的独立 B 站账号与授权私信已有真实使用，持续自动化等边界见[能力状态](docs/capabilities.md)。web/desktop GUI、其它系统和模型路由不在本批新增验收内。
+
+### 核心 rc6
+
 - Reader、通用任务和 Scroll 分域：通用队列、任务历史、分流、批读与结果归 reading_tasks；私信 Inbox、原消息历史与个人投递归 Scroll。新增独立任务 CLI 和 Reader video_tasks，保留原兼容入口。
 - 共享 Reader job 提供短等待、阶段、进展、心跳和结果接续。Scroll 单轮有持久状态、检查点和显式留档恢复；不自动补发。
 - 默认阅读复用已有核验，新的深层 OCR 按需请求；精确补帧使用独立锁与记录，减少等待长会话处理的耦合。

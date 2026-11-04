@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-04",
+  "adapter_version": "0.1.0",
+  "core_version": "0.10.0rc6",
+  "dsh_version": "0.2.2-rc.1",
+  "release_scope": "Complete Reader, independent reading_tasks and Scroll; two MCP servers, shared local installation",
+  "artifact": {
+    "filename": "dsh-video-reader-0.1.0.tgz",
+    "files": [
+      "LICENSE",
+      "README.md",
+      "cordis.patch.yml",
+      "locale/en.json",
+      "locale/zh.json",
+      "package.json"
+    ],
+    "bytes": 3497,
+    "sha256": "9406e0160d98ad79ff85c4f36d191fcab2b00199e30e54416ca8934983eb41bc"
+  },
+  "checks": {
+    "real_dsh_plugin_add_local_tgz": true,
+    "profile_bundle_registered": true,
+    "reader_and_scroll_called": true,
+    "generic_queue_via_reader": true,
+    "scroll_status_offline": true,
+    "blind_visual_codes_matched": 2,
+    "subtitle_limit_one_offsets": [
+      0,
+      1
+    ],
+    "core_path_with_chinese_and_spaces_via_junction": true,
+    "all_model_calls_in_scope": true,
+    "source_distribution_tests": 1,
+    "existing_host_adapter_tests": 7,
+    "document_files": 16,
+    "local_document_links": 228,
+    "public_files_scanned": 363,
+    "private_content_findings": 0
+  },
+  "observations": [
+    "Supervisor task used unsupported action=list; model recovered with queue-list; no queue mutation requested or called."
+  ],
+  "source_files_sha256": {
+    "LICENSE": "2db56bb20874933af0c888db4ee3ffed8e4724f02d19734b57704b7df3ef29ec",
+    "README.md": "0d97ea90fda55a4491b7b3a6e62e9eefda21e7caa3977f86c38e5af9ad65bd1b",
+    "cordis.patch.yml": "47f5831600d4875b039e8d1eafb0945d00dc72b46c2d4f1e8a3226edb1f9539c",
+    "locale/en.json": "b6053bec149988d5de15ea1f6d7beb8ad44e119986610c69a025ab8d855cc8a9",
+    "locale/zh.json": "41b003dc10faf4663431152183bd4db4073780fcf8278373f09ffca8d9372850",
+    "package.json": "926af536bc28f606ef6823be3f4c1c636d9ad3c7b3eb48d5c5ace3b60d3d6162"
+  },
+  "evidence_sha256": {
+    "run.jsonl": "8480bd12777e618a24d1465c033d67d27ace010208dc7096bf0a2a950738668a",
+    "answer.txt": "d1e3ed4b2efdbb4a67f66cbb09c57d289cc7b7d4d01810b475c5746d19fbac87",
+    "portability.jsonl": "4624849cc9dc73f5c14a04eb43b03d8b67304c625662db405d21f67d0a328b43"
+  },
+  "new_messages_sent": 0,
+  "schedules_changed": false,
+  "not_verified": [
+    "Web/Desktop GUI interaction",
+    "other model routes or operating systems",
+    "npm publication",
+    "plugin index listing"
+  ],
+  "source_archive": {
+    "filename": "video-reader-scroll-dsh-0.1.0-source.zip",
+    "files": 153,
+    "bytes": 429324,
+    "sha256": "b16f57ede98bcb6243c537fc0ede18c6ecea8f786946874b0586d3437591d35d",
+    "manifest_hashes_verified": true
+  },
+  "release_url": "https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0"
+}

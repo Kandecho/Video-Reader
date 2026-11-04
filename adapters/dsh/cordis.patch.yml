@@ -1,0 +1,41 @@
+# Reuse the installed Reader / queue / Scroll core; no runtime or account is bundled.
+- insert:
+    - id: video-reader-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: video_reader
+        transport: stdio
+        command: !!js >-
+          (() => {
+            const root = process.env.VIDEO_READER_ROOT;
+            if (!root) throw new Error('VIDEO_READER_ROOT is required: set it to your Video Reader installation before starting DSH.');
+            return root + '/.venv/Scripts/python.exe';
+          })()
+        args: !!js "['-I', process.env.VIDEO_READER_ROOT + '/launch_mcp.py']"
+        cwd: !!js process.env.VIDEO_READER_ROOT
+        env:
+          VIDEO_READER_CONFIG: !!js "process.env.VIDEO_READER_CONFIG || process.env.VIDEO_READER_ROOT + '/config.json'"
+          PYTHONIOENCODING: 'utf-8'
+        startupTimeoutMs: 60000
+        toolCallTimeoutMs: 60000
+        failOnStartupError: true
+
+    - id: scroll-agent-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: scroll_agent
+        transport: stdio
+        command: !!js >-
+          (() => {
+            const root = process.env.VIDEO_READER_ROOT;
+            if (!root) throw new Error('VIDEO_READER_ROOT is required: set it to your Video Reader installation before starting DSH.');
+            return root + '/.venv/Scripts/python.exe';
+          })()
+        args: !!js "['-I', process.env.VIDEO_READER_ROOT + '/launch_scroll.py', '--mcp']"
+        cwd: !!js process.env.VIDEO_READER_ROOT
+        env:
+          VIDEO_READER_CONFIG: !!js "process.env.VIDEO_READER_CONFIG || process.env.VIDEO_READER_ROOT + '/config.json'"
+          PYTHONIOENCODING: 'utf-8'
+        startupTimeoutMs: 60000
+        toolCallTimeoutMs: 60000
+        failOnStartupError: true

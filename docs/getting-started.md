@@ -2,7 +2,7 @@
 
 目标是完成一件事：让你正在用的 AI 助手读取一条视频，并能按时间点继续讨论。
 
-当前发布版支持 Windows x64，使用 PowerShell 7 和 Python 3.12。先准备依赖、安装 Reader，再接入 Codex 或 Claude Code。
+当前发布版支持 Windows x64，使用 PowerShell 7 和 Python 3.12。先准备依赖、安装整包，再接入 Codex、Claude Code 或 DSH。
 
 ## 1. 准备依赖和源码
 
@@ -17,7 +17,7 @@
 
 如果不能让 uv 下载 Python，先自行安装 Python 3.12。FFmpeg 解压后，需要把包含 `ffmpeg.exe` 和 `ffprobe.exe` 的目录加入 PATH。
 
-打开 [下载页](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6)，下载 `video-reader-0.10.0rc6-source.zip` 并解压。以下命令都在解压后含有 `bootstrap.ps1` 的目录执行；目录可以包含中文和空格。
+打开 [下载页](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)，下载 `video-reader-scroll-dsh-0.1.0-source.zip` 并解压。以下命令都在解压后含有 `bootstrap.ps1` 的目录执行；目录可以包含中文和空格。
 
 ## 2. 安装并检查
 
@@ -52,7 +52,11 @@ claude plugin install video-reader@video-reader-local
 
 完成后让助手重新加载插件和 MCP 连接，再开始视频讨论。接入文件会指向这次安装的 Reader；模型和材料仍留在同一安装中。
 
-如果使用其他支持 MCP 的助手，或需要检查接入细节，见 [操作与接入参考](reader-reference.md)。DSH 可按 [手动 MCP 接入指南](dsh.md)试用；已验证本机 0.2.2-rc.1 的 CLI 读图与续读，尚未提供一条命令安装的 DSH bundle。
+### DSH
+
+按 [DSH 接入指南](dsh.md)设置现有核心目录并安装 tgz 薄包。它同时接入 Reader 和 Scroll，通用队列/历史沿用独立模块；不需要把核心复制进 DSH。
+
+完成后让 DSH 重启加载。当前已实测本机 0.2.2-rc.1 的 bundle 安装、两个 MCP 的调用与原生读图；web/desktop 界面另行验证。其他 MCP 助手或手动连接细节见 [操作与接入参考](reader-reference.md)。
 
 ## 4. 读第一条视频
 
