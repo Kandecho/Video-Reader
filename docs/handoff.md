@@ -4,6 +4,8 @@
 
 ## 当前从哪里继续
 
+最新任务为面向人类整理 README 等入口，并先考察 DSH 适配，再讨论 Agent 如何检索本仓库。README、文档首页、首次使用和安装参考已按使用路径整理；命令与诊断细节保留在参考文档。DSH [本批考察](../research/dsh-adaptation-20261104/report-source.md)固定官方源码，核对本机 0.2.1-rc.5 包并完成 Reader 端合约测量。当前建议为 Reader-only stdio 薄接入；正式 bundle、DSH 端到端验收、索引收录和通用 GEO 动作尚未实施。后续先讨论目标检索入口及成功标准，不把研究草案当成已安装功能。
+
 本轮按用户要求完成原定发布收尾与候选验收，原创代码已选择 MIT。[v0.10.0rc6 源码预发布版](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6) 已公开，标签源码为 84e151c，附 142 文件源码 ZIP 和 SHA256SUMS，服务端摘要一致。当前入口统一在 README；完整 334 项及最终分发回归通过，范围和证据见 [发布验收](../validation/release-20261104/report-source.md)。首版沿用干净隔离环境、代表任务及已测宿主适配范围，不追加跨机、独立初校或后台消费门槛。当前授权已收尾，后续问题按用户新任务接续。
 
 当前六项已按用户指定范围完成：完整观点笔记、AIRI 简述与 95 条评论原文、动画指南、12 站资源清单、Vespera 简报和雨声项目想法。产物在 data/reading-results/20261104，六项 done、pending=0；原附言、7 个原消息关联和旧分流保留，latest_result 可查。任务完成不等于每帧/原声及全量第三方事实均已核实。

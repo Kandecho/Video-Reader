@@ -197,8 +197,14 @@ Reader 分支仍需把初校职责和回答时机确定清楚。用户不需要�
 
 见[当前架构](../docs/architecture.md)、[任务操作](../docs/tasks.md)和[本批验收](../validation/architecture-fixes-20261104/report-source.md)。没有新后台消费者、额度策略或调度；后续目标依然需明确范围。
 
+### 7. 面向人的文档入口与 DSH 考察（2026-11-04）
+
+README 按用途、开始使用和查阅路径整理，首次安装与自然语言使用单列指南，命令参数和诊断保留在参考文档。见 [文档首页](../docs/README.md)。本轮为文档维护与研究，不改已发布 rc6 的资产或支持声明。
+
+DSH 官方源码固定为 8bd0733，核对本机 0.2.1-rc.5 包；Reader 端实际测量 20 工具、6,971 字节服务指令及规范 JPEG 输出，符合所查 MCP 客户端约束。尚未安装 DSH 适配器或完成宿主模型看图等端到端验收。接入建议为共享核心的 Reader-only stdio 配置；DSH 插件发现另需可安装 bundle、SemVer 版本及目标索引收录。详见 [考察](../research/dsh-adaptation-20261104/report-source.md)。后续先讨论目标检索入口与成功标准，不自动实施 bundle 发布、索引提交或 GitHub 元数据修改。
+
 ## G 查阅入口
 
-日常入口是 [README](../README.md)，接续从 [handoff](../docs/handoff.md) 开始；详细资料由 [registry](../docs/registry.md) 按需定位。历史正文中的“当前”“下一步”仅适用于当时。
+使用者从 [README](../README.md)、[首次使用](../docs/getting-started.md)或[文档首页](../docs/README.md)开始。开发接续从 [handoff](../docs/handoff.md) 开始，详细资料由 [registry](../docs/registry.md) 按需定位。历史正文中的“当前”“下一步”仅适用于当时。
 
-源码候选见 [10 月 28 日 docs1 记录](../validation/docs-20261028/summary.json)，不含本次文档修订。本轮未重打包或发布；未来出候选须同步当前主维护文档与经确认的宿主流程。
+已发布版本见 [v0.10.0rc6](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6)及[发布验收](../validation/release-20261104/report-source.md)。[10 月 28 日 docs1](../validation/docs-20261028/summary.json)仅保留为旧候选快照；主分支文档可晚于下载包。未来出候选仍需同步主维护文档及经确认的宿主流程。

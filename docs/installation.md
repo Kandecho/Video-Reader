@@ -1,57 +1,105 @@
-# Install and relocate
+# 安装与配置参考
 
-Source: https://github.com/Kandecho/Video-Reader. Original code is MIT licensed; third-party notices remain in effect. Core 0.10.0rc6 and host adapters 0.5.5 are the current source prerelease.
+第一次使用，请先看 [首次使用指南](getting-started.md)。本页供需要配置模型、平台登录、文件位置或迁移安装的用户查阅。更多入口见 [文档首页](README.md)。
 
-The supported installation baseline is Windows x64 with Python 3.12 and PowerShell 7. This release is validated in a clean isolated directory on the same machine; no other-machine or other-OS validation is implied. Models, credentials, FFmpeg, Node and Python environments are not bundled.
+当前发布版是 0.10.0rc6，Codex / Claude Code 接入文件版本为 0.5.5。已测基础环境为 Windows x64、Python 3.12 和 PowerShell 7；其他系统和 Python 组合尚未完成安装验收。项目原创代码为 MIT，第三方许可分别保留。
 
-## Source candidate versus current documentation
+## 基础安装与依赖
 
-The current source candidate takes its README, license and notices directly from the maintained source. See [release notes](../RELEASE_NOTES.md) for scope and limitations. Earlier installation records apply to their dated versions; the rc6 release acceptance is recorded separately in the source repository's validation/release-20261104 directory. A successful older candidate does not verify later behavior.
+准备 PowerShell 7、uv 和 PATH 上的 FFmpeg / ffprobe。YouTube 下载还需要 Node.js。安装 Python 依赖和获取在线视频需要网络；已有本地材料可以离线使用。
 
-## Prerequisites
-
-- Python 3.11+ (3.12 for the locked Windows runtime), or uv with permission to obtain Python.
-- FFmpeg and ffprobe on PATH for local media. They are external binaries, not copied into this source distribution.
-- Node on PATH for the existing yt-dlp JavaScript runtime path, particularly YouTube. Basic local video/caption reading does not require Node.
-- Internet for initial Python dependency installation and platform access. Cached/local reading stays local.
-
-PowerShell 7, from any working directory:
+在解压后的 Reader 目录运行：
 
 ```powershell
-& 'D:\tools\Video Reader\bootstrap.ps1'
-& 'D:\tools\Video Reader\run.ps1' doctor
+& './bootstrap.ps1'
+& './run.ps1' doctor
 ```
 
-The path is an example. Use your actual extracted folder, including spaces or Chinese characters. Bootstrap creates a local `.venv`, installs base + MCP + vision extras, creates config.json only if absent, and generates both host plugins from the actual installation root. It never overwrites existing configuration or downloads speech models.
+默认安装基础、MCP 和 OCR 依赖。uv 可在需要时准备 Python 3.12，脚本随后建立本目录的 `.venv`，仅在缺失时创建 `config.json`，并按实际目录生成两套宿主接入文件。它不下载语音模型，也不复制其他安装的环境、账号或缓存。
 
-`-Features mcp` skips optional OCR; `-Features mcp,vision,asr` adds Whisper dependencies. `-FullRuntime` uses the observed Windows dependency lock. An already installed environment is reused. The original installation's environment, models and auth are not copied into another environment.
+按需要选择可选依赖：
 
-Without uv, create a venv with Python, install the selected package extras with pip, copy config.example.json to a new config.json and run tools/build_plugins.py with that venv's Python. Use the root launch.py/launch_mcp.py scripts or installed entry points. Do not add a developer checkout to PYTHONPATH.
+| 用途 | 安装命令 |
+|---|---|
+| 不需要本地 OCR | `& './bootstrap.ps1' -Features mcp` |
+| 需要 Whisper 转写，或运行完整测试 | `& './bootstrap.ps1' -Features mcp,vision,asr` |
+| 按已记录的 Windows 完整依赖清单重建 | `& './bootstrap.ps1' -FullRuntime` |
 
-## Configuration and private data
+没有 uv 时，也可自行用 Python 3.12 建立 `.venv`，用该环境的 pip 安装 `.[mcp,vision]`，仅在缺失时复制 `config.example.json` 为 `config.json`，再运行 `tools/build_plugins.py`。启动可用根目录脚本或已安装的命令行入口；不需要设置开发目录的 PYTHONPATH。
 
-Precedence: CLI `--config`, then VIDEO_READER_CONFIG, then VIDEO_READER_HOME/config.json. A source checkout otherwise uses its own config.json; a wheel installation otherwise uses the per-user VideoReader data directory. Relative cache/model/auth/cookie/runtime paths resolve against the configuration file directory, never the caller's working directory.
+## 配置与文件位置
 
-Keep configuration, credentials, models and generated data outside a candidate/source archive. `cache_dir`, `preview.directory`, `bilibili_auth.directory`, model paths and `platforms.youtube.cookies_file` can point to separate drives. Relative paths are preferable when moving a whole private installation; absolute external paths remain valid until their owner moves them. Rebuild host adapters after moving the core.
+配置读取顺序为 CLI 的 `--config`、环境变量 `VIDEO_READER_CONFIG`、`VIDEO_READER_HOME/config.json`。未指定时，源码安装使用自身目录的配置；wheel 安装使用用户的 VideoReader 数据目录。
 
-Moving an existing cache does not rewrite historical source/image references automatically. Portable sharing is the explicit `export` operation: copy the entire exported folder. Historical cache migration is separate from installing clean source.
+配置中的相对路径以**配置文件所在目录**为准，不随命令的工作目录变化。以下位置都可以另配到其他磁盘：
 
-Bilibili uses its own QR login store. YouTube supports importing a user-exported, short-lived Netscape cookie file for access while it remains valid. Long-term login-state maintenance is currently unavailable. Check current validity with `youtube-status`; no fixed access duration is guaranteed. After expiry, the user must export and replace the file. A disposable copy protects the original during yt-dlp operations. A failed network check is unknown status. Credentials are never bundled.
+| 内容 | 配置项 |
+|---|---|
+| 已读取的视频和材料 | `cache_dir` |
+| 分镜预览 | `preview.directory` |
+| B 站登录 | `bilibili_auth.directory` |
+| Whisper 模型 | `asr.model_path` |
+| 可选 Qwen 模型与环境 | `qwen.model_path`、`qwen.aligner_path`、`qwen.runtime_dir` |
+| YouTube Cookie 文件 | `platforms.youtube.cookies_file` |
 
-## Optional models and runtime
+模型、登录、缓存和配置可由不同宿主共用。分享源码时排除这些私有文件；要分享阅读依据，使用 [材料导出](material-delivery.md)，不要直接复制整个运行目录。
 
-Whisper: obtain a compatible faster-whisper CTranslate2 model from its publisher, retain the publisher revision/license and SHA-256 inventory, and configure `asr.model_path`. No model is needed for native captions. Without a configured local model, the reader reports unavailable speech rather than fabricated silence. CPU/int8 remains the default.
+## 平台登录
 
-Qwen is explicit `source=qwen`, not a fallback. Configure local ASR and aligner model paths and `qwen.runtime_dir` (new default `runtimes/qwen`). Use a separate Python environment with the same Python major/minor as Reader, qwen-asr and its compatible GPU dependencies. Availability is a file check, not a claim that CUDA works. Existing installations with the old component-owned research runtime retain that exact path/profile unless explicitly configured otherwise; there is no research-source dependency for new installs.
+**Bilibili** 使用 Reader 自己的扫码登录存储，不读取或跟随浏览器账号。需要时让助手启动登录、展示二维码，再由你使用目标账号扫码。
 
-The validated optional environment used Python 3.12, qwen-asr 0.0.6, torch/torchaudio 2.10.0+cu128, transformers 4.57.6 and accelerate 1.12.0. Create `runtimes/qwen` with `uv venv --python 3.12 runtimes/qwen`; install the CUDA 12.8 torch/torchaudio wheels from the official PyTorch cu128 index, then those pinned qwen-asr/transformers/accelerate packages into that environment. Download the ASR and ForcedAligner model directories from their publishers and set `qwen.model_path` / `qwen.aligner_path`. This GPU option needs a compatible NVIDIA driver and enough VRAM; the basic Reader does not. The live check covered a 20-second Chinese window, not every GPU or a fresh full GPU installation. Keep an existing validated runtime until a replacement passes a short local Qwen request.
+**YouTube** 支持用户手动导出的短期 Netscape Cookie 文件。把 `platforms.youtube.cookies_file` 指向该文件，用 `youtube-status` 检查当前情况；失败可能是网络或平台问题，不能直接当作已退出登录。Cookie 失效后需要重新导出并替换，目前没有长期自动维持方案。处理使用临时副本，不改写原文件。
 
-The local model provenance inventory is separate from model weights. Verify downloaded weights against immutable publisher revisions and hashes before enabling them. Run offline with models already present; HF_HUB_OFFLINE is enabled and no fallback fetch/provider is attempted.
+不要把 Cookie、登录目录或含凭据的配置上传到问题报告或源码仓库。
 
-The candidate includes `docs/models/faster-whisper-medium.json`: the installed publisher revision and verified file hashes, without weights or private paths. Obtain each named file from that model's publisher at the exact upstream_revision (Hugging Face resolve URL: `https://huggingface.co/MODEL/resolve/REVISION/FILENAME`). Then run `python tools/check_models.py docs/models/faster-whisper-medium.json YOUR_MODEL_DIRECTORY`. A mismatch or missing file fails the check. The checker makes no network requests and changes no model files. Other selected models require their own reviewed provenance; do not silently use these hashes for another revision.
+## 没有字幕时配置语音转写
 
-## Candidate checks
+有可用字幕时不需要语音模型。无字幕或需要独立核对语音时，可安装本地 Whisper 依赖：
 
-Run `python -m unittest discover -s tests -v`. Build an allowlisted candidate with `python tools/build_candidate.py NEW_FOLDER`; it refuses an existing destination. Candidate contents exclude live config, credentials, data, models, Python environments, research, personal plans and generated host plugin paths. `candidate-manifest.json` records hashes. Bootstrap generates plugins for that installation rather than shipping another user's absolute paths.
+```powershell
+& './bootstrap.ps1' -Features mcp,vision,asr
+```
 
-The built-in optional cloud path remains disabled. Installing, moving or testing this component does not create a scheduler or authorize messages. Scroll's daily selection/delivery rules remain separately configured.
+然后从模型发布方取得兼容 faster-whisper 的 CTranslate2 模型，把 `asr.model_path` 指向模型目录。默认在 CPU 上以 int8 运行。仅装 Python 包不会自动取得权重；没有本地模型时会报告不可用，不把它解释为视频无人声。
+
+在安装目录的 `config.json` 中调整现有的 `asr.model_path`，例如：
+
+```json
+{"asr": {"model_path": "D:/Models/faster-whisper-medium"}}
+```
+
+源码附有 [Whisper medium 来源与校验清单](models/faster-whisper-medium.json)，记录发布方、固定 revision 和文件 SHA-256，不包含权重。按清单的 model 和 upstream_revision 下载对应文件，随后检查：
+
+文件下载地址的形式为 `https://huggingface.co/<model>/resolve/<upstream_revision>/<filename>`，三个值均取自清单。
+
+```powershell
+& './.venv/Scripts/python.exe' tools/check_models.py docs/models/faster-whisper-medium.json 'D:\Models\faster-whisper-medium'
+```
+
+上面的模型路径是示例。检查不会联网或改写模型；缺少文件或校验不符会失败。选用其他模型时，需要它自己的来源与许可记录，不能沿用 medium 的哈希。
+
+### 可选 Qwen
+
+Qwen 需要明确选择 `source=qwen`，不会自动作为默认或失败回退。基础读取不依赖它；当前强制中文退化问题仍未修复，见 [发布说明](../RELEASE_NOTES.md)。
+
+新安装的隔离环境默认位置为 `runtimes/qwen`，与 Reader 使用相同 Python 主次版本。已验证环境组合为 Python 3.12、qwen-asr 0.0.6、torch / torchaudio 2.10.0+cu128、transformers 4.57.6 和 accelerate 1.12.0。创建环境后，从官方 PyTorch cu128 源安装对应 GPU 包，再安装上述 ASR 依赖；ASR 与 ForcedAligner 模型另从发布方取得，并配置模型路径。
+
+该选项需要兼容的 NVIDIA 驱动和显存。已有验证只涵盖本机一个短语音窗口；文件探测通过不等于 CUDA 可用。原安装仍兼容已有的 research 隔离环境，不要在新环境通过实际请求前删除它。运行时使用本地模型，失败不自动下载或转云端。
+
+## 更新、迁移和回退
+
+将新源码解压到新目录，建立环境，并显式配置要复用的模型、登录与数据路径。验证后再让宿主切换过去，保留原目录与配置以便回退。
+
+移动核心后重新生成接入文件：
+
+```powershell
+& './.venv/Scripts/python.exe' tools/build_plugins.py
+```
+
+随后按 [首次接入步骤](getting-started.md#3-接入你使用的助手) 更新宿主并重新连接 MCP。回退时恢复此前核心和配置的指向，不删除共享缓存、模型、登录或校对记录。
+
+移动缓存不会自动改写历史材料引用；可移位分享的交付物是完整导出目录，缓存迁移需单独处理。安装和更新不会自动启用推荐、私信、日推或新调度。
+
+## 开发与发行记录
+
+测试、复现和源码候选构建见 [CONTRIBUTING](../CONTRIBUTING.md)。本版具体范围见 [发布说明](../RELEASE_NOTES.md)，历史验收保留各自版本和日期；当前主分支文档可能晚于下载包中的文档快照。

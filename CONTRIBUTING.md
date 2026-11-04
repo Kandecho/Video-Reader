@@ -1,5 +1,7 @@
 # Reproduce and contribute
 
+For installation and ordinary use, start with [Getting started](docs/getting-started.md) or the [documentation index](docs/README.md). This page is for contributors and issue reproduction.
+
 Source and issues: https://github.com/Kandecho/Video-Reader. Original code is MIT licensed; retain upstream attribution and the separate third-party notices. Current release scope and known limitations are in [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 Use Python 3.12 on Windows for the tested environment. Run `bootstrap.ps1 -Features mcp,vision,asr`, then `python -m unittest discover -s tests -v` with the created environment. The full suite needs the ASR package even though decoding is mocked and no speech model is required; the default bootstrap deliberately omits that optional package. Qwen/GPU and real platform authentication are separate integration checks; tests do not require private credentials, video caches, model weights or message delivery. FFmpeg/ffprobe must be on PATH. Preserve Reader/Scroll responsibilities and existing source/review identities. Add a focused regression for a meaningful new behavior or failure, rather than mirroring code.

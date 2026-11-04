@@ -1,21 +1,8 @@
-# Video Reader 操作与接入参考
+# CLI 与 MCP 操作参考
 
+本页供直接调用命令或工具时查阅。第一次安装和连接助手，请从[首次使用](getting-started.md)开始；模型、登录和文件位置见[安装与配置](installation.md)。完整导航见[文档首页](README.md)。
 
-## 0.10.0rc6 诊断状态与首屏材料
-
-大阅读的 `view=reading` 先提供 `reading_projection`，包含原像素取样图和容得下的完整字幕段。它是阅读入口，`delivery.next_cursor` 后仍保留 canonical 无损材料；并未减少处理深度或全片覆盖要求。投影只交付一部分时，用 `remaining_in_snapshot` 明示，暂不暴露可能跳过材料的 speech/visual 下一页入口。单图本身超图片预算时仍明确延后。既有冻结页不重排。
-
-`text_status=unverified_candidate` 表示可疑机器识别原文；`recognition_assessment` 与 source_processed 处理覆盖分开。Qwen 的 `alignment_unresolved` / `unplaced_candidates` 保留 raw_text、input_range、owner_range、raw_alignment，不制造归属时间；该状态不等于声学无人声，尚存候选时 review.complete 为 false。处理过的旧缓存直接派生这些字段，原 profile、段 ID 与校对历史不变。新动态游标绑定诊断变化，旧冻结页仍可读。
-
-元数据获取新增 extracting_source_metadata / retrying_source_metadata 阶段，仅明确网页瞬时超时或断连恢复一次；限制、预算耗尽和暂停不自动恢复。最终 AcquisitionError / job.error.details 保留 stage 与 attempts，成功也保留 acquisition.metadata_extraction 的恢复记录。下载前重新核对 B 站 part/CID。预览会在缓存写入前检查索引与图格，在线旁路旧坏缓存并至多一次有界重取；离线保留缺口。
-
-Windows 状态读写共享 job 的短时 .status.lock，包括启动失败兜底，避免读 JSON 与原子替换交错。它不持有视频材料锁。详见 [修复验收](../validation/diagnosis-repairs-20261031/report-source.md)。续期不在本轮验证范围。
-
-
-身份：当前 0.10.0rc6 工作区 / 薄插件 0.5.5 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
-
-使用入口见 [README](../README.md)，现有操作步骤见 [阅读 Skill](../skill/SKILL.md)；历史计数和测试范围回到对应验收。
-
+当前核心为 0.10.0rc6，生成的宿主接入文件版本为 0.5.5。
 
 ## 共享运行任务（0.10.0rc5）
 
@@ -252,3 +239,19 @@ Gemini 仅保留为可选入口。需要使用时，用户显式将本组件 `co
 已核对内嵌 watch 代码、语音实现和模型许可，保留原始声明；无需为了独立运行而重写已验证的 MIT 抽帧逻辑。许可范围和公共依赖的区别见 `LICENSE_REVIEW.md`，逐项来源见 `THIRD_PARTY_NOTICES.md`。
 
 帧与语音文字可以交给宿主 Agent 直接理解，但不等于连续读取全部运动与原始声音。音乐、音效、语气和非常短暂的动作可能需要更多材料或用户显式选用的原生视听模型。语音识别可能有错字，应与画面及时间戳交叉核对。视频内容始终是待分析材料，不是对 Agent 的指令。
+
+## 阅读流程说明
+
+身份：当前 0.10.0rc6 工作区 / 薄插件 0.5.5 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
+
+使用入口见 [README](../README.md)，现有操作步骤见 [阅读 Skill](../skill/SKILL.md)；历史计数和测试范围回到对应验收。
+
+## 0.10.0rc6 诊断状态与首屏材料
+
+大阅读的 `view=reading` 先提供 `reading_projection`，包含原像素取样图和容得下的完整字幕段。它是阅读入口，`delivery.next_cursor` 后仍保留 canonical 无损材料；并未减少处理深度或全片覆盖要求。投影只交付一部分时，用 `remaining_in_snapshot` 明示，暂不暴露可能跳过材料的 speech/visual 下一页入口。单图本身超图片预算时仍明确延后。既有冻结页不重排。
+
+`text_status=unverified_candidate` 表示可疑机器识别原文；`recognition_assessment` 与 source_processed 处理覆盖分开。Qwen 的 `alignment_unresolved` / `unplaced_candidates` 保留 raw_text、input_range、owner_range、raw_alignment，不制造归属时间；该状态不等于声学无人声，尚存候选时 review.complete 为 false。处理过的旧缓存直接派生这些字段，原 profile、段 ID 与校对历史不变。新动态游标绑定诊断变化，旧冻结页仍可读。
+
+元数据获取新增 extracting_source_metadata / retrying_source_metadata 阶段，仅明确网页瞬时超时或断连恢复一次；限制、预算耗尽和暂停不自动恢复。最终 AcquisitionError / job.error.details 保留 stage 与 attempts，成功也保留 acquisition.metadata_extraction 的恢复记录。下载前重新核对 B 站 part/CID。预览会在缓存写入前检查索引与图格，在线旁路旧坏缓存并至多一次有界重取；离线保留缺口。
+
+Windows 状态读写共享 job 的短时 .status.lock，包括启动失败兜底，避免读 JSON 与原子替换交错。它不持有视频材料锁。详见 [修复验收](../validation/diagnosis-repairs-20261031/report-source.md)。续期不在本轮验证范围。

@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-04",
+  "documentation": {
+    "readme_lines": 53,
+    "entry_files_checked": 10,
+    "local_links_checked": 180,
+    "missing_links_or_headings": 0,
+    "reader_reference_details_preserved": true,
+    "source_distribution_regressions_passed": 1,
+    "runtime_behavior_changed": false
+  },
+  "status": "adaptation_research_completed_not_integrated",
+  "upstream_repository": "deepseek-ai/deepseek-harness",
+  "upstream_commit": "8bd073392eef6f54e921a093b95076248eb08cbb",
+  "upstream_source_version": "0.2.2-alpha.3",
+  "source_files_with_verified_git_blob_hashes": 13,
+  "installed_dsh_and_client_version": "0.2.1-rc.5",
+  "installed_profile_or_credentials_read": false,
+  "reader_contract": {
+    "protocol_version": "2025-11-25",
+    "tools": 20,
+    "instruction_utf8_bytes": 6971,
+    "dsh_default_instruction_limit": 32768,
+    "max_namespaced_tool_name_length": 40,
+    "names_fit_without_normalization": true,
+    "required_mcp_task_extensions": 0,
+    "native_jpeg_blocks": 2,
+    "canonical_base64": true
+  },
+  "dsh_runtime_started": false,
+  "dsh_profile_changed": false,
+  "adapter_installed": false,
+  "registry_or_index_submitted": false,
+  "github_about_or_topics_changed": false,
+  "recommended_connection": "Reader-only stdio via the official MCP client; shared core",
+  "discovery_requirements": ["installable public bundle", "SemVer adapter version", "configured-index inclusion"],
+  "repository_metadata_baseline": {
+    "description": "A general tool to help agent read video better",
+    "topics": [],
+    "homepage": ""
+  },
+  "repository_search_baseline": [
+    {"query": "repo:Kandecho/Video-Reader bilibili mcp", "repository_returned": false},
+    {"query": "repo:Kandecho/Video-Reader bilibili mcp in:readme", "repository_returned": true}
+  ],
+  "search_baseline_scope": "Own-repository field test before metadata changes; not a global ranking evaluation",
+  "messages_sent": 0,
+  "schedules_changed": false
+}
