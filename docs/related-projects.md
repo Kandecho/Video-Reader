@@ -19,6 +19,11 @@
 
 ## 其它值得参考的入口
 
+- [canyueY/sense-now](https://github.com/canyueY/sense-now)：实时陪看之外，已有独立的长视频索引、按问题检索和按需补证据。与 Reader 直接重叠，值得作为长片内容检索的对照；默认适配器与实测范围需分别确认。
+- [SAOS-3624/dsh-see-now](https://github.com/SAOS-3624/dsh-see-now)：Sense Now 声明的来源项目，侧重屏幕/摄像头实时筛帧、拼图和陪看。对应实时输入场景，当前 Reader 没有该产品入口。
+
+两者的固定源码、与本项目的职责差异及限制见[本批对照](https://github.com/Kandecho/Video-Reader/blob/main/research/sense-now-comparison-20261104/report-source.md)。它们也提供 Node 模块导出，不能简单因现成工具接入 DSH 就判断为无法复用。
+
 - [vlln/dsh-video2text](https://github.com/vlln/dsh-video2text)：侧栏视频转文案、播放器和逐字稿；短演示、界面截图及首次使用确认方式值得参考。
 - [Aurum807/dsh-bilibili-video-summary](https://github.com/Aurum807/dsh-bilibili-video-summary)：聚焦发链接后总结，先展示对话体验，再说明安装、自检与限制。
 

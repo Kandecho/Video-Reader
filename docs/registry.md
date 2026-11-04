@@ -16,6 +16,7 @@
 | 面向使用者的文档 | [文档首页](README.md)、[首次使用](getting-started.md) | 清楚区分人类使用步骤、参数参考和开发维护入口 |
 | DSH 接入与 Agent 发现 | [整包薄适配](dsh.md)、[薄包验证](../validation/dsh-bundle-20261104/report-source.md)、[前期实测](../validation/dsh-integration-20261104/report-source.md)、[呈现与检索](../research/dsh-presentation-20261104/report-source.md) | 查整包安装、Reader/队列/Scroll 调用与检索基线；社区收录和 npm 尚未实施 |
 | 对外能力状态与相关实现 | [能力状态](capabilities.md)、[相关项目](related-projects.md) | 真实可用、试用与未完成分别说明；独立 B 站账号和授权私信已用，不作整体稳定性或竞品排名承诺 |
+| 长视频内容检索与实时陪看对照 | [Sense Now / See Now](../research/sense-now-comparison-20261104/report-source.md) | 固定源码比较分块检索、实时输入和任务工作流；未安装第三方项目，不据合成 benchmark 排性能 |
 | DSH 索引与社区收录 | [发现指南](discovery.md)、[作者索引](../discovery/dsh/README.md)、[实测](../validation/dsh-discovery-20261104/report-source.md) | 本机搜索→固定 Git 安装→调用已通；作者索引、社区目录和通用 MCP Registry 不混为一谈 |
 
 ## 操作与运行

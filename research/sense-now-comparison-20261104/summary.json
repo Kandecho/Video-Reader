@@ -1,0 +1,181 @@
+{
+  "date": "2026-11-04",
+  "evidence_level": "Pinned README, public interfaces and source review; no installation or media runtime test",
+  "our_baseline": "488dc8f58786d753305e3e397c3d0f104aa632a0",
+  "projects": [
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "source_manifest_version": "0.1.0",
+      "license": "Apache-2.0"
+    },
+    {
+      "repository": "SAOS-3624/dsh-see-now",
+      "commit": "93342e6122b278139281d71346314048170a034b",
+      "source_manifest_version": "0.1.1",
+      "license": "Apache-2.0"
+    }
+  ],
+  "relationship": {
+    "sense_notice_explicitly_credits_upstream": true,
+    "github_sense_fork_flag": false,
+    "exact_same_current_src_blobs": [
+      "src/png.js",
+      "src/tiers.js"
+    ],
+    "same_blob_count_is_not_a_total_similarity_measure": true
+  },
+  "source_files": [
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "README.md",
+      "expected_git_blob": "494c1b1ca0772e0d89a5f2e19b7f791ec0c4db29",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/README.md",
+      "sha256": "3312f2d5baf3de6881837780e1c9ae3a9cc449afe37fd7ad72ac8c48b5ae63b0"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "package.json",
+      "expected_git_blob": "4ffd687e80e1fecc900b407958280010e38a0fe8",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/package.json",
+      "sha256": "62c0ded7bedc0194198602734839b412d3d2135851c128b684f59b3d1153ee98"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "cordis.patch.yml",
+      "expected_git_blob": "6a87c40f2e84c921246eacbca2dcb643280aa6ae",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/cordis.patch.yml",
+      "sha256": "50d80711977a2cabfda1c8e5cfb3d1722300d96a9b2dec26f6bf98ac9f825572"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "NOTICE",
+      "expected_git_blob": "870c1bed0cdee1ef4421b30abc56016c2a36665b",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/NOTICE",
+      "sha256": "10a89b6869b1623a944107a32455a9645530fd29f1698c99bddb395451f4c276"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/index.js",
+      "expected_git_blob": "336d8a58d39e3458529c40a68600130f1596b35e",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/index.js",
+      "sha256": "ebde1877c56024a2dd18ef56af9259e73d5fa52786876973ffe2eaa96b0e95db"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index-tool.js",
+      "expected_git_blob": "d0a4003d08fedf9ae86bcee46605c1c534e5a61a",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index-tool.js",
+      "sha256": "47a6762089b3c87426495ce84f6f806c6f2b9e923875f00f5605dcde3bb9af8c"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index/query-router.js",
+      "expected_git_blob": "6ecd9956deaa41d82f002194bfd2484015c2a795",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index/query-router.js",
+      "sha256": "15e4748456e82152dabdeb2f24f5f7a45b824cce06cefc550e5f5863964ddc47"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index/index-retriever.js",
+      "expected_git_blob": "3abc0e7122565deb75f3d97ce746ceec5375fe3e",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index/index-retriever.js",
+      "sha256": "a8686e0337434abc462dcdd5cff7886a553c8bbd74c8a1ea81afa43e5b98a8a0"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index/adapters/ocr-adapter.js",
+      "expected_git_blob": "01117c77aeaf5aa979a9c3495d04c335fae9b26e",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index/adapters/ocr-adapter.js",
+      "sha256": "4ead85594a7aad5929b6aa4356a7c3ff99cfa927b5e70e4c1134cb352a49e5e0"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index/adapters/speech-activity-adapter.js",
+      "expected_git_blob": "82d1de4faeba417382cbd3f60384be5243d339d7",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index/adapters/speech-activity-adapter.js",
+      "sha256": "370264aa117a91d8de336560933e15273de8c09f2fbc59bb45521908e9b67e8c"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index/adapters/bilibili-source.js",
+      "expected_git_blob": "cf7563a724e5d1f65d8651df00a93e4977598c2d",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index/adapters/bilibili-source.js",
+      "sha256": "e7011437bba10124307b99eda84b8c87dd78bda7d50902388f0e95aafbb17dae"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "src/video-index/video-index-engine.js",
+      "expected_git_blob": "626fa50fa7a3c14ba3be798e16a4c11577ddc73b",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/src/video-index/video-index-engine.js",
+      "sha256": "13168d2ab3f93acebf5cf3d05c79566a943fc4bac248ebaeabaf32275a8bea4e"
+    },
+    {
+      "repository": "canyueY/sense-now",
+      "commit": "6ae6f358cff6688c2b849af4a968b40c83bb3af6",
+      "path": "scripts/install-dev.mjs",
+      "expected_git_blob": "ebeee1b8612d97f84644a18ca943538be24ca661",
+      "url": "https://github.com/canyueY/sense-now/blob/6ae6f358cff6688c2b849af4a968b40c83bb3af6/scripts/install-dev.mjs",
+      "sha256": "f28c7afcf072c60323decaca8f037f7f4ca3fc43b5286ca91f72bc7a8a906ef6"
+    },
+    {
+      "repository": "SAOS-3624/dsh-see-now",
+      "commit": "93342e6122b278139281d71346314048170a034b",
+      "path": "README.md",
+      "expected_git_blob": "2bb345e7a5f16686bb010682711e8c7fb283310f",
+      "url": "https://github.com/SAOS-3624/dsh-see-now/blob/93342e6122b278139281d71346314048170a034b/README.md",
+      "sha256": "b10fbce87a0f2b13233ac81068d98f3ec278ee3a5f62cb171b537eff9a8a9988"
+    },
+    {
+      "repository": "SAOS-3624/dsh-see-now",
+      "commit": "93342e6122b278139281d71346314048170a034b",
+      "path": "package.json",
+      "expected_git_blob": "5482738d8b754a74cd8b18f37cd0414617d57cfe",
+      "url": "https://github.com/SAOS-3624/dsh-see-now/blob/93342e6122b278139281d71346314048170a034b/package.json",
+      "sha256": "09c08c3c1fd769b1bf77ca8023521f32b78f7ef51ab88b24a588884352e531b7"
+    },
+    {
+      "repository": "SAOS-3624/dsh-see-now",
+      "commit": "93342e6122b278139281d71346314048170a034b",
+      "path": "src/index.js",
+      "expected_git_blob": "b23bc82f69ca9ecdf3ab0a2ffee2dfc89d6231fb",
+      "url": "https://github.com/SAOS-3624/dsh-see-now/blob/93342e6122b278139281d71346314048170a034b/src/index.js",
+      "sha256": "c0bf2eb59c23220d8c2efb49ad65654b715fa19b6cc27ba1624806eef0fab976"
+    },
+    {
+      "repository": "SAOS-3624/dsh-see-now",
+      "commit": "93342e6122b278139281d71346314048170a034b",
+      "path": "src/tool-spec.js",
+      "expected_git_blob": "562f558a206230d28742203b86d39fdb81820639",
+      "url": "https://github.com/SAOS-3624/dsh-see-now/blob/93342e6122b278139281d71346314048170a034b/src/tool-spec.js",
+      "sha256": "b6089aff50586e886aefae7862375a207d4f08e54e1aae299119bd208c351d34"
+    }
+  ],
+  "findings": [
+    "Sense Now has both live watching and an implemented offline video_index tool.",
+    "Video_index query returns retrieved evidence to the host, not an independent final-answer model.",
+    "Query routing uses rules; retrieval uses lexical scoring and chunk selection.",
+    "Default OCR and VAD adapters require injected implementations.",
+    "Catalog lookup in our current Reader is source/account material lookup, not the same as question-routed video-content retrieval."
+  ],
+  "third_party_test_counts": {
+    "sense_readme_claim": 303,
+    "run_by_us": false,
+    "benchmarks_not_cross_compared": true
+  },
+  "installed_other_projects": false,
+  "screen_or_audio_capture_started": false,
+  "production_config_changed": false
+}

@@ -4,6 +4,8 @@
 
 ## 当前从哪里继续
 
+最新按用户点名对照 Sense Now 与其来源 See Now，固定两仓库提交，核对 17 文件指纹；未安装或启动采集。Sense Now 的 video_index 确有分块索引、规则路由和内容检索，与 Reader 直接重叠；See Now 主要是实时陪看。我们当前材料目录查找不等同内容问题检索，独立小号收件、通用任务/结果与跨宿主接口是已有的组合侧重。详见[对照研究](../research/sense-now-comparison-20261104/report-source.md)；没有据研究自动实施检索层或调整默认阅读体验。
+
 最新任务已打通 DSH 发现路径：作者 format-1 索引位于 discovery/dsh/index.json，通过 raw GitHub HTTPS 订阅；从已发布 f2656bf 生成，安装固定到 adapters/dsh 0.1.0。真实 plugin_market 的三组中英文检索、版本/兼容性、未安装→Git 安装→已安装以及 Reader 队列/Scroll 状态调用均通过。常用 web profile 已启用官方发现 bundle 和只读工具、订阅项目索引、安装整包；原配置和 launch.ps1 已备份，后者提供核心目录。web 服务启动和两个 MCP 工具表初始化通过，测试服务已停止，GUI 点击仍未验收。见[发现指南](discovery.md)和[本批证据](../validation/dsh-discovery-20261104/report-source.md)。
 
 社区索引快照中本项目尚未收录；已整理开放插件市场 Issue、awesome-dsh-plugin PR 和 Topic 发现型目录的不同规则，以及[可提交资料](../discovery/dsh/submissions.md)，未向第三方发送。GitHub 三条组合查询可返回本仓库，位置只代表本次返回页。通用 MCP Registry 支持 GitHub/GitLab Release 的 MCPB，可作为后续跨宿主发现方向，不必先发 npm；当前 DSH tgz 不能当 MCPB 登记。
