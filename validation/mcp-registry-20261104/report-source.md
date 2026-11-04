@@ -19,7 +19,7 @@
 
 ## 社区申请及前序推送
 
-未来内容检索计划已由 bb9b9d3 推送。DSH [开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)与 [Awesome PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)已提交，均待审核，PR 检查仍运行。GitHub 集成没有外部仓库写权限，提交使用已有 gh 登录；没有重复申请。
+未来内容检索计划已由 bb9b9d3 推送。11 月 4 日发布时，DSH [开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)与 [Awesome PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)均已提交待审核，PR 检查仍运行；这是当日快照。11 月 5 日回查，开放插件市场已收录并关闭申请，Awesome PR 也已合并且目录条目核对通过，见[后续确认](../dsh-community-20261105/report-source.md)。GitHub 集成没有外部仓库写权限，提交使用已有 gh 登录；没有重复申请。
 
 ## 验证边界
 

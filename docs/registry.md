@@ -2,7 +2,7 @@
 
 本页供开发和维护时定位当前决定、实现与历史证据。安装和日常使用请从 [文档首页](README.md)或[首次使用](getting-started.md)开始。
 
-身份：只定位主维护处和读取条件，更新于 2026-11-04。当前事实与历史证据分开读取；历史报告不自动生成新任务。
+身份：只定位主维护处和读取条件，更新于 2026-11-05。当前事实与历史证据分开读取；历史报告不自动生成新任务。
 
 ## 当前任务入口
 
@@ -10,11 +10,11 @@
 |---|---|---|
 | 目的与直接使用 | [README](../README.md) | 理解 Reader 服务什么、怎样调用 |
 | 有效决定与未决事项 | [decisions](decisions.md) | 查响应速度、初校职责、既有边界及本次授权 |
-| 当前能力、缺口与后续方向 | [路线源稿](../planning/roadmap-20261021-source.md) B–F；[阅读版](../planning/roadmap-20261021.html) | 讨论机制或接续开发；区分事实、目标与候选验证 |
-| 当前接续 | [handoff](handoff.md) | 下一次任务先读；六项任务已清理，架构中高项修复及结果汇报已接通；后台消费尚未接入 |
+| 当前能力、缺口、阶段顺序与验收 | [路线源稿](../planning/roadmap-20261021-source.md)、[六阶段安排](../planning/roadmap-20261021-source.md#f-六阶段路线与独立验收)、[阅读版](../planning/roadmap-20261021.html) | 从交互摩擦调查接续；不规定时间盒，阶段 1/2 可交叉，安装与发现贯穿维护 |
+| 当前接续 | [handoff](handoff.md) | 下一次先读；定位当前阶段及可复用样本，旧批次日志从历史索引回查 |
 | 整体架构与边界检查 | [当前架构](architecture.md)及[修复前检查](architecture-20261104.md) | Reader/通用任务/Scroll 的当前职责、状态与存储，以及修复和保留项 |
 | 面向使用者的文档 | [文档首页](README.md)、[首次使用](getting-started.md) | 清楚区分人类使用步骤、参数参考和开发维护入口 |
-| DSH 接入与 Agent 发现 | [整包薄适配](dsh.md)、[薄包验证](../validation/dsh-bundle-20261104/report-source.md)、[前期实测](../validation/dsh-integration-20261104/report-source.md)、[呈现与检索](../research/dsh-presentation-20261104/report-source.md) | 查整包安装、Reader/队列/Scroll 调用与检索基线；两条社区申请已提交待审核，npm 未发布 |
+| DSH 接入与 Agent 发现 | [整包薄适配](dsh.md)、[薄包验证](../validation/dsh-bundle-20261104/report-source.md)、[收录确认](../validation/dsh-community-20261105/report-source.md)、[呈现与检索](../research/dsh-presentation-20261104/report-source.md) | 开放插件市场已收录 0.1.0，Awesome PR 已合并并核对目录源；npm 未发布 |
 | 对外能力状态与相关实现 | [能力状态](capabilities.md)、[相关项目](related-projects.md) | 真实可用、试用与未完成分别说明；独立 B 站账号和授权私信已用，不作整体稳定性或竞品排名承诺 |
 | 长视频内容检索与实时陪看对照 | [Sense Now / See Now](../research/sense-now-comparison-20261104/report-source.md) | 固定源码比较分块检索、实时输入和任务工作流；未安装第三方项目，不据合成 benchmark 排性能 |
 | DSH 索引与社区收录 | [发现指南](discovery.md)、[作者索引](../discovery/dsh/README.md)、[实测](../validation/dsh-discovery-20261104/report-source.md) | 本机搜索→固定 Git 安装→调用已通；作者索引、社区目录和通用 MCP Registry 不混为一谈 |
@@ -26,13 +26,13 @@
 
 | 知识 | 位置 | 何时读取 |
 |---|---|---|
-| Reader 操作 | [reader-reference](reader-reference.md)、[阅读 Skill](../skill/SKILL.md) | 查工具及校对提交方式；注意参考开头的目标与当前指令差距 |
+| Reader 操作 | [reader-reference](reader-reference.md)、[阅读 Skill](../skill/SKILL.md) | 查工具、按疑点深入与校对提交；已同步及时回答，不把全片逐段校对作为每次答复前置 |
 | 安装与当前发布 | [installation](installation.md)、[本批验收](../validation/release-20261104/report-source.md) | 查 MIT、公共依赖、干净安装、代表任务与本版发布事实；旧候选记录保留历史范围 |
 | 材料、游标和导出 | [material-delivery](material-delivery.md) | 修改/接续分页、来源、修订或完整交付 |
 | 列表与分镜预览 | [material-reference](material-reference.md) | 查 UID/作品分页、轻量/密集与批量预览 |
 | Scroll 普通工作流与批量 | [scroll-reference](scroll-reference.md)、[scroll-batch](scroll-batch.md)、[Scroll Skill](../scroll-skill/SKILL.md) | 个人选片、记忆、显式多片队列；不将推荐流程塞回 Reader |
 | Scroll 单轮状态与恢复 | [操作参考](scroll-reference.md#单轮状态与显式恢复2026-11-04)、[11 月 4 日验收](../validation/scroll-state-20261104/report-source.md) | 指定轮次的阶段、执行者、错误链、事件与显式留档接续；查询不触发重试，恢复不发送 |
-| Scroll Inbox、队列与历史 | [操作参考](inbox-queue.md)、[本批验收](../validation/inbox-queue-20261104/report-source.md)、[路线 F.4](../planning/roadmap-20261021-source.md) | 显式同步授权来信、旧消息只留历史、新视频入队、原消息及操作追溯；不调用读取或模型 |
+| Scroll Inbox、队列与历史 | [操作参考](inbox-queue.md)、[本批验收](../validation/inbox-queue-20261104/report-source.md)、[通用任务](tasks.md) | 显式同步授权来信、旧消息只留历史、新视频入队与原消息追溯；后台消费按阶段 4/6 分开推进 |
 | Scroll 粗读建议分流 | [操作参考](triage.md)、[试跑验证](../validation/triage-architecture-20261104/report-source.md) | 显式 prepare/material/content/submit，类型、附言意图、建议/待定/等待用户；不执行方案或启动后台消费者 |
 | 首页首条日试用 | [daily-trial](daily-trial.md) | 查既有 20:00 Windows 任务、依赖及运行快照；实时状态另查 status |
 | YouTube Cookie | [handoff 的凭据接续](handoff.md#youtube-cookie-接续2026-10-28)、[平台参考](reader-reference.md#平台配置与云端选项) | 查私有位置、失效替换及长期维持缺口，不把历史检查当当前登录证明 |
@@ -47,6 +47,6 @@
 |---|---|---|
 | 已完成阅读及可继续材料 | [真实任务报告](../validation/task-reading-20261028/report-source.md)、[接续材料](../validation/task-reading-20261028/resume-check.md) | 人工复核、复用已读材料或设计现有错例对照 |
 | 当前功能基线 | [rc6 修复](../validation/diagnosis-repairs-20261031/report-source.md)、[rc2 验收](../validation/reader-0.10.0rc2/report-source.md)、[rc1 整轮](../validation/reader-0.10.0rc1/report-source.md) | 核实修复、功能和宿主/安装证据范围 |
-| 本次文档维护 | [docs-20261103](../validation/docs-20261103/summary.json) | 查归档、同步、核对范围与保全记录 |
+| 11 月 3 日文档维护 | [docs-20261103](../validation/docs-20261103/summary.json) | 回查当时归档、同步与保全；最新路线与旧快照的分界见历史索引 |
 | 11 月 3 日阅读与选图观察 | [双片阅读](../validation/reading-pair-20261103/report-source.md)、[攻略选图](../validation/guide-image-selection-20261103/report-source.md) | 复用已读材料，核对锁等待及选图边界 |
 | 其他研究、版本及旧决定 | [history-index](history-index.md) | 按问题回查；日常接续无需通读历史 |

@@ -2,21 +2,28 @@
 
 Video Reader 的 GitHub 仓库、DSH 索引和通用 MCP 目录是不同的发现入口。这个项目按整包提供 Reader、独立队列/历史和 Scroll；可用与试用范围见[能力状态](capabilities.md)。
 
-## DSH：订阅项目索引
+## DSH：选择索引源
 
-当前 DSH 不内置统一索引源。启用「插件 → 实验性插件 → 自定义插件索引」，再到「发现 → 添加索引源」填写：
+在「插件 → 实验性插件」启用自定义插件索引，再到「发现 → 添加索引源」。可选择以下来源：
+
+| 来源 | 订阅地址 | 本项目状态 |
+|---|---|---|
+| [开放插件市场](https://dshopen.org/zh/plugins/dsh-video-reader/) | `https://dshopen.org/index.json` | 2026-11-05 已核对收录 dsh-video-reader 0.1.0 |
+| 作者单项目索引 | `https://raw.githubusercontent.com/Kandecho/Video-Reader/main/discovery/dsh/index.json` | 作者维护，仅含本项目整包适配 |
+
+如只需本项目，作者索引地址为：
 
 ```text
 https://raw.githubusercontent.com/Kandecho/Video-Reader/main/discovery/dsh/index.json
 ```
 
-这是项目作者维护的索引，包含可安装的 `dsh-video-reader` 版本及仓库入口。索引通过 HTTPS 直接返回 JSON，不依赖 Release 附件的下载重定向。支持 `plugin_market` 的模式可以先列出配置的索引，再搜索 `video reader`、`字幕 画面`、`账号 私信` 等短词组合。整句自然语言需求适合交给 Agent 拆成检索词。
+两个索引都提供可安装的 `dsh-video-reader` 版本及仓库入口。社区线上条目与作者索引均固定到同一已发布 Git 提交和 adapters/dsh 子目录。支持 `plugin_market` 的模式可先列出已配置索引，再搜索 `dsh-video-reader`。作者索引另已实测 `video reader`、`字幕 画面`、`账号 私信` 等组合；不同索引的关键词和排序不作同等保证。
 
-本机已完成这三组真实搜索、版本查询、按返回参数安装和安装后调用。常用 web profile 已启用官方发现模块、订阅本索引并安装整包；原启动脚本会设置核心目录。常规启动 DSH 后可从「插件 → 发现」选择项目索引，也可让 Agent 用 `plugin_market` 查询。CLI 模型与 web 启动已验收，尚未逐项点击验证 GUI。
+本机此前已用作者索引完成三组真实搜索、版本查询、安装和安装后调用。常用 web profile 已启用官方发现模块、订阅作者索引并安装整包；原启动脚本会设置核心目录。常规启动 DSH 后可从「插件 → 发现」选择已添加的索引，也可让 Agent 用 `plugin_market` 查询。CLI 模型与 web 启动已验收，尚未逐项点击验证 GUI。本次社区收录核对未修改本机订阅或重新安装。
 
 索引中的安装来源是固定 Git 提交和子目录；[Release tgz](dsh.md)另供直接安装。请先准备 Windows 核心并设置 `VIDEO_READER_ROOT`。发现条目不等于已经准备好 Python、模型或平台登录。
 
-## 社区收录不等于自行托管索引
+## 社区收录与审核状态
 
 项目索引可以立即供愿意订阅它的 DSH 使用，但不会自动加入别人已经配置的社区源。以下规则来自各项目的贡献指南，并非 DSH 官方统一审核：
 
@@ -26,7 +33,7 @@ https://raw.githubusercontent.com/Kandecho/Video-Reader/main/discovery/dsh/index
 | [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md) | PR 添加一个 `data/plugins` YAML；支持 monorepo 子包 | 指向 adapters/dsh 的链接、中英文功能介绍及分类；仓库需有 topic、真实 bundle 和维护 |
 | [bruc3van/awesome-dsh-plugin](https://github.com/bruc3van/awesome-dsh-plugin/blob/main/CONTRIBUTING.md) | Topic 与简介进入发现/待审核流程，由维护者核实 | 已有 dsh-plugin topic、简介和真实可安装子包；自动发现不等于通过审核，自荐位还有单独要求 |
 
-本项目已有公开源码、MIT、dsh.bundle.patch、固定版本和实装记录。2026-11-04 已提交[开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)及[Awesome DSH PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)，当前待审核。社区是否接受、何时更新均由对方维护流程决定；当前不能使用其“已收录”或“已验证”徽章。
+2026-11-05 回查：[开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)已以 completed 关闭，[维护者确认收录](https://github.com/polang233/dsh-plugin-index/issues/243#issuecomment-6636422560)，正式线上索引和详情页均已有 0.1.0。[Awesome DSH PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)也已合并，检查成功，合并提交内可查[目录源条目](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/18fdd9b4d69a506a3b4519742113574785a2fc78/data/plugins/Kandecho__Video-Reader--adapters-dsh.yml)。当前两条申请均已完成收录。功能支持范围继续以[能力状态](capabilities.md)为准；证据见[本次确认](../validation/dsh-community-20261105/report-source.md)。
 
 ## 其他 Agent 如何发现
 

@@ -43,7 +43,7 @@ Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Cl
 |---|---|
 | 第一次安装、接入助手、读一条视频 | [首次使用](docs/getting-started.md) |
 | 在 DSH 中安装整包薄适配 | [DSH 接入](docs/dsh.md) |
-| 从 DSH 插件索引发现本项目 | [发现与收录](docs/discovery.md) |
+| 从 DSH 插件索引发现本项目 | [发现与收录](docs/discovery.md) · [开放插件市场条目](https://dshopen.org/zh/plugins/dsh-video-reader/) |
 | 使用 MCPB 接入包、在官方目录查询 | [MCP Registry](docs/mcp-registry.md) |
 | 区分可用能力、试用部分与未完成项 | [能力状态](docs/capabilities.md) |
 | 设置模型、登录或调整文件位置 | [安装与配置](docs/installation.md) |
@@ -51,6 +51,7 @@ Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Cl
 | 管理待读视频、附言和结果 | [队列与历史](docs/tasks.md) |
 | 使用个人推荐、私信收件和授权投递 | [Scroll](docs/scroll-reference.md) |
 | 报告问题或参与开发 | [贡献与复现](CONTRIBUTING.md) |
+| 了解开发顺序与阶段验收 | [开发路线](planning/roadmap-20261021-source.md) |
 
 Scroll 可按需使用，普通读片无需配置个人投递。[文档首页](docs/README.md)列出完整入口；与 dsh-bili-scroll 等实现的不同侧重见[相关项目](docs/related-projects.md)。
 

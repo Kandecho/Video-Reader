@@ -66,3 +66,7 @@
 ## 2026-11-03 交接整理
 
 [截至 10 月 31 日的交接快照](history/handoff-through-20261031.md)保留本次整理前的内容；当前接续统一读 handoff。
+
+## 2026-11-04 六阶段排期整理
+
+[排期前路线](../planning/roadmap-through-20261104-publication.md)和[排期前交接](history/handoff-through-20261104-publication.md)保留发布、DSH 发现、社区申请与 Registry 登记的逐批记录，以及当时的候选优先级。当前顺序与验收统一读[六阶段路线](../planning/roadmap-20261021-source.md)，不沿用旧“下一步”。

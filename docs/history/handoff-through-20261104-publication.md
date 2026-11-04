@@ -1,0 +1,93 @@
+# Video Reader 接续
+
+历史快照：保留 2026-11-04 发布与登记完成后、六阶段排期确定前的记录。文中“当前”“下一步”和优先级仅适用于当时；现行安排见 [当前交接](../handoff.md)及[当前路线](../../planning/roadmap-20261021-source.md)。
+
+身份：2026-11-04 接续快照。当前事实和方向在 [路线](../../planning/roadmap-through-20261104-publication.md) 主维护，重要取舍在 [决定记录](../decisions.md)；本页定位下一次接续，不重复逐轮日志。旧交接见 [截至 10 月 31 日的快照](handoff-through-20261031.md)。
+
+## 当前从哪里继续
+
+本批已串行完成：未来计划由 bb9b9d3 推送；DSH [Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)及 [PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)已提交待审核；两个 MCPB 0.1.0 与 169 文件清单的完整源码已发布到 [mcpb-v0.1.0](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0)，源码提交 c50f0f6。Reader 与 Scroll 分别登记官方 MCP Registry，公开 API 返回两条，均 active/isLatest=true，版本和包摘要核对一致。见[接入及检索指南](../mcp-registry.md)与[验收](../../validation/mcp-registry-20261104/report-source.md)。两个薄包复用既有 Windows 核心；官方清单、真实 stdio、Reader 20/Scroll 7 工具、本地视频/字幕分页/队列/Scroll 离线状态、中文/空格路径通过，宿主 MCPB 安装 UI 未测。无新发送、收件同步或调度。
+
+用户已确认将轻量内容目录、可复用 storyboard 导航、按问题选块和局部作业复用纳入后续计划，主维护处为[路线 F.10](../../planning/roadmap-through-20261104-publication.md#10-轻量内容目录storyboard-与问题检索已纳入后续计划未实施)。内容检索层未实施，现有分镜/拼图不重复算新功能；后续实现仍需按新任务接续。
+
+最新按用户点名对照 Sense Now 与其来源 See Now，固定两仓库提交，核对 17 文件指纹；未安装或启动采集。Sense Now 的 video_index 确有分块索引、规则路由和内容检索，与 Reader 直接重叠；See Now 主要是实时陪看。我们当前材料目录查找不等同内容问题检索，独立小号收件、通用任务/结果与跨宿主接口是已有的组合侧重。详见[对照研究](../../research/sense-now-comparison-20261104/report-source.md)；没有据研究自动实施检索层或调整默认阅读体验。
+
+最新任务已打通 DSH 发现路径：作者 format-1 索引位于 discovery/dsh/index.json，通过 raw GitHub HTTPS 订阅；从已发布 f2656bf 生成，安装固定到 adapters/dsh 0.1.0。真实 plugin_market 的三组中英文检索、版本/兼容性、未安装→Git 安装→已安装以及 Reader 队列/Scroll 状态调用均通过。常用 web profile 已启用官方发现 bundle 和只读工具、订阅项目索引、安装整包；原配置和 launch.ps1 已备份，后者提供核心目录。web 服务启动和两个 MCP 工具表初始化通过，测试服务已停止，GUI 点击仍未验收。见[发现指南](../discovery.md)和[本批证据](../../validation/dsh-discovery-20261104/report-source.md)。
+
+社区目录尚未确认收录，已提交的两条申请及规则见[申请资料](../../discovery/dsh/submissions.md)。GitHub 三条组合查询可返回本仓库，位置只代表本次返回页。通用 MCP Registry 已用实际 MCPB 完成登记，不是把 DSH tgz 当作 MCPB；目录按服务名检索，不保证下游同步或语义排名。
+
+最新确认：发布仍按整包，包含 Reader、独立 reading_tasks 和 Scroll，不因部分自动化试用而排除 Scroll。DSH 0.1.0 薄包已完成本地及公开 URL 的 tgz 安装、两个 MCP 实际调用、队列查询、原生读图和中文/空格核心路径验证；[同一 Release](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)已提供 153 文件清单的整包源码与 6 文件薄包，3 个服务端摘要核对一致。见[安装指南](../dsh.md)及[本批证据](../../validation/dsh-bundle-20261104/report-source.md)。核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5，原发布资产不覆盖。
+
+README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](../capabilities.md)区分可用、试用与尚未接入；[相关项目](../related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；npm 未发布。
+
+About/topics 已更新；限定本仓库的默认 bilibili mcp 查询由未命中变为命中，宽泛 B 站/YouTube 查询仍未进当次前 30。复查 10 个 dsh-* 仓库并固定深读 5 个，见[呈现与检索](../../research/dsh-presentation-20261104/report-source.md)。短演示与目标索引仍待讨论。
+
+本机 DSH 已从 0.2.1-rc.5 升至官方 next 0.2.2-rc.1，组件内保存启动文件/配置备份与回退命令；前期 Reader 手动接入、精确帧和同一会话恢复见[实测](../../validation/dsh-integration-20261104/report-source.md)。本批整包安装使用独立验证 profile，未改生产 web patch；web/desktop GUI 和其它模型未验收。
+
+本轮按用户要求完成原定发布收尾与候选验收，原创代码已选择 MIT。[v0.10.0rc6 源码预发布版](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6) 已公开，标签源码为 84e151c，附 142 文件源码 ZIP 和 SHA256SUMS，服务端摘要一致。当前入口统一在 README；完整 334 项及最终分发回归通过，范围和证据见 [发布验收](../../validation/release-20261104/report-source.md)。首版沿用干净隔离环境、代表任务及已测宿主适配范围，不追加跨机、独立初校或后台消费门槛。当前授权已收尾，后续问题按用户新任务接续。
+
+当前六项已按用户指定范围完成：完整观点笔记、AIRI 简述与 95 条评论原文、动画指南、12 站资源清单、Vespera 简报和雨声项目想法。产物在 data/reading-results/20261104，六项 done、pending=0；原附言、7 个原消息关联和旧分流保留，latest_result 可查。任务完成不等于每帧/原声及全量第三方事实均已核实。
+
+用户确认新的边界：Inbox 与原消息历史归 Scroll；通用队列、任务历史、分流、批读和结果归 reading_tasks。新增 tasks.ps1 与 Reader video_tasks；本地查询不需 B 站登录。Reader 材料目录/语音身份索引为公开接口；任务不扫描 manifest 或调用 _speech。见[当前架构](../architecture.md)、[任务参考](../tasks.md)和[修复验收](../../validation/architecture-fixes-20261104/report-source.md)。
+
+本批修复短链离线/预算旁路、默认隐式深核验和补帧长锁、收件/发信配置、Inbox/Queue 表和私有调用、task 意图和契约漂移。Store 独立连接层复用现有 SQLite；原库 ID 固定，不跟随登录。scroll_report 预览是否入队、初分流、任务状态和结果；显式 send 使用共享发送接口与幂等账本，本批未真实发信。没有新模型、常驻消费或调度。
+
+低项按证据保留 Windows MCP OCR 预导入，独立任务 CLI 不经过它。Qwen 中文退化和历史 Windows 原子替换问题未据架构变化宣称修复。AIRI 末页计数与顶层页不符，原始 partial 保留，不能当历史全量。
+
+用户已经说明的用途无需重问：将视频转发给组件小号，自动入队；资源有余量时阅读，紧张时保留待办；在现有会话查询已读结果、同步队列、指定某条先读并继续讨论，不做专门前端。持久状态和及时响应是重点；已有材料与重复提交须主动提示。
+
+现有 Scroll 显式批量队列已有确认、重放、失败隔离和续读，尚不等于自动收件或持续后台阅读。Reader 材料就绪与宿主实际读完、结果可讨论必须分开。后台要形成结果，仍需宿主消费材料。
+
+收件规则已确认：只同步已配置主号发给组件小号的私信，旧消息只留历史，启用后的新视频在同步时自动入队；暂由会话主动同步。本机启用界线为北京时间 2026-11-04 13:51:00。首次保存 15 条历史来信（6 条含视频），未转成待办；实际新状态另查。不同附言/任务分开，消息和操作历史保全。独立文字不擅自归给相邻视频。
+
+队列可查看/搜索、置顶、暂停/恢复、人工 done、取消和归档；人工完成不等于 Reader 或宿主读完。已有材料与相关任务提示保留。显式粗读操作见 triage.md；后续自动同步、完整阅读和模型余量策略仍待用户决定。现有单轮 recover 仍只留档。已运行的 MCP 需重启连接加载 Reader 20 / Scroll 7 个工具，CLI 立即可用。
+
+## 前批单轮状态修复与实测
+
+问题编号 **SCROLL-STATE-20261103-01**。已展开 11 月 3 日 host.log，最终错误为 workspace routing discovery timed out；1 条预览已保留。这定位到宿主路由发现阶段超时，未进一步证明本地网络或服务端根因。原[只读观察](../../validation/scroll-state-20261103/report-source.md)保留，新证据见[本批验收](../../validation/scroll-state-20261104/report-source.md)。
+
+11 月 1 日仅保存 preparing 初始快照，候选与预览均为空；现无执行者持有单轮锁，查询投影为 interrupted。原业务快照不改，无检查点时拒绝原地恢复，不能重新取首页冒充旧候选。本轮没有恢复生产轮次或补发。
+
+CLI `scroll.ps1 status ROUND_ID --offline` 与 MCP `scroll_round(action="status", run_id=...)` 可查阶段、心跳/进展、执行者、检查点、错误链、产物及最近 100 条历史事件。显式 recover 在原候选上复用材料/判断，始终只留档；发送不确定和平台接受分别按账本保留，不自动重试。操作见[参考](../scroll-reference.md#单轮状态与显式恢复2026-11-04)。现有同步深读关联 session，只有实际存在时才登记 Reader job；选片判断仍不算完整阅读。
+
+## 当前实现基线
+
+- 正式目录 D:/IA/apps/video-reader；核心 **0.10.0rc6**，薄插件 **0.5.5**；Reader 20 工具、Scroll 7 工具。本批未发布新版本；本批完整 330 项通过，最后新增账号/库分离回归及相关 45 项通过；新进程接口另有本批记录。
+- Reader / Scroll 源码和 MCP 分开，共享登录、模型、运行环境及材料。个人收件、推荐、记忆、投递、调度归 Scroll；不新增第二套阅读核心。
+- Reader 已有跨 CLI/MCP 的共享 job、短等待返回、阶段/心跳/进展/锁等待和结果接续；状态查询不等待材料锁。详见 [共享任务验收](../../validation/runtime-jobs-20261030/report-source.md)。Scroll 单轮状态及 Inbox/队列分别保留，尚未接后台视频消费。已运行的 MCP 进程需重启连接加载新代码，CLI 可直接使用。
+- rc6 已修复坏预览缓存、可疑识别及未对齐候选保全、网页超时/断连的一次恢复、首屏可读投影，以及 Windows 状态 JSON 读/替换竞态。范围见 [实施与真实复验](../../validation/diagnosis-repairs-20261031/report-source.md)。
+- 评论/楼中楼和按分 P 分段弹幕已接入；弹幕默认关闭，可按播放时间与字幕、画面组合。来源相关不等于语义一致，不承诺隐藏、删除或历史全量内容。
+
+## Reader 保留的未解决事项
+
+**初校和及时回答。** Reader 提供获取、ASR、抽帧/OCR、差异和局部复听，语义校对仍由宿主完成。独立初校未实施；源码 Skill、MCP 和生成插件已同步按疑点深入、足以回答便及时回答。机制与候选验证看路线 F.1–F.2。
+
+**默认核查开销和材料锁。** 11 月 3 日首条 open 耗时 1024.917 秒，两类深检查约占 98%，补帧等锁 600 秒后失败；锁释放后关闭这两类检查的精确补帧为 1.901 秒。不是同等处理深度的速度对照，本批已改默认新 OCR 为按需，并让细节帧不再等待长会话锁；没有把旧耗时当作新版本性能基准。见 [双片观察](../../validation/reading-pair-20261103/report-source.md)。
+
+**选图与连续动作。** 攻略 v2 已按用户要求选择出手前准星帧和闪光结果；adaptive 或大量取帧不保证图片用途正确，C 长明确受闪结果仍未核实。见 [选图复验](../../validation/guide-image-selection-20261103/report-source.md)。
+
+**ASR 同窗根因。** 已定位 Qwen 强制 Chinese 退化及后处理遮蔽，识别策略尚未修复；未取得直接听辨真值，不宣称全片无人声或识别正确。见 [联网依据与同窗复验](../../validation/asr-followup-20261031/report-source.md)。续期仍按用户要求不验证。
+
+## 已读内容优先复用
+
+| 视频 | 本轮状态 | 继续时注意 |
+|---|---|---|
+| BV1gaxb6NEXz：获取信息渠道 / WaytoAGI | 已有讨论材料，session v_a9364426c9f39396770f420e | 90 条原生字幕已读；部分碎句和疑点保留，不宣称深层 OCR 中间证据全已观察 |
+| BV1g3t96kEEF：丝滑方案切换组件 | 已有讨论材料、宿主校对 revision 2、可交互复现；session v_12172c2147294b8dc0096794 | 原片初始有缩小灰色二级提示；用户更喜欢初始完全隐藏的变体，已实现 |
+| BV1Cxxt6JEqP：攻略 | 本轮按用户确认跳过，已有 v2 攻略 | 投放图取出手前准星帧，闪光图对应结果；不要再次默认为待读 |
+
+双片材料及范围见双片观察；本地讨论页、攻略与演示的实际路径见本轮会话工作区的 HANDOFF.md。按钮灵感已放到 OtherSpeakit 的 artifacts/tmp-button-inspiration-20261103/index.html，页面标明用途，尚未接入该产品。
+
+更早的数学、软件小字、长访谈与 Scroll 比较见 [真实任务报告](../../validation/task-reading-20261028/report-source.md)及[接续材料](../../validation/task-reading-20261028/resume-check.md)。这些是既有成果和有限样本，不需要为接续重读已完成任务，也不能当作通用准确率验收。
+
+## 运行、凭据与授权边界
+
+既有首页首条日试用和依赖只在 [daily-trial](../daily-trial.md) 维护；实时情况查 status 和日记录。最新授权已完成六项指定产物及架构中高项修复，低项依证据处理；发信接口已接结果，但本批没有实际发送。未改变调度、恢复日推、补发或新增语义模型。历史授权和本页建议不自动成为下一轮实施授权。
+
+默认本地，Gemini 关闭，失败不自动转云端；未新增初校模型。Qwen 继续复用既有 research/asr-engine-20261021/.venv 与模型，不清理实际运行资产；新安装路径与公共依赖见 [installation](../installation.md)。
+
+10 月 31 日已完成远端仓库首次导入推送，见决定记录。11 月 4 日用户授权原范围发布收尾并选择 MIT，当前发布事实以本批验收为准。跨机与其他系统未测；协议调用及本机隔离实测不扩张为全部宿主理解质量承诺。
+
+## YouTube Cookie 接续（2026-10-28）
+
+继续使用用户手动导出的短期 Cookie；长期维持暂缺。失效时由用户重导，不启用自动登录服务，不展示凭据原文。历史在线成功不代表当前登录有效；具体私有位置见 [旧交接快照](handoff-through-20261031.md#youtube-cookie-接续2026-10-28)。

@@ -38,7 +38,7 @@ Native previews use separate `p_` material identities and the same continuation 
 
 The 2026-10-29 user decision treats time to a useful answer as part of the reading experience. Enough evidence for the current answer and all materials reviewed are distinct judgments; response readiness is a host judgment, not a new API field. Unchecked material must remain available with provenance. Full requested summaries still require their scope to be covered.
 
-The current runtime/installed Skill still carries its earlier proofreading workflow; that behavior has not been revised in this documentation pass. Reader stores host-authored semantic corrections. OCR differences and fresh ASR are candidates, not an independent first-pass semantic review. See [current decisions](decisions.md) and [route](../planning/roadmap-20261021-source.md).
+Source Skills, MCP instructions and generated adapters were synchronized on 2026-11-04 to answer when evidence is sufficient and investigate relevant uncertainties as needed. Full-video segment-by-segment proofreading is not a prerequisite for every answer. Reader stores host-authored semantic corrections; OCR differences and fresh ASR remain candidates, not an independent semantic review. See [current decisions](decisions.md) and [route](../planning/roadmap-20261021-source.md).
 
 ## Meaning of completion
 

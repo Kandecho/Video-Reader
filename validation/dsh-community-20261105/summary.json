@@ -1,0 +1,97 @@
+{
+  "checked_date": "2026-11-05",
+  "timezone": "Asia/Shanghai",
+  "open_market": {
+    "state": "listed",
+    "issue_url": "https://github.com/polang233/dsh-plugin-index/issues/243",
+    "issue_state": "closed",
+    "state_reason": "completed",
+    "closed_at_utc": "2026-11-04T16:46:02Z",
+    "closed_at_local": "2026-11-05T00:46:02+08:00",
+    "confirmation_url": "https://github.com/polang233/dsh-plugin-index/issues/243#issuecomment-6636422560",
+    "index_url": "https://dshopen.org/index.json",
+    "index_entries_snapshot": 1023,
+    "index_sha256": "1e28aed57b1206642e7fa175933ccbfa452174bc78a7902832a003b0bfa1ac89",
+    "matched_entries": 1,
+    "entry": {
+      "name": "dsh-video-reader",
+      "title": {
+        "en": "Video Reader",
+        "zh": "Video Reader 视频阅读"
+      },
+      "description": {
+        "en": "★ 0 │ Connect an installed Video Reader core to DSH for timestamped video text, frames, queues and optional Scroll account workflows. Windows only; requires DSH >=0.2.2-rc.1, a separately installed core and VIDEO_READER_ROOT. Private delivery and scheduling need separate configuration.",
+        "zh": "★ 0 │ 将已安装的 Video Reader 核心接入 DSH，读取带时间文字与画面，管理队列，并可使用 Scroll 账号工作流。仅 Windows；需 DSH >=0.2.2-rc.1、另装核心并设置 VIDEO_READER_ROOT，私信与调度需单独配置。"
+      },
+      "author": "Kandecho",
+      "repository": {
+        "url": "https://github.com/Kandecho/Video-Reader",
+        "directory": "adapters/dsh"
+      },
+      "homepage": "https://github.com/Kandecho/Video-Reader#readme",
+      "metadata": {
+        "category": "integrations",
+        "keywords": [
+          "dsh",
+          "dsh-plugin",
+          "deepseek-harness",
+          "mcp",
+          "bilibili",
+          "youtube",
+          "video-reader",
+          "scroll-agent",
+          "queue",
+          "history"
+        ],
+        "sortKeys": {
+          "github-stars": 0,
+          "recommended": 483,
+          "random-resources": 575
+        },
+        "labels": [
+          "verified",
+          "updated-recent"
+        ]
+      },
+      "versions": [
+        {
+          "version": "0.1.0",
+          "publishTimestamp": 1793797035,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/Kandecho/Video-Reader",
+            "commit": "f2656bf030ec94b9f6dfea22008c1d3168f4e4c6",
+            "path": "adapters/dsh"
+          },
+          "engines": {
+            "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+          }
+        }
+      ]
+    },
+    "detail_url": "https://dshopen.org/zh/plugins/dsh-video-reader/",
+    "detail_http_status": 200,
+    "detail_sha256": "f901ecc474d430b1a5636bfa1ddcea4e33bc4aa96cad7fa16c1c8bcd63a233f8",
+    "repository_static_index_contains_entry": false,
+    "repository_snapshot": "942cc9628ff37cfa699e883a5a9815cc23424daf"
+  },
+  "awesome": {
+    "url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055",
+    "state": "closed",
+    "merged": true,
+    "merged_at_utc": "2026-11-04T17:26:10Z",
+    "merged_at_local": "2026-11-05T01:26:10+08:00",
+    "merge_commit_sha": "18fdd9b4d69a506a3b4519742113574785a2fc78",
+    "entry_path": "data/plugins/Kandecho__Video-Reader--adapters-dsh.yml",
+    "entry_blob_sha": "267bfd2705068150332dde5c9ecdc18d870a1a37",
+    "entry_url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/18fdd9b4d69a506a3b4519742113574785a2fc78/data/plugins/Kandecho__Video-Reader--adapters-dsh.yml",
+    "head_sha": "ad751a4c4cc78a2d482e21f93c2cb6a774859210",
+    "workflow_run_url": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/actions/runs/41851438969",
+    "workflow_state": "completed",
+    "workflow_conclusion": "success"
+  },
+  "new_external_posts": 0,
+  "local_dsh_configuration_changed": false,
+  "runtime_changed": false,
+  "scope": "Public GitHub status, maintainer confirmation, live JSON entry and HTTP detail page; no new host search/install acceptance."
+}

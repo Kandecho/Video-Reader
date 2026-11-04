@@ -4,7 +4,7 @@ DSH 适配器 **0.1.0** 接入同一安装中的 Reader、通用队列/历史和
 
 ## 安装薄包
 
-也可以先订阅[项目插件索引](discovery.md)，让 DSH 的发现页或 `plugin_market` 查到版本、仓库和固定 Git 安装参数；下面保留 Release tgz 的直接安装方式。
+可先按[发现指南](discovery.md)订阅社区或作者索引，再搜索 `dsh-video-reader`，取得版本、仓库和固定 Git 安装参数。[开放插件市场](https://dshopen.org/zh/plugins/dsh-video-reader/)已收录 0.1.0，社区索引地址为 `https://dshopen.org/index.json`；下面保留 Release tgz 的直接安装方式。
 
 源码与适配器在[同一发布页](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)提供。薄包只装连接配置，不复制核心、凭据、模型或材料。请把目录改为你的实际安装位置：
 
@@ -16,7 +16,7 @@ dsh web
 
 已运行的 DSH 需要退出后从这个终端重新启动；仅刷新页面不会更新进程的环境变量。下次从另一个终端启动时，也需设置 `VIDEO_READER_ROOT`。如使用自定义配置，可另设绝对路径 `VIDEO_READER_CONFIG`；两套 MCP 共用它。未设置核心目录时，适配器会明确提示该变量缺失。
 
-安装不会启用定时任务，也不会授权发送私信或评论。独立 B 站账号、收件、队列和授权投递的真实可用状态，以及仍在试用的自动化，见[能力状态](capabilities.md)。当前可从项目索引或上面的 tgz 地址安装；尚未发布 npm，也未获第三方社区索引收录。
+安装不会启用定时任务，也不会授权发送私信或评论。独立 B 站账号、收件、队列和授权投递的真实可用状态，以及仍在试用的自动化，见[能力状态](capabilities.md)。当前可从开放插件市场、作者索引或上面的 tgz 地址安装；Awesome DSH 目录也已合并收录。尚未发布 npm。
 
 源码开发时，可在 `adapters/dsh` 执行 `npm pack`，再把 tgz 的绝对路径传给 `dsh plugin --profile <name> add`。卸载用 `dsh plugin --profile web remove dsh-video-reader`，重启后生效；共享核心及记录保留。
 

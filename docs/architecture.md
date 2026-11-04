@@ -1,6 +1,6 @@
 # Video Reader 当前架构
 
-身份：2026-11-04 队列清理及架构修复后的工作区。核心仍标记 0.10.0rc6，薄适配器 0.5.5，尚未发布新版本。当前是 Reader、通用任务与 Scroll 三个模块域，两套 MCP；不需要额外服务。
+身份：2026-11-04 任务拆分与发布后的当前架构。核心 0.10.0rc6，Codex/Claude 适配器 0.5.5，DSH/MCPB 适配器各 0.1.0，整包已发布。Reader、通用任务与 Scroll 三个模块域，两套 MCP；不需要额外服务。
 
 ## 分层与调用
 
@@ -52,4 +52,4 @@ Reader 核心不导入 Scroll。材料语义与偏好策略不混入获取核心
 
 入口见[通用任务](tasks.md)、[Reader 参考](reader-reference.md)、[Inbox](inbox-queue.md)和[Scroll](scroll-reference.md)。旧架构检查的九项原始结论见[修复前快照](architecture-20261104.md)，本页维护当前结果。
 
-六项指定任务已交付并登记 done，原附言、关联消息和初步分流均保留。详细内容在本地结果索引。完整测试、真实 CLI/新 MCP 回查及不发送的报告验证，见[本批记录](../validation/architecture-fixes-20261104/report-source.md)。旧连接需重启后发现新工具；生成的薄适配器已同步，未发布或手改宿主插件缓存。
+六项指定任务已交付并登记 done，原附言、关联消息和初步分流均保留。完整测试、真实 CLI/新 MCP 回查及不发送的报告验证，见[修复记录](../validation/architecture-fixes-20261104/report-source.md)。旧连接需重启加载新工具；当前发布范围见[能力状态](capabilities.md)。后续按[六阶段路线](../planning/roadmap-20261021-source.md)推进，交互改进优先复用本页架构和接口。

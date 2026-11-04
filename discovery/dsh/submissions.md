@@ -1,10 +1,17 @@
 # 社区收录申请与资料
 
-日期：2026-11-04。已按用户授权提交[开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)及[Awesome DSH PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)，均待维护者处理，不能表述为已收录。PR 仅新增下述一个 YAML，自动检查仍在运行。作者索引已公开可订阅，社区收录须分别按对方流程处理。
+更新：2026-11-05。两条申请的状态分别核对，不把 Issue 关闭等同于拒绝，也不把检查通过等同于 PR 合并。
+
+| 渠道 | 当前结果 | 可回查证据 |
+|---|---|---|
+| 开放插件市场 | **已收录** dsh-video-reader 0.1.0；Issue 于北京时间 11 月 5 日 00:46:02 以 completed 关闭 | [Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)、[维护者确认](https://github.com/polang233/dsh-plugin-index/issues/243#issuecomment-6636422560)、[市场详情](https://dshopen.org/zh/plugins/dsh-video-reader/) |
+| Awesome DSH | **已合并收录**；北京时间 11 月 5 日 01:26:10 合并，PR check 成功 | [PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)、[主分支条目](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/18fdd9b4d69a506a3b4519742113574785a2fc78/data/plugins/Kandecho__Video-Reader--adapters-dsh.yml) |
+
+已从正式线上索引 `https://dshopen.org/index.json` 查到本项目：版本 0.1.0，固定提交 f2656bf030ec94b9f6dfea22008c1d3168f4e4c6，子目录 adapters/dsh，与原发布及实装来源一致。可在 DSH 添加这个社区索引源后搜索 `dsh-video-reader`；先准备核心与 VIDEO_READER_ROOT。回查范围和来源见[收录确认](../../validation/dsh-community-20261105/report-source.md)。
 
 ## 开放插件市场
 
-[收录表单](https://github.com/polang233/dsh-plugin-index/issues/new?template=plugin-add.yml)接受维护者确认的固定 Git 来源。可填写：
+[收录表单](https://github.com/polang233/dsh-plugin-index/issues/new?template=plugin-add.yml)接受维护者确认的固定 Git 来源。本次已获收录，保留原申请字段供维护回查：
 
 | 字段 | 内容 |
 |---|---|
@@ -20,7 +27,7 @@
 
 ## awesome-dsh-plugin
 
-依[贡献规则](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)，可提交单一文件 `data/plugins/Kandecho__Video-Reader--adapters-dsh.yml`：
+依[贡献规则](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)，PR #12055 仅提交文件 `data/plugins/Kandecho__Video-Reader--adapters-dsh.yml`：
 
 ```yaml
 url: https://github.com/Kandecho/Video-Reader/tree/main/adapters/dsh
@@ -31,7 +38,7 @@ description:
   zh: '复用现有本地安装，为 DSH 接入带时间的视频材料、通用队列/历史和 Scroll 账号工作流。'
 ```
 
-该渠道支持 monorepo 子包，README 由条目生成，不应手工修改对方 README。公开、真实 bundle、许可证、维护与 topic 等条件已有对应材料；合并仍由对方维护者决定。
+该渠道支持 monorepo 子包，README 由条目生成，不应手工修改对方 README。PR 已由维护者合并，提交为 18fdd9b4d69a506a3b4519742113574785a2fc78；目录源中的名称、仓库子目录及中英文描述与本次提交一致。
 
 ## Topic 发现型目录
 

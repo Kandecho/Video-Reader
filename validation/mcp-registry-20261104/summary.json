@@ -17,10 +17,12 @@
   ],
   "registry_state": "published_public_latest_verified",
   "community": {
+    "snapshot_date": "2026-11-04",
     "open_market": "https://github.com/polang233/dsh-plugin-index/issues/243",
     "awesome": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055",
     "state": "submitted_pending_review",
-    "awesome_check": "in_progress_build; all previous listed steps succeeded"
+    "awesome_check": "in_progress_build; all previous listed steps succeeded",
+    "latest_verification": "../dsh-community-20261105/summary.json"
   },
   "new_messages_sent": 0,
   "schedules_changed": false,
