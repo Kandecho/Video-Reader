@@ -10,6 +10,10 @@
 
 同一[发布页](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)提供完整源码与 tgz。核心仍为 0.10.0rc6，Codex/Claude 薄适配仍为 0.5.5；适配器有自己的 SemVer，不覆盖旧 rc6 资产。当前未发 npm、未提交 DSH 插件索引。
 
+该预发布版已公开，标签 `dsh-video-reader@0.1.0` 指向 f2656bf。源码 ZIP 含 153 个清单文件及生成的 manifest；薄包 3,497 字节。3 个 GitHub 资产的服务端 SHA-256 均与本地一致。随后直接使用文档中的公开 tgz 地址再次 `dsh plugin add` 成功，安装后 6 个文件与源码逐字节一致，复用前述相同运行文件的调用证据。
+
+仓库 About 也按整包范围补充队列、Scroll 独立 B 站账号、收件与授权投递；topics 增加 dsh-plugin、deepseek-harness、scroll-agent。前批检索记录保持当时快照，本次没有将元数据再次修改宣称为新排名提升。
+
 ## 已完成验证
 
 - 用官方 DSH 0.2.2-rc.1 的 `dsh plugin add` 将真正打出的 tgz 安装到独立 profile；包进入 dependencies 与 `dsh.profile.bundles`。测试启动没有再加载此前手写的 Reader MCP patch。

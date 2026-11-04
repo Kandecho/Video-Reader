@@ -35,7 +35,10 @@
     "document_files": 16,
     "local_document_links": 228,
     "public_files_scanned": 363,
-    "private_content_findings": 0
+    "private_content_findings": 0,
+    "real_dsh_plugin_add_public_release_url": true,
+    "installed_public_files_match_source": true,
+    "github_asset_digests_verified": 3
   },
   "observations": [
     "Supervisor task used unsupported action=list; model recovered with queue-list; no queue mutation requested or called."
@@ -68,5 +71,41 @@
     "sha256": "b16f57ede98bcb6243c537fc0ede18c6ecea8f786946874b0586d3437591d35d",
     "manifest_hashes_verified": true
   },
-  "release_url": "https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0"
+  "release_url": "https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0",
+  "publication": {
+    "published": true,
+    "prerelease": true,
+    "tag": "dsh-video-reader@0.1.0",
+    "source_commit": "f2656bf030ec94b9f6dfea22008c1d3168f4e4c6",
+    "published_at": "2026-11-04T12:58:35Z",
+    "assets": [
+      {
+        "name": "dsh-video-reader-0.1.0.tgz",
+        "sha256": "9406e0160d98ad79ff85c4f36d191fcab2b00199e30e54416ca8934983eb41bc"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "sha256": "5690907d43d0d1c4a5058d97238b031d66ec4a1aa4fcc702511cdabe5f3523ec"
+      },
+      {
+        "name": "video-reader-scroll-dsh-0.1.0-source.zip",
+        "sha256": "b16f57ede98bcb6243c537fc0ede18c6ecea8f786946874b0586d3437591d35d"
+      }
+    ]
+  },
+  "repository_metadata": {
+    "description": "MCP video reader for Bilibili, YouTube and local files; queues/history plus Scroll Agent for an independent Bilibili account, inbox and authorized delivery.",
+    "topics": [
+      "ai-agents",
+      "bilibili",
+      "deepseek-harness",
+      "dsh-plugin",
+      "local-first",
+      "mcp-server",
+      "scroll-agent",
+      "video-reader",
+      "youtube"
+    ],
+    "note": "Updated after whole-package clarification; earlier retrieval baseline remains a dated snapshot, no new ranking measurement."
+  }
 }

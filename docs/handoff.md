@@ -4,7 +4,7 @@
 
 ## 当前从哪里继续
 
-最新确认：发布仍按整包，包含 Reader、独立 reading_tasks 和 Scroll，不因部分自动化试用而排除 Scroll。DSH 0.1.0 薄包已完成 tgz 本地安装及两个 MCP 实际调用、队列查询、原生读图和中文/空格核心路径验证；同一 Release 提供整包源码与薄包，见[安装指南](dsh.md)及[本批证据](../validation/dsh-bundle-20261104/report-source.md)。当前核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5，原发布资产不覆盖。
+最新确认：发布仍按整包，包含 Reader、独立 reading_tasks 和 Scroll，不因部分自动化试用而排除 Scroll。DSH 0.1.0 薄包已完成本地及公开 URL 的 tgz 安装、两个 MCP 实际调用、队列查询、原生读图和中文/空格核心路径验证；[同一 Release](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)已提供 153 文件清单的整包源码与 6 文件薄包，3 个服务端摘要核对一致。见[安装指南](dsh.md)及[本批证据](../validation/dsh-bundle-20261104/report-source.md)。核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5，原发布资产不覆盖。
 
 README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](capabilities.md)区分可用、试用与尚未接入；[相关项目](related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；未发布 npm 或提交插件索引。
 
