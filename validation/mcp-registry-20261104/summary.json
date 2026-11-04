@@ -8,14 +8,82 @@
   "tests_passed": 4,
   "reader_tools": 20,
   "scroll_tools": 7,
-  "protocol_checks": ["queue-list", "local-video-open", "caption-offset-0-1", "scroll-offline-status", "chinese-space-core-and-bundle-paths"],
-  "registry_state": "validated_pending_publication",
+  "protocol_checks": [
+    "queue-list",
+    "local-video-open",
+    "caption-offset-0-1",
+    "scroll-offline-status",
+    "chinese-space-core-and-bundle-paths"
+  ],
+  "registry_state": "published_public_latest_verified",
   "community": {
     "open_market": "https://github.com/polang233/dsh-plugin-index/issues/243",
     "awesome": "https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055",
-    "state": "submitted_pending_review"
+    "state": "submitted_pending_review",
+    "awesome_check": "in_progress_build; all previous listed steps succeeded"
   },
   "new_messages_sent": 0,
   "schedules_changed": false,
-  "unverified": ["desktop-host MCPB installation UI", "other operating systems", "cross-machine setup", "new semantic reading quality"]
+  "unverified": [
+    "desktop-host MCPB installation UI",
+    "other operating systems",
+    "cross-machine setup",
+    "new semantic reading quality"
+  ],
+  "source_commit": "c50f0f65a3c3616a849223a35fd872fcb7d1a26a",
+  "source_manifest_files": 169,
+  "release_url": "https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0",
+  "release_assets": [
+    {
+      "filename": "scroll-agent-0.1.0.mcpb",
+      "sha256": "6cefeff37eca60295965df04339a0b778a7ef59e8564fedea1d4b4047fa30beb",
+      "bytes": 3785
+    },
+    {
+      "filename": "video-reader-0.1.0.mcpb",
+      "sha256": "677b053a35b6253447b994c036b73397f39f1ee45d50f164e4f9cd4c6e8e2b90",
+      "bytes": 3714
+    },
+    {
+      "filename": "video-reader-scroll-mcpb-0.1.0-source.zip",
+      "sha256": "b82a4212825176ccf79bc38867b169ae0389bcc0710a330f1ce29698f8f3a575",
+      "bytes": 452168
+    }
+  ],
+  "public_assets_verified": 4,
+  "registry_name_query_count": 2,
+  "registrations": [
+    {
+      "name": "io.github.Kandecho/video-reader",
+      "version": "0.1.0",
+      "latest_url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Kandecho%2Fvideo-reader/versions/latest",
+      "fileSha256": "677b053a35b6253447b994c036b73397f39f1ee45d50f164e4f9cd4c6e8e2b90",
+      "registry_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "statusChangedAt": "2026-11-04T15:06:19.83843Z",
+          "publishedAt": "2026-11-04T15:06:19.83843Z",
+          "updatedAt": "2026-11-04T15:06:19.83843Z",
+          "isLatest": true
+        }
+      }
+    },
+    {
+      "name": "io.github.Kandecho/scroll-agent",
+      "version": "0.1.0",
+      "latest_url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Kandecho%2Fscroll-agent/versions/latest",
+      "fileSha256": "6cefeff37eca60295965df04339a0b778a7ef59e8564fedea1d4b4047fa30beb",
+      "registry_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "status": "active",
+          "statusChangedAt": "2026-11-04T15:06:20.619883Z",
+          "publishedAt": "2026-11-04T15:06:20.619883Z",
+          "updatedAt": "2026-11-04T15:06:20.619883Z",
+          "isLatest": true
+        }
+      }
+    }
+  ],
+  "authentication_note": "Initial publish JWT expired; refreshed official authentication and published once per service.",
+  "protocol_auth_note": "Scroll requires existing login even offline; no credentials copied. Isolated material/task/agent state."
 }

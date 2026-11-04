@@ -234,8 +234,16 @@ About/topics 已按同意的草案修改；保留 7 条真实 GitHub 查询前�
 
 保留及时回答与按疑点深入：完整建索引不成为每次回答的前置条件；局部读取、已有核验和后续深入路径继续可用。先比较长访谈反复追问、中后段无字幕操作、字幕缺失/错误三类同片任务，分别记录首个可用回答时间、证据召回、遗漏与复用成本。Sense Now 的合成 benchmark 只作设计参考，不作为目标性能承诺；具体实现次序与可选模型方案在实施时按证据确定。对照依据见[本批研究](../research/sense-now-comparison-20261104/report-source.md)。
 
+### 11. DSH 社区申请与官方 MCP Registry（2026-11-04）
+
+按用户授权串行完成未来计划推送、DSH 社区申请和 MCP Registry 登记。DSH [开放插件市场 Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)与 [Awesome PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)已提交，仍待维护者处理；不能据此宣称社区已收录。PR 条目路径、格式、披露等步骤通过，整体生成构建仍运行。第 9 节是申请前快照，状态由本节更新。
+
+新增两份 Windows MCPB 0.1.0，复用已有核心，不另包模型、运行环境或账号。Reader、reading_tasks 与 Scroll 的完整源码及两个薄包在[同一 Release](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0)提供；核心仍为 0.10.0rc6。官方清单及元数据校验、4 项适配/分发测试、解包后的真实 stdio 和中文/空格路径通过；Reader 20 工具及本地视频/字幕分页/队列、Scroll 7 工具及已有登录离线状态通过。MCPB 宿主安装 UI 与跨机未测。
+
+`io.github.Kandecho/video-reader` 与 `io.github.Kandecho/scroll-agent` 0.1.0 已发布官方 Registry，公开 API 按发布者查询返回两条，latest 均 active/isLatest=true，资产 SHA-256 一致。官方入口按名称子串搜索，不是能力语义检索；登记不保证下游目录同步或所有 Agent 自动发现。详见[接入与查询](../docs/mcp-registry.md)及[验收](../validation/mcp-registry-20261104/report-source.md)。本批没有实现第 10 节的视频内容检索层，没有发送、来信同步或调度变更。
+
 ## G 查阅入口
 
 使用者从 [README](../README.md)、[首次使用](../docs/getting-started.md)或[文档首页](../docs/README.md)开始。开发接续从 [handoff](../docs/handoff.md) 开始，详细资料由 [registry](../docs/registry.md) 按需定位。历史正文中的“当前”“下一步”仅适用于当时。
 
-已发布版本见 [v0.10.0rc6](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6)及[发布验收](../validation/release-20261104/report-source.md)。[10 月 28 日 docs1](../validation/docs-20261028/summary.json)仅保留为旧候选快照；主分支文档可晚于下载包。未来出候选仍需同步主维护文档及经确认的宿主流程。
+已发布核心见 [v0.10.0rc6](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6)及[发布验收](../validation/release-20261104/report-source.md)，最新整包和双 MCPB 见 [mcpb-v0.1.0](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0)。[10 月 28 日 docs1](../validation/docs-20261028/summary.json)仅保留为旧候选快照；主分支文档可晚于下载包。未来出候选仍需同步主维护文档及经确认的宿主流程。

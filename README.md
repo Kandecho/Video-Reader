@@ -4,7 +4,7 @@
 
 Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Claude Code 和 DSH；理解和回答由助手完成。你可以直接贴链接提问，不必先生成笔记。
 
-**[开始使用](docs/getting-started.md) · [下载整包](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0) · [文档](docs/README.md)**
+**[开始使用](docs/getting-started.md) · [下载整包](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0) · [文档](docs/README.md)**
 
 ## 可以用来做什么
 

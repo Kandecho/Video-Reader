@@ -13,7 +13,9 @@
 
 ## 分发与目录状态
 
-发布前快照：两份元数据已验证，待上传并登记。服务名为 `io.github.Kandecho/video-reader` 与 `io.github.Kandecho/scroll-agent`；[维护清单](../../discovery/mcp/reader.server.json)和[Scroll 清单](../../discovery/mcp/scroll.server.json)绑定各自 MCPB SHA-256。后续公开回查写入同目录 summary.json 并更新本文；准备通过不能代替实际登记成功。
+已公开 [mcpb-v0.1.0 Release](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0)，来源 c50f0f65a3c3616a849223a35fd872fcb7d1a26a。完整源码 ZIP 的清单含 169 文件；两个 MCPB、源码 ZIP 和摘要文件共四个资产，GitHub 服务端 digest 与实际公开下载均核对一致。源码 ZIP 保留发布前准备快照，最终登记回执以 main 上本文及 summary.json 为准。
+
+北京时间 2026-11-04 23:06:19–20，`io.github.Kandecho/video-reader` 与 `io.github.Kandecho/scroll-agent` 0.1.0 串行发布成功。未经认证的公开 API 按 Kandecho 查询返回两条；精确 latest 查询均为 active、isLatest=true，版本、安装包地址和 SHA-256 与[Reader 清单](../../discovery/mcp/reader.server.json)、[Scroll 清单](../../discovery/mcp/scroll.server.json)一致。初次发布遇 Registry 短期 JWT 已过期而返回 401；刷新认证后成功，没有重复登记或更换版本冒充成功。
 
 ## 社区申请及前序推送
 

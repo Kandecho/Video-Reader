@@ -12,7 +12,7 @@ Video Reader 与 Scroll 通过同一项目的两个 MCPB 接入包发布，共�
 
 ## 登记在哪里，如何查询
 
-官方入口是 [MCP Registry](https://registry.modelcontextprotocol.io/)，服务名称为 `io.github.Kandecho/video-reader` 和 `io.github.Kandecho/scroll-agent`。网页可按服务名称搜索 `Kandecho`、`video-reader` 或 `scroll-agent`。API 的名称查询是大小写不敏感的子串匹配，检索词至少三个字符；它不是按自然语言理解能力的语义搜索。[官方 API 说明](https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/api/official-registry-api.md)。
+官方入口是 [MCP Registry](https://registry.modelcontextprotocol.io/)，服务名称为 `io.github.Kandecho/video-reader` 和 `io.github.Kandecho/scroll-agent`。2026-11-04 两个 0.1.0 已发布，公开 API 按发布者检索返回两条，精确 latest 查询均为 active、isLatest=true，包地址和摘要与本地清单一致。网页可按服务名称搜索 `Kandecho`、`video-reader` 或 `scroll-agent`。API 的名称查询是大小写不敏感的子串匹配，检索词至少三个字符；它不是按自然语言理解能力的语义搜索。[官方 API 说明](https://github.com/modelcontextprotocol/registry/blob/main/docs/reference/api/official-registry-api.md)。
 
 - [查询本发布者的最新条目](https://registry.modelcontextprotocol.io/v0.1/servers?search=Kandecho&version=latest)。
 - [Reader 最新登记](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.Kandecho%2Fvideo-reader/versions/latest)。

@@ -4,17 +4,19 @@
 
 ## 当前从哪里继续
 
-用户已确认将轻量内容目录、可复用 storyboard 导航、按问题选块和局部作业复用纳入后续计划，主维护处为[路线 F.10](../planning/roadmap-20261021-source.md#10-轻量内容目录storyboard-与问题检索已纳入后续计划未实施)。本批依次完成计划推送、DSH 社区申请，再制作标准 MCP 接入包并登记官方 MCP Registry。内容检索层未实施，现有分镜/拼图不重复算新功能。
+本批已串行完成：未来计划由 bb9b9d3 推送；DSH [Issue #243](https://github.com/polang233/dsh-plugin-index/issues/243)及 [PR #12055](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/12055)已提交待审核；两个 MCPB 0.1.0 与 169 文件清单的完整源码已发布到 [mcpb-v0.1.0](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0)，源码提交 c50f0f6。Reader 与 Scroll 分别登记官方 MCP Registry，公开 API 返回两条，均 active/isLatest=true，版本和包摘要核对一致。见[接入及检索指南](mcp-registry.md)与[验收](../validation/mcp-registry-20261104/report-source.md)。两个薄包复用既有 Windows 核心；官方清单、真实 stdio、Reader 20/Scroll 7 工具、本地视频/字幕分页/队列/Scroll 离线状态、中文/空格路径通过，宿主 MCPB 安装 UI 未测。无新发送、收件同步或调度。
+
+用户已确认将轻量内容目录、可复用 storyboard 导航、按问题选块和局部作业复用纳入后续计划，主维护处为[路线 F.10](../planning/roadmap-20261021-source.md#10-轻量内容目录storyboard-与问题检索已纳入后续计划未实施)。内容检索层未实施，现有分镜/拼图不重复算新功能；后续实现仍需按新任务接续。
 
 最新按用户点名对照 Sense Now 与其来源 See Now，固定两仓库提交，核对 17 文件指纹；未安装或启动采集。Sense Now 的 video_index 确有分块索引、规则路由和内容检索，与 Reader 直接重叠；See Now 主要是实时陪看。我们当前材料目录查找不等同内容问题检索，独立小号收件、通用任务/结果与跨宿主接口是已有的组合侧重。详见[对照研究](../research/sense-now-comparison-20261104/report-source.md)；没有据研究自动实施检索层或调整默认阅读体验。
 
 最新任务已打通 DSH 发现路径：作者 format-1 索引位于 discovery/dsh/index.json，通过 raw GitHub HTTPS 订阅；从已发布 f2656bf 生成，安装固定到 adapters/dsh 0.1.0。真实 plugin_market 的三组中英文检索、版本/兼容性、未安装→Git 安装→已安装以及 Reader 队列/Scroll 状态调用均通过。常用 web profile 已启用官方发现 bundle 和只读工具、订阅项目索引、安装整包；原配置和 launch.ps1 已备份，后者提供核心目录。web 服务启动和两个 MCP 工具表初始化通过，测试服务已停止，GUI 点击仍未验收。见[发现指南](discovery.md)和[本批证据](../validation/dsh-discovery-20261104/report-source.md)。
 
-社区索引快照中本项目尚未收录；已整理开放插件市场 Issue、awesome-dsh-plugin PR 和 Topic 发现型目录的不同规则，以及[可提交资料](../discovery/dsh/submissions.md)，未向第三方发送。GitHub 三条组合查询可返回本仓库，位置只代表本次返回页。通用 MCP Registry 支持 GitHub/GitLab Release 的 MCPB，可作为后续跨宿主发现方向，不必先发 npm；当前 DSH tgz 不能当 MCPB 登记。
+社区目录尚未确认收录，已提交的两条申请及规则见[申请资料](../discovery/dsh/submissions.md)。GitHub 三条组合查询可返回本仓库，位置只代表本次返回页。通用 MCP Registry 已用实际 MCPB 完成登记，不是把 DSH tgz 当作 MCPB；目录按服务名检索，不保证下游同步或语义排名。
 
 最新确认：发布仍按整包，包含 Reader、独立 reading_tasks 和 Scroll，不因部分自动化试用而排除 Scroll。DSH 0.1.0 薄包已完成本地及公开 URL 的 tgz 安装、两个 MCP 实际调用、队列查询、原生读图和中文/空格核心路径验证；[同一 Release](https://github.com/Kandecho/Video-Reader/releases/tag/dsh-video-reader%400.1.0)已提供 153 文件清单的整包源码与 6 文件薄包，3 个服务端摘要核对一致。见[安装指南](dsh.md)及[本批证据](../validation/dsh-bundle-20261104/report-source.md)。核心仍为 0.10.0rc6，Codex/Claude 适配器仍为 0.5.5，原发布资产不覆盖。
 
-README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](capabilities.md)区分可用、试用与尚未接入；[相关项目](related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；未发布 npm 或提交社区收录申请。
+README 明确 Scroll 组件独立 B 站账号、小号首页与主号授权私信已有真实使用。[能力状态](capabilities.md)区分可用、试用与尚未接入；[相关项目](related-projects.md)引用 dsh-bili-scroll 等进行中性比较。未新增日轮、发送、常驻监听或后台消费者；npm 未发布。
 
 About/topics 已更新；限定本仓库的默认 bilibili mcp 查询由未命中变为命中，宽泛 B 站/YouTube 查询仍未进当次前 30。复查 10 个 dsh-* 仓库并固定深读 5 个，见[呈现与检索](../research/dsh-presentation-20261104/report-source.md)。短演示与目标索引仍待讨论。
 
