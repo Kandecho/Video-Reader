@@ -3,7 +3,14 @@
   "version": "0.10.0rc6",
   "adapter_version": "0.5.5",
   "original_code_license": "MIT",
-  "release_state": "validated_candidate",
+  "release_state": "published_prerelease",
+  "release_url": "https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6",
+  "source_commit": "84e151c42ec7167d2817183319730bcfc0a6598f",
+  "source_archive_files": 142,
+  "source_archive_bytes": 417736,
+  "source_archive_sha256": "7bc7d14c8924521b1bfb0f7665596d8162702c28f553eb5d99a97e3dfa947122",
+  "github_asset_digest_matches": true,
+  "tested_runtime_files_identical": 65,
   "tag": "v0.10.0rc6",
   "platform_scope": "Windows x64 / Python 3.12.13 / PowerShell 7; same-machine clean isolation",
   "installation": {
@@ -16,7 +23,7 @@
     "base_without_asr_model_passed": true,
     "full_suite_requires_asr_extra": true
   },
-  "tests": {"full_passed": 334, "full_seconds": 56.463},
+  "tests": {"full_passed": 334, "full_seconds": 56.463, "final_distribution_regression_passed": 1},
   "representative_tasks": {
     "bilingual_caption_pagination": true,
     "exact_frame_conflict_observed": true,
