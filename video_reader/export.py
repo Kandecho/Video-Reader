@@ -11,7 +11,8 @@ from .common import ReaderError, UNTRUSTED, write_json
 from . import review
 
 
-def export(reader, session, destination, revision, source='auto', context=None, read_ids=None, include_danmaku=False):
+def export(reader, session, destination, revision, source='auto', context=None, read_ids=None, include_danmaku=False,
+           speech_profile=None):
     if not isinstance(include_danmaku, bool):
         raise ReaderError('include_danmaku must be true or false')
     if type(revision) is not int or revision < 0:
@@ -22,7 +23,8 @@ def export(reader, session, destination, revision, source='auto', context=None, 
     directory = reader.directory(session)
     with FileLock(str(directory / '.lock'), timeout=600):
         data = reader.load(session)
-        speech = reader._speech(data, 0, data['metadata']['duration_seconds'], source, context)
+        options = {'speech_profile': speech_profile} if speech_profile is not None else {}
+        speech = reader._speech(data, 0, data['metadata']['duration_seconds'], source, context, **options)
         snapshot, raw = review.document(speech)
         selected_state = review.state(directory, snapshot, revision)
         if reader.config.get('vision', {}).get('enabled', True):

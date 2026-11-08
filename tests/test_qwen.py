@@ -80,7 +80,8 @@ class QwenTests(unittest.TestCase):
         self.assertIsNone(qwen.language(self.reader.config))
         self.assertNotEqual(qwen.profile(self.reader.config, ''), legacy)
         self.reader.config['qwen']['language'] = 'Chinese'
-        self.assertEqual(qwen.profile(self.reader.config, ''), legacy)
+        self.assertEqual(qwen.legacy_profile(self.reader.config, ''), legacy)
+        self.assertNotEqual(qwen.profile(self.reader.config, ''), legacy)
         self.load_qwen()
         prepared = self.reader.review(self.sid, source='qwen')
         self.reader.review(self.sid, 'commit', source='qwen', payload={'snapshot_id': prepared['snapshot_id'],

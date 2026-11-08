@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib.util
 from contextlib import contextmanager
 from pathlib import Path
 import time
@@ -51,6 +50,17 @@ class Reader:
         from .catalog import lookup, account_scope
         if isinstance(sources,str): sources=[sources]
         return lookup(self.cache,sources,scopes={source:account_scope(self.config,source) for source in sources})
+
+    def active_jobs(self, exclude=None):
+        return Jobs(self).active(exclude=exclude)
+
+    def validate_assets(self, frames):
+        from .content import validate_assets
+        return validate_assets(frames)
+
+    def evidence_frames(self, session, requests, binding=None):
+        from .content import evidence_frames
+        return evidence_frames(self, session, requests, binding=binding)
 
     def content(self, target, action='index', query='', block_ids=None, source='auto', context=None,
                 block_seconds=120, offset=0, limit=20, index_id=None, offline=False, refresh=False, _delivery=True):
@@ -152,9 +162,9 @@ class Reader:
         from .audio import inspect_audio
         return inspect_audio(self, session, start, end)
 
-    def export(self, session, destination, revision, source='auto', context=None, read_ids=None, include_danmaku=False):
+    def export(self, session, destination, revision, source='auto', context=None, read_ids=None, include_danmaku=False, speech_profile=None):
         from .export import export
-        return export(self, session, destination, revision, source, context, read_ids, include_danmaku)
+        return export(self, session, destination, revision, source, context, read_ids, include_danmaku, speech_profile=speech_profile)
 
     def discover(self, **options):
         from .discovery import discover
@@ -372,13 +382,12 @@ class Reader:
     @delivered
     def read(self, session, start=0, end=None, timestamps=None, max_frames=None, width=None, page=0, temporal=None,
              source='auto', verify=None, context=None, view='reading', strategy='uniform', task=None,
-             include_danmaku=False, danmaku_snapshot_id=None):
+             include_danmaku=False, danmaku_snapshot_id=None, speech_profile=None):
         if not isinstance(include_danmaku, bool):
             raise ReaderError('include_danmaku must be true or false')
         if danmaku_snapshot_id is not None and not include_danmaku:
             raise ReaderError('danmaku_snapshot_id requires include_danmaku=True')
-        if source not in ('auto', 'captions', 'asr', 'qwen'):
-            raise ReaderError('Speech source must be auto, captions, asr or qwen')
+        speech_engine.validate_source(source)
         if view not in ('reading', 'evidence', 'raw'):
             raise ReaderError('view must be reading, evidence or raw')
         if verify is not None and not isinstance(verify, bool):
@@ -392,7 +401,7 @@ class Reader:
             data = self.load(session)
             report(materials={'media_available': True, 'captions_available': any(s['source'] == 'captions' for s in data['speech'])})
             lo, hi = self.window(data, start, end)
-            context = self._reading_context(data, context, source)
+            context = self._reading_context(data, context, source, speech_profile)
             budget = self.config["overview_frames"] if max_frames is None else max_frames
             if max_frames is None and strategy in ('adaptive', 'dense'):
                 budget = 12 if strategy == 'adaptive' else 48
@@ -410,16 +419,24 @@ class Reader:
             if temporal is not None and not isinstance(temporal, bool):
                 raise ReaderError('temporal must be true or false')
             vision_enabled = self.config.get('vision', {}).get('enabled', True)
-            ocr_available = importlib.util.find_spec('rapidocr_onnxruntime') is not None
+            from . import vision
+            ocr_available = vision.available()
             if temporal is True and not ocr_available:
                 raise ReaderError('Temporal text checks need the optional vision extra; install it or select temporal=False')
             vision_enabled = vision_enabled and ocr_available
             temporal = False if temporal is None else temporal
-            from .vision import FRAME_REVISION as vision_revision
             parameters = {"start": lo, "end": hi, "timestamps": points, "budget": budget, "width": width,
-                          'temporal': temporal, 'vision_revision': vision_revision if temporal else 0}
+                          'temporal': temporal, 'vision_revision': vision.FRAME_REVISION if temporal else 0}
+            if temporal:
+                parameters['vision_profile'] = vision.profile()
             if strategy != 'uniform' or task is not None:
                 parameters.update(strategy=strategy, task=task)
+            planning_speech = None
+            if not points and strategy in ('adaptive', 'scene'):
+                from .observation import plan_identity
+                if strategy == 'adaptive':
+                    planning_speech = self._speech(data, lo, hi, source, context, speech_profile)
+                parameters['observation_profile'] = plan_identity(strategy, planning_speech)
             read_id = digest(parameters)
             previous = next((r for r in data["reads"] if r["id"] == read_id), None)
             if previous and all(Path(f["path"]).is_file() for f in previous["frames"]):
@@ -438,7 +455,7 @@ class Reader:
                     elif strategy in ('adaptive', 'scene'):
                         from .observation import extract
                         selected, observation = extract(data, output, lo, hi, budget, width, strategy,
-                            self._speech(data, lo, hi, source, context))
+                            planning_speech or {})
                     elif strategy == 'dense':
                         dense_points = [lo + (hi-lo) * (i+.5) / budget for i in range(budget)]
                         selected, _ = _watch_call(frames.extract_at_timestamps, data['media_path'], output, dense_points,
@@ -467,10 +484,10 @@ class Reader:
             if page and page * page_size >= count:
                 raise ReaderError("Frame page is outside the available range")
             selected = record["frames"][page * page_size:(page+1) * page_size]
-            speech = self._speech(data, lo, hi, source, context)
+            speech = self._speech(data, lo, hi, source, context, speech_profile)
             speech_page_size = self.config["page_transcript_segments"]
             segments = speech.pop("segments", [])
-            full = self._speech(data, 0, data['metadata']['duration_seconds'], source, context)
+            full = self._speech(data, 0, data['metadata']['duration_seconds'], source, context, speech_profile)
             speech['segments'], speech['review'], speech['screen_verification'] = self._speech_page(
                 data, full, segments[:speech_page_size], directory, verify, view, cached_only=bool(points))
             speech["returned_segments"] = len(speech["segments"])
@@ -508,77 +525,18 @@ class Reader:
             raise ReaderError('Speech context must be a string of at most 1000 characters')
         return value
 
-    def _reading_context(self, data, context=None, source='auto'):
-        value = self._context(data, context, source)
-        if context is not None or source in ('qwen', 'captions'):
-            return value
-        records = [s for s in data['speech'] if s['source'] == 'local_faster_whisper']
-        if any(s.get('profile') == speech_engine.profile(self.config, '') for s in records):
-            return ''
-        # Preserve access to old cached transcripts/reviews. New decoding never
-        # continues the old implicit title prompt; explicit context selects it.
-        legacy = data.get('platform_metadata', {}).get('part_title') or data['title']
-        if any(s.get('profile') == speech_engine.profile(self.config, legacy) for s in records):
-            return legacy
-        return ''
+    def _reading_context(self, data, context=None, source='auto', speech_profile=None):
+        return speech_engine.reading_context(data, self.config, context, source, speech_profile)
 
-    def _speech(self, data, lo, hi, source='auto', context=None):
-        if source not in ('auto', 'captions', 'asr', 'qwen'):
-            raise ReaderError('Speech source must be auto, captions, asr or qwen')
-        available = sorted(set(s['source'] for s in data['speech']))
-        captions = [s for s in data['speech'] if s['source'] == 'captions']
-        records = captions if source not in ('asr', 'qwen') and captions else []
-        if not records and source != 'captions':
-            from . import qwen
-            engine = qwen if source == 'qwen' else speech_engine
-            wanted = engine.profile(self.config, self._reading_context(data, context, source))
-            source_name = qwen.SOURCE if source == 'qwen' else 'local_faster_whisper'
-            records = [s for s in data['speech'] if s['source'] == source_name and s.get('profile') == wanted]
-        missing = speech_engine.missing_ranges(records, lo, hi)
-        coverage = {'kind': 'source_processed', 'requested_range': [lo, hi], 'complete': not missing,
-                    'missing_ranges': [list(r) for r in missing]}
-        if records:
-            records = sorted(records, key=lambda r: r['start'])
-            record = records[0]
-            alignment = {}
-            if source == 'qwen':
-                assembled, seams, cuts = qwen.assemble(records)
-                candidates = assembled
-                alignment = {'qwen_alignment': {'timing_accuracy_verified': False,
-                    'timestamp_class_step_seconds': .08,
-                    'seams_requiring_review': [seam['time'] for seam in seams if seam['requires_review'] and lo <= seam['time'] <= hi],
-                    'shared_pair_seams': sum(cut['method'] == 'unique_shared_pair' for cut in cuts),
-                    'zero_duration_raw_units': sum(len(r['qwen_chunk']['warnings']) for r in records)}}
-            else:
-                candidates = [s for r in records for s in r['segments']]
-            segments = sorted((s for s in candidates if s['end'] > lo and s['start'] < hi),
-                              key=lambda s: (s['start'], s['end']))
-            segments = list({(s['start'], s['end'], s['text']): s for s in segments}.values())
-            from .recognition import assess
-            assessment, unplaced_candidates = assess(records, segments, lo, hi)
-            from .review import identity
-            review_document = data.get('review_documents', {}).get(digest(identity(record)))
-            return {**{k: v for k, v in record.items() if k not in ('segments', 'start', 'end', 'qwen_chunk')}, **alignment,
-                    **({'review_document_id': review_document} if review_document else {}),
-                    'start': lo, 'end': hi, 'status': 'partial' if missing else 'alignment_unresolved' if unplaced_candidates else 'ready' if segments else 'no_speech',
-                    'segments': segments, 'coverage': coverage, 'available_sources': available,
-                    'recognition_assessment': assessment, 'unplaced_candidates': unplaced_candidates,
-                    'quality': {'source': 'human_declared' if (record.get('track') or {}).get('kind') == 'manual' else 'machine_generated',
-                                'exactness_guaranteed': False, 'text_status': assessment['text_status']}}
-        if source == 'captions':
-            return {'status': 'unavailable', 'segments': [], 'coverage': coverage,
-                    'available_sources': available, 'reason': 'No caption track covers this interval'}
-        if not data["metadata"]["has_audio"]:
-            return {"status": "no_audio_stream", "segments": [], 'coverage': coverage, 'available_sources': available}
-        model = self.config["asr"].get("model_path")
-        ready = qwen.available(self.config) if source == 'qwen' else bool(
-            model and (Path(model) / "model.bin").is_file() and importlib.util.find_spec("faster_whisper"))
-        return {"status": "requires_transcription" if ready else "unavailable", "segments": [],
-                'coverage': coverage, 'available_sources': available,
-                "available_tool": "video_transcript" if ready else None,
-                "reason": ('Selected local speech source needs decoding' if ready else
-                           'Qwen needs its local runtime and both models; no fallback' if source == 'qwen' else
-                           'No captions and no configured local ASR model/runtime')}
+    def _speech(self, data, lo, hi, source='auto', context=None, speech_profile=None, *, allow_historical=True):
+        context = self._reading_context(data, context, source, speech_profile)
+        result = speech_engine.material(data, lo, hi, self.config, source, context,
+            speech_profile=speech_profile, allow_historical=allow_historical)
+        from .review import identity
+        review_document = data.get('review_documents', {}).get(digest(identity(result)))
+        if review_document:
+            result['review_document_id'] = review_document
+        return result
 
     def _speech_page(self, data, full, selected, directory, verify, view, cached_only=False):
         from .review import overlay
@@ -586,7 +544,8 @@ class Reader:
         automatic = verify is None
         cached_only = cached_only or (automatic and view != 'evidence')
         enabled = self.config.get('vision', {}).get('enabled', True)
-        ocr_available = importlib.util.find_spec('rapidocr_onnxruntime') is not None
+        from . import vision
+        ocr_available = vision.available()
         if verify is True and not ocr_available:
             raise ReaderError('Screen verification needs the optional vision extra; install it or select verify=False')
         enabled = enabled and ocr_available
@@ -612,7 +571,7 @@ class Reader:
 
     @delivered
     def transcript(self, session, start=0, end=None, offset=0, limit=60, transcribe=True,
-                   source='auto', verify=None, context=None, view='reading', max_chunks=None):
+                   source='auto', verify=None, context=None, view='reading', max_chunks=None, speech_profile=None):
         if view not in ('reading', 'evidence', 'raw'):
             raise ReaderError('view must be reading, evidence or raw')
         if verify is not None and not isinstance(verify, bool):
@@ -627,25 +586,23 @@ class Reader:
             report(materials={'media_available': True, 'captions_available': any(s['source'] == 'captions' for s in data['speech'])})
             lo, hi = self.window(data, start, end)
             requested_context = context
-            context = self._reading_context(data, context, source)
-            speech = self._speech(data, lo, hi, source, context)
+            context = self._reading_context(data, context, source, speech_profile)
+            speech = self._speech(data, lo, hi, source, context, speech_profile,
+                allow_historical=not transcribe or speech_profile is not None)
             processed = 0
-            if speech["status"] in ('requires_transcription', 'partial') and transcribe and source != 'captions':
-                if requested_context is None and source != 'qwen' and context:
+            if speech["status"] in ('requires_transcription', 'partial') and transcribe and source != 'captions' and speech_profile is None:
+                if requested_context is None and context:
                     context = ''
-                    speech = self._speech(data, lo, hi, source, context)
-                from . import qwen
-                chunk = 60 if source == 'qwen' else self.config['asr'].get('chunk_seconds', 120)
-                if isinstance(chunk, bool) or not isinstance(chunk, (float, int)) or not 15 <= chunk <= 600:
-                    raise ReaderError('ASR chunk_seconds must be between 15 and 600')
+                    speech = self._speech(data, lo, hi, source, context, allow_historical=False)
+                engine = speech_engine.backend(source)
+                chunk = engine.chunk_seconds(self.config)
                 for begin, finish in speech['coverage']['missing_ranges']:
                     while begin < finish - .001:
                         if max_chunks is not None and processed >= max_chunks:
                             break
                         until = min(finish, begin+chunk)
-                        decoder = qwen.decode if source == 'qwen' else speech_engine.decode
                         report('transcribing', progress={'start': begin, 'end': until, 'range_end': hi})
-                        record = decoder(data, begin, until, directory, self.config, context, print_progress)
+                        record = engine.decode(data, begin, until, directory, self.config, context, print_progress)
                         data['speech'].append(record)
                         self.save(data)  # Completed intervals survive interruption; never claim an unfinished tail.
                         begin = until
@@ -653,7 +610,7 @@ class Reader:
                 speech = self._speech(data, lo, hi, source, context)
             all_segments = speech.pop("segments", [])
             selected = all_segments[offset:offset+limit]
-            full = self._speech(data, 0, data['metadata']['duration_seconds'], source, context)
+            full = self._speech(data, 0, data['metadata']['duration_seconds'], source, context, speech_profile)
             selected, speech['review'], speech['screen_verification'] = self._speech_page(
                 data, full, selected, directory, verify, view)
             speech.update(session_id=session, requested_range={"start": lo, "end": hi}, offset=offset,
@@ -667,7 +624,7 @@ class Reader:
 
     @delivered
     def review(self, session, action='prepare', source='auto', offset=0, limit=60,
-               payload=None, context=None, start=None, end=None):
+               payload=None, context=None, start=None, end=None, speech_profile=None):
         from . import review
         if type(offset) is not int or offset < 0 or type(limit) is not int or not 1 <= limit <= 200:
             raise ReaderError('offset must be >=0 and limit between 1 and 200')
@@ -683,10 +640,10 @@ class Reader:
                     start, end = supplied_scope['start'], supplied_scope['end']
             local = start is not None or end is not None
             lo, hi = self.window(data, 0 if start is None else start, end)
-            selected = self._speech(data, lo, hi, source, context)
+            selected = self._speech(data, lo, hi, source, context, speech_profile)
             if action in ('prepare', 'commit') and not selected['coverage']['complete']:
                 raise ReaderError('Finish transcription of the requested review range before preparing or committing its review' if local else 'Finish full-source transcription before preparing or committing its review')
-            speech = self._speech(data, 0, duration, source, context)
+            speech = self._speech(data, 0, duration, source, context, speech_profile)
             if local and action == 'prepare' and not speech.get('review_document_id'):
                 # Pin the existing review document; adding other decoded intervals
                 # must not orphan edits. Raw segment IDs still bind exact text/time.

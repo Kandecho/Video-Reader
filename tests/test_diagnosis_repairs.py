@@ -194,7 +194,7 @@ class RecognitionRepairTests(unittest.TestCase):
         self.assertIn('候选。',(self.root/'export/index.html').read_text(encoding='utf-8'))
 
     def test_valid_padding_only_alignment_does_not_become_an_unplaced_failure(self):
-        from video_reader.recognition import unplaced
+        from video_reader.qwen import unplaced
         chunk=owned_chunk('前文。',[SimpleNamespace(text='前文',start_time=0,end_time=1)],
           {'index':0,'owner_start':20,'owner_end':620,'input_start':0,'input_end':640},10,298)
         self.assertIsNone(unplaced({'start':300,'end':360,'qwen_chunk':chunk}))

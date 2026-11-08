@@ -1,8 +1,20 @@
 """Observation candidates reuse the existing scene and exact-frame extractors."""
 from pathlib import Path
 
-from .common import ReaderError, write_json
+from .common import ReaderError, digest, write_json
 from .vendor import frames
+
+REVISION = 1
+
+
+def plan_identity(strategy, speech=None):
+    """Only the actual adaptive planning input affects its generation.
+
+    Host review, confidence and speech text are not inputs to timestamp choice.
+    Scene-only plans do not depend on speech at all.
+    """
+    cues = [(s['start'], s['end']) for s in (speech or {}).get('segments', [])] if strategy == 'adaptive' else None
+    return digest([REVISION, strategy, cues])
 
 
 def spread(values, count):

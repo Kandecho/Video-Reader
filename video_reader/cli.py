@@ -11,6 +11,7 @@ from .reader import Reader
 
 def parser():
     from reading_tasks.api import ACTIONS as TASK_ACTIONS
+    from .speech import SOURCES
     p = argparse.ArgumentParser(description="Read video as source material for an agent; JSON output")
     p.add_argument("--config")
     sub = p.add_subparsers(dest="command", required=True)
@@ -19,7 +20,7 @@ def parser():
     content.add_argument('--action', choices=('index','query','storyboard','material','validate'), default='index')
     content.add_argument('--query', default='')
     content.add_argument('--block-ids', nargs='+')
-    content.add_argument('--source', choices=('auto','captions','asr','qwen'), default='auto')
+    content.add_argument('--source', choices=SOURCES, default='auto')
     content.add_argument('--context')
     content.add_argument('--block-seconds', type=int, default=120)
     content.add_argument('--offset', type=int, default=0)
@@ -101,7 +102,8 @@ def parser():
     read.add_argument("--width", type=int)
     read.add_argument("--page", type=int, default=0)
     read.add_argument('--temporal', action=argparse.BooleanOptionalAction, default=None)
-    read.add_argument('--source', choices=('auto', 'captions', 'asr', 'qwen'), default='auto')
+    read.add_argument('--source', choices=SOURCES, default='auto')
+    read.add_argument('--speech-profile', help='Select a returned saved speech profile; never starts decoding')
     read.add_argument('--verify', action=argparse.BooleanOptionalAction, default=None)
     read.add_argument('--context')
     read.add_argument('--view', choices=('reading', 'evidence', 'raw'), default='reading')
@@ -114,7 +116,8 @@ def parser():
     tr.add_argument("--offset", type=int, default=0)
     tr.add_argument("--limit", type=int, default=60)
     tr.add_argument("--no-transcribe", action="store_true")
-    tr.add_argument('--source', choices=('auto', 'captions', 'asr', 'qwen'), default='auto')
+    tr.add_argument('--source', choices=SOURCES, default='auto')
+    tr.add_argument('--speech-profile', help='Select a returned saved speech profile; never starts decoding')
     tr.add_argument('--verify', action=argparse.BooleanOptionalAction, default=None)
     tr.add_argument('--context')
     tr.add_argument('--view', choices=('reading', 'evidence', 'raw'), default='reading')
@@ -139,14 +142,16 @@ def parser():
     output.add_argument('destination')
     output.add_argument('--include-danmaku', action='store_true')
     output.add_argument('--revision', type=int, required=True)
-    output.add_argument('--source', choices=('auto', 'captions', 'asr', 'qwen'), default='auto')
+    output.add_argument('--source', choices=SOURCES, default='auto')
+    output.add_argument('--speech-profile', help='Export a returned saved speech profile and its explicit review revision')
     output.add_argument('--context')
     output.add_argument('--read-id', action='append', dest='read_ids')
     sub.add_parser('youtube-status', help='Check explicitly configured manual cookies without modifying them')
     review = sub.add_parser('review', help='Prepare/commit host-agent proofreading with source evidence')
     review.add_argument('action', choices=('prepare', 'commit', 'status'))
     review.add_argument('session')
-    review.add_argument('--source', choices=('auto', 'captions', 'asr', 'qwen'), default='auto')
+    review.add_argument('--source', choices=SOURCES, default='auto')
+    review.add_argument('--speech-profile', help='Review a returned saved speech profile without decoding')
     review.add_argument('--offset', type=int, default=0)
     review.add_argument('--limit', type=int, default=60)
     review.add_argument('--context')
@@ -186,18 +191,19 @@ def doctor(reader):
     import importlib.util
     from pathlib import Path
     import shutil
-    from . import qwen
+    from . import speech, vision
+    speech_status = speech.status(reader.config)
     return {"python": sys.version.split()[0], "ffmpeg": shutil.which("ffmpeg"), "ffprobe": shutil.which("ffprobe"),
             "python_executable": sys.executable, "python_base": sys.base_prefix,
             "yt_dlp_module": str(importlib.util.find_spec("yt_dlp").origin) if importlib.util.find_spec("yt_dlp") else None,
             "node": shutil.which("node"), "default_reader": reader.config["default_reader"],
             "mcp": bool(importlib.util.find_spec("mcp")), "faster_whisper": bool(importlib.util.find_spec("faster_whisper")),
-            "local_ocr": bool(importlib.util.find_spec("rapidocr_onnxruntime")),
-            "temporal_text_checks": reader.config.get('vision', {}).get('enabled', True) and bool(importlib.util.find_spec('rapidocr_onnxruntime')),
-            "local_model_present": bool(reader.config["asr"].get("model_path") and (Path(reader.config["asr"]["model_path"]) / "model.bin").is_file()),
+            "local_ocr": vision.available(),
+            "temporal_text_checks": reader.config.get('vision', {}).get('enabled', True) and vision.available(),
+            "local_model_present": speech_status['asr_assets'],
             "local_model_path": reader.config["asr"].get("model_path"),
-            "qwen_assets_present": qwen.available(reader.config),
-            "qwen_selection": "Explicit source=qwen, Chinese GPU ASR; availability does not probe CUDA",
+            "qwen_assets_present": speech_status['qwen'],
+            "qwen_selection": "Explicit source=qwen, local GPU ASR with configured language detection; availability does not probe CUDA",
             "gemini_enabled": reader.config["gemini"]["enabled"],
             "gemini_key_present": bool(__import__("os").environ.get(reader.config["gemini"]["api_key_env"])),
             "cache_dir": str(reader.cache)}
@@ -243,7 +249,8 @@ def main():
         elif args.command == 'sound':
             result = reader.sound(args.session, args.start, args.end)
         elif args.command == 'export':
-            result = reader.export(args.session, args.destination, args.revision, args.source, args.context, args.read_ids, args.include_danmaku)
+            result = reader.export(args.session, args.destination, args.revision, args.source, args.context,
+                                   args.read_ids, args.include_danmaku, speech_profile=args.speech_profile)
         elif args.command == 'youtube-status':
             from .youtube_auth import status
             result = status(reader.config['platforms']['youtube'])
@@ -261,6 +268,7 @@ def main():
             from .common import read_json
             result = reader.review(args.session, args.action, source=args.source, offset=args.offset,
                                    limit=args.limit, context=args.context, start=args.start, end=args.end,
+                                   speech_profile=args.speech_profile,
                                    payload=read_json(args.payload) if args.payload else None)
         elif args.command == 'relisten':
             result = reader.relisten(args.session, args.start, args.end, terms=args.term,

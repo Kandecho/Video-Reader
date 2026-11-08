@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from difflib import SequenceMatcher
+import importlib
+import importlib.util
 from pathlib import Path
 import re
 import threading
@@ -11,11 +13,29 @@ from PIL import Image
 
 from .common import ReaderError, digest, read_json, stamp, write_json
 from .vendor import frames as decoder
+from .capability_identity import runtime_identity
 
 REVISION = 3
 FRAME_REVISION = 2
 _engine = None
+_engine_profile = None
 _lock = threading.Lock()
+
+
+def available():
+    return importlib.util.find_spec('rapidocr_onnxruntime') is not None
+
+
+def warmup():
+    """Preload native imports on the Windows main thread without loading a model."""
+    if available():
+        importlib.import_module('rapidocr_onnxruntime')
+
+
+def profile():
+    return digest({'engine': 'rapidocr_onnxruntime', 'frame_policy': FRAME_REVISION, 'verification_policy': REVISION,
+                   'runtime': runtime_identity('rapidocr-onnxruntime', assets=True),
+                   'onnxruntime': runtime_identity('onnxruntime')})
 
 
 def normalized(text):
@@ -23,26 +43,28 @@ def normalized(text):
 
 
 def ocr_frame(path):
-    global _engine
+    global _engine, _engine_profile
     path = Path(path)
     identity = [path.stat().st_size, path.stat().st_mtime_ns]
-    cached = path.with_suffix('.ocr.json')
+    generation = profile()
+    cached = path.with_suffix(f'.ocr-{generation}.json')
     if cached.is_file():
         previous = read_json(cached)
         if previous.get('revision') == FRAME_REVISION and previous.get('identity') == identity:
             return previous['lines']
     try:
         with _lock:
-            if _engine is None:
+            if _engine is None or _engine_profile != generation:
                 from rapidocr_onnxruntime import RapidOCR
                 _engine = RapidOCR(intra_op_num_threads=2, inter_op_num_threads=1)
+                _engine_profile = generation
             rows, _ = _engine(str(path))
     except Exception as exc:
         raise ReaderError(f'Local OCR failed: {type(exc).__name__}; check rapidocr-onnxruntime in this component environment') from None
     lines = [{'text': row[1], 'confidence': round(float(row[2]), 4),
               'box': [[round(float(x), 2), round(float(y), 2)] for x, y in row[0]]}
              for row in (rows or [])]
-    write_json(cached, {'revision': FRAME_REVISION, 'identity': identity, 'lines': lines})
+    write_json(cached, {'revision': FRAME_REVISION, 'profile': generation, 'identity': identity, 'lines': lines})
     return lines
 
 
@@ -110,7 +132,7 @@ def annotate_frame(frame, data, directory, config, end, allow_shift=True):
     finish = min(end, start+lookahead)
     if finish-start < 1:
         return {**original, 'temporal': {'status': 'unresolved', 'reason': 'Insufficient source interval to establish a local hold'}}
-    out = directory / 'temporal' / digest([FRAME_REVISION, start, finish, width])
+    out = directory / 'temporal' / digest([profile(), start, finish, width])
     index_path = out / 'index.json'
     if index_path.exists() and all(Path(f['path']).is_file() for f in read_json(index_path)):
         probes = read_json(index_path)
@@ -189,7 +211,8 @@ def _frame_at(data, directory, timestamp):
 def verify_segments(data, segments, directory, config, *, cached_only=False, skip_reviewed=False):
     if not config.get('vision', {}).get('enabled', True):
         return [{**s, 'screen_verification': {'status': 'disabled'}} for s in segments]
-    cache_path = directory / 'screen-verifications.json'
+    generation = profile()
+    cache_path = directory / f'screen-verifications-{generation}.json'
     cache = read_json(cache_path) if cache_path.exists() else {}
     result, previous = [], time.monotonic()
     for segment in segments:
@@ -221,6 +244,7 @@ def verify_segments(data, segments, directory, config, *, cached_only=False, ski
                                  basis='Two local OCR frames agree on a near-identical full line. OCR can be wrong even when stable and confident; compare the actual images. Original speech/captions are never replaced.')
                 else:
                     check['status'] = 'unstable_or_disagreeing_screen_text'
+            check['ocr_profile'] = generation
             cache[key] = check
             write_json(cache_path, cache)
         check = {**cache[key], 'cache_reused': reusable}

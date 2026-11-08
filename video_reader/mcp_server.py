@@ -147,10 +147,11 @@ def video_read(session_id: str, start: str = "0", end: str | None = None,
                source: str = 'auto', verify: bool | None = None, context: str | None = None,
                view: str = 'reading', strategy: str = 'adaptive', task: str | None = None,
                include_danmaku: bool = False, danmaku_snapshot_id: str | None = None,
-               wait_seconds: float = 1) -> list[TextContent | ImageContent]:
+               wait_seconds: float = 1, speech_profile: str | None = None) -> list[TextContent | ImageContent]:
     """Read actual video frames with source times; continue next_page with unchanged parameters.
     source/context/view select the same speech and review snapshot as video_transcript; read never starts ASR.
     source=qwen selects cached Qwen speech; asr remains Whisper and auto still prefers captions.
+    speech_profile selects a returned saved track for historical reading; it never starts decoding.
     Automatic OCR reuses cached checks and computes only for pending speech. Exact-timestamp reads use cached
     speech checks only by default. verify=True or view=evidence computes missing checks, including reviewed
     speech; verify=False disables speech OCR. temporal separately controls numeric/formula frame analysis.
@@ -164,6 +165,7 @@ def video_read(session_id: str, start: str = "0", end: str | None = None,
     return pack(reader.job('start', operation='read', parameters=dict(session=session_id, start=start, end=end,
         timestamps=timestamps, max_frames=max_frames, width=width, page=page, temporal=temporal,
         source=source, verify=verify, context=context, view=view, strategy=strategy, task=task,
+        speech_profile=speech_profile,
         include_danmaku=include_danmaku, danmaku_snapshot_id=danmaku_snapshot_id), wait_seconds=wait_seconds))
 
 
@@ -171,9 +173,9 @@ def video_read(session_id: str, start: str = "0", end: str | None = None,
 def video_transcript(session_id: str, start: str = "0", end: str | None = None,
                      offset: int = 0, limit: int = 60, source: str = 'auto',
                      verify: bool | None = None, context: str | None = None, view: str = 'reading', max_chunks: int | None = 1,
-                     wait_seconds: float = 1) -> dict:
+                     wait_seconds: float = 1, speech_profile: str | None = None) -> dict:
     """Read full-range speech, continuing all next_offset pages. source=asr forces independent Whisper decoding.
-    source=qwen explicitly selects local Chinese Qwen GPU ASR with model-estimated word timing, no title hint
+    source=qwen explicitly selects local Qwen GPU ASR with configured language detection and model-estimated word timing, no title hint
     unless context is explicitly supplied, and separate caches/review. Requires the component's Qwen runtime
     and both models. Each <=60s interval has its own bounded worker; failures do not trigger fallback.
     Completed intervals are saved and reused after interruptions. Machine text is checked against near-identical
@@ -184,9 +186,11 @@ def video_transcript(session_id: str, start: str = "0", end: str | None = None,
     Default view=reading returns compact corrected text (pending until reviewed). Use view=evidence for
     original text, edit reasons, full raw word timestamps/confidences and screen evidence in a chosen range;
     view=raw selects the original wording. Review coverage is separate from decoding coverage.
+    speech_profile selects one returned saved track without decoding, including historical corrected tracks.
     """
     return reader.job('start', operation='transcript', parameters=dict(session=session_id, start=start, end=end,
-        offset=offset, limit=limit, source=source, verify=verify, context=context, view=view, max_chunks=max_chunks),
+        offset=offset, limit=limit, source=source, verify=verify, context=context, view=view, max_chunks=max_chunks,
+        speech_profile=speech_profile),
         wait_seconds=wait_seconds)
 
 
@@ -226,13 +230,15 @@ def video_sound(session_id: str, start: str = '0', end: str | None = None) -> di
 @mcp.tool()
 def video_export(session_id: str, destination: str, revision: int, source: str = 'auto',
                  context: str | None = None, read_ids: list[str] | None = None,
-                 include_danmaku: bool = False) -> dict:
+                 include_danmaku: bool = False, speech_profile: str | None = None) -> dict:
     """Create a new portable folder for an explicit review revision, raw text, corrections and evidence.
     Copies referenced images to relative assets, includes full evidence.json and a readable index.html.
     Existing exports are never overwritten. Revision 0 is explicitly unreviewed. Does not publish or upload.
     include_danmaku=True includes already acquired audience snapshots for selected reads; never fetches online.
+    speech_profile selects a returned historical saved track and its own review history without decoding.
     """
-    return reader.export(session_id, destination, revision, source, context, read_ids, include_danmaku)
+    return reader.export(session_id, destination, revision, source, context, read_ids, include_danmaku,
+                         speech_profile=speech_profile)
 
 
 @mcp.tool()
@@ -248,7 +254,8 @@ def video_youtube_status() -> dict:
 @mcp.tool()
 def video_review(session_id: str, action: str = 'prepare', source: str = 'auto',
                  offset: int = 0, limit: int = 60, payload: dict | None = None,
-                 context: str | None = None, start: str | None = None, end: str | None = None) -> dict:
+                 context: str | None = None, start: str | None = None, end: str | None = None,
+                 speech_profile: str | None = None) -> dict:
     """Proofread complete speech using host judgment, whole context and actual frames; no notes or extra LLM service.
     prepare returns snapshot_id, base_revision, segment_id and paginated text. commit payload:
     {snapshot_id, base_revision, reviewed_segment_ids:[IDs including unchanged utterances],
@@ -264,7 +271,8 @@ def video_review(session_id: str, action: str = 'prepare', source: str = 'auto',
     into the commit payload. scope_review describes that range, while review.complete still means the whole
     source. Later decoding of other intervals preserves existing edits; changed text never inherits review.
     """
-    return reader.review(session_id, action, source, offset, limit, payload, context, start, end)
+    return reader.review(session_id, action, source, offset, limit, payload, context, start, end,
+                         speech_profile=speech_profile)
 
 
 @mcp.tool()
@@ -410,7 +418,8 @@ def main():
     import sys
     if sys.platform == "win32" and reader.config.get("vision", {}).get("enabled", True):
         try:
-            import rapidocr_onnxruntime  # noqa: F401
+            from .vision import warmup
+            warmup()
         except ImportError:
             # Keep preview/login available; OCR still reports its normal tool error.
             pass

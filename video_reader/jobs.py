@@ -21,6 +21,13 @@ TERMINAL = {'completed', 'failed', 'interrupted'}
 OPERATIONS = {'open', 'read', 'transcript', 'continue_read', 'content', 'consume_task'}
 
 
+def execution_identity(reader):
+    """Bind a request and its worker to the same effective config/account."""
+    from .bilibili_auth import BilibiliAuth
+    account = BilibiliAuth(reader.config).account_scope()
+    return digest({'config': reader.config, 'account': account})
+
+
 def report(stage=None, **details):
     job = CURRENT.get()
     if job:
@@ -130,6 +137,8 @@ class Jobs:
             raise ReaderError(str(exc)) from None
         bound.apply_defaults()
         parameters = dict(bound.arguments)
+        if parameters.get('speech_profile') is None:
+            parameters.pop('speech_profile', None)
         source_identity = None
         if operation in ('read','transcript','continue_read'):
             self.reader.directory(parameters['session'])
@@ -140,10 +149,7 @@ class Jobs:
             source_identity = resolved['identity']
         self._wait_value(wait_seconds)
         # Config and current account isolate active requests. Never persist tokens.
-        auth = self.reader.config.get('bilibili_auth', {})
-        credential = Path(auth.get('directory', '')) / 'credential.json'
-        account = read_json(credential).get('account_marker') if auth.get('enabled') and credential.is_file() else None
-        identity = digest({'config': self.reader.config, 'account': account})
+        identity = execution_identity(self.reader)
         key = digest({'operation': operation, 'parameters': parameters, 'config_identity': identity,
                       'source_identity': source_identity})
         with FileLock(str(self.root / '.index.lock'), timeout=10):
@@ -212,6 +218,23 @@ class Jobs:
         paths = [p for p in paths if not p.name.endswith('.result.json')][:20]
         return {'jobs': [self.status(p.stem) for p in paths]}
 
+    def active(self, *, exclude=None):
+        """All nonterminal jobs, without the display list's twenty-item limit."""
+        excluded = {exclude} if isinstance(exclude, str) else set(exclude or ())
+        current = CURRENT.get()
+        if current:
+            excluded.add(current.job_id)
+        active = []
+        for path in self.root.glob('j_*.json'):
+            if path.name.endswith('.result.json') or path.stem in excluded:
+                continue
+            if read_json(path).get('status') in TERMINAL:
+                continue
+            state = self.status(path.stem)
+            if state['status'] not in TERMINAL:
+                active.append(state)
+        return active
+
 
 class Running:
     def __init__(self, store, job_id):
@@ -249,6 +272,8 @@ class Running:
             token = CURRENT.set(self)
             thread = threading.Thread(target=self.heartbeat, daemon=True)
             try:
+                if self.value.get('config_identity') != execution_identity(self.store.reader):
+                    raise ReaderError('Job execution configuration/account changed; reload the caller and start an explicit new request')
                 self.update('initializing', status='running', worker_pid=os.getpid())
                 thread.start()
                 result = getattr(self.store.reader, self.value['operation'])(**self.value['parameters'])

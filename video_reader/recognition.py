@@ -3,44 +3,21 @@ import copy
 from .common import digest
 
 REVISION = 1
-SUSPECT = {'suspect_decoding', 'zero_duration_alignment', 'unresolved_segment_timing', 'qwen_seam_requires_review'}
+SUSPECT = {'suspect_decoding', 'zero_duration_alignment', 'unresolved_segment_timing'}
 
 
 def candidate(segment):
-    return bool(SUSPECT.intersection(segment.get('recognition', {}).get('flags', [])))
+    recognition = segment.get('recognition', {})
+    return bool(recognition.get('requires_review') or SUSPECT.intersection(recognition.get('flags', [])))
 
 
-def unplaced(record):
-    chunk = record.get('qwen_chunk') or {}
-    raw = chunk.get('raw_text', '')
-    from .qwen_pipeline import normalize
-    if not normalize(raw) and chunk.get('generation', {}).get('requires_review'):
-        raw = ''.join(item.get('raw_text', '') for item in chunk['generation'].get('outputs', []))
-    if not normalize(raw) or chunk.get('text') or chunk.get('words'):
-        return None
-    words = chunk.get('raw_words') or []
-    if words and not any(w['start'] == w['end'] for w in words):
-        return None  # Valid speech confined to padding must stay outside owner.
-    value = {'raw_text': raw, 'input_range': chunk.get('input'), 'owner_range': chunk.get('owner'),
-             'time_status': 'unplaced', 'reason': 'missing_or_zero_duration_alignment',
-             'raw_alignment': copy.deepcopy(words), 'warnings': copy.deepcopy(chunk.get('warnings', [])),
-             'processed_range': [record['start'], record['end']]}
-    if chunk.get('generation'):
-        value['generation'] = copy.deepcopy(chunk['generation'])
-    value['candidate_id'] = digest([record.get('source'), record.get('profile'), value])
-    return value
-
-
-def assess(records, segments, lo, hi):
+def assess(records, segments, lo, hi, *, diagnostics=None):
+    diagnostics = diagnostics or {}
     suspects = [s for s in segments if candidate(s)]
-    unresolved = [value for r in records if r['end'] > lo and r['start'] < hi
-                  if (value := unplaced(r)) is not None]
+    unresolved = copy.deepcopy(diagnostics.get('unplaced_candidates', []))
     status = ('alignment_unresolved' if unresolved else 'unverified_candidates' if suspects
               else 'candidate_text' if segments else 'no_transcript_returned')
-    generation = [{'range': [r['start'], r['end']],
-                   **{key: value for key, value in r['qwen_chunk']['generation'].items() if key != 'outputs'}}
-                  for r in records if r['end'] > lo and r['start'] < hi and
-                  r.get('qwen_chunk', {}).get('generation', {}).get('requires_review')]
+    generation = copy.deepcopy(diagnostics.get('generation_warnings', []))
     return {'revision': REVISION, 'text_status': status, 'suspect_segments': len(suspects),
             'generation_warnings': generation,
             'suspect_ranges': [[s['start'], s['end']] for s in suspects],
@@ -49,5 +26,10 @@ def assess(records, segments, lo, hi):
 
 
 def diagnostic_identity(speech):
-    return digest([REVISION, [(s['start'], s['end'], s['text'], s.get('recognition'))
+    # requires_review is a normalized projection of the preserved raw flags.
+    # Adding the projection must not invalidate pre-boundary-fix continuations.
+    def identity(segment):
+        value = segment.get('recognition')
+        return {k: v for k, v in value.items() if k != 'requires_review'} if value is not None else None
+    return digest([REVISION, [(s['start'], s['end'], s['text'], identity(s))
                               for s in speech.get('segments', [])], speech.get('unplaced_candidates', [])])

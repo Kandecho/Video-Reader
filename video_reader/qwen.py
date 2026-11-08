@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import copy
 from pathlib import Path
 import re
 import subprocess
@@ -10,6 +11,7 @@ import uuid
 
 from .common import ROOT, ReaderError, digest, read_json, run, stamp, write_json
 from .qwen_pipeline import seam_diagnostics, stitch_chunks
+from .capability_identity import assets_identity, file_identity, runtime_identity
 
 SOURCE = 'local_qwen3_asr'
 REVISION = 2
@@ -24,7 +26,7 @@ def language(config):
     return value.strip().capitalize()
 
 
-def profile(config, context):
+def legacy_profile(config, context):
     options = config['qwen']
     selected = language(config)
     # Explicit Chinese retains the original forced-language track and reviews.
@@ -32,6 +34,60 @@ def profile(config, context):
     return digest({'engine': SOURCE, 'revision': 1 if selected == 'Chinese' else REVISION, 'model': options['model_path'],
                    'aligner': options['aligner_path'], 'runtime': options['runtime_dir'],
                    'context': context, 'language': selected, 'chunk_seconds': 60, 'padding_seconds': 2})
+
+
+def engine_identity(config):
+    options = config['qwen']
+    runtime = Path(options['runtime_dir'])
+    site = runtime / 'Lib/site-packages'
+    return {'model': assets_identity(options['model_path']), 'aligner': assets_identity(options['aligner_path']),
+            'runtime_config': file_identity(runtime / 'pyvenv.cfg'),
+            'runtime': [runtime_identity(name, site) for name in ('qwen-asr', 'transformers', 'torch')],
+            'python': list(sys.version_info[:3])}
+
+
+def profile(config, context):
+    return digest([legacy_profile(config, context), engine_identity(config)])
+
+
+def chunk_seconds(config):
+    return 60
+
+
+def unplaced(record):
+    """Normalize backend-specific alignment failures at the backend boundary."""
+    from .qwen_pipeline import normalize
+    chunk = record.get('qwen_chunk') or {}
+    raw = chunk.get('raw_text', '')
+    if not normalize(raw) and chunk.get('generation', {}).get('requires_review'):
+        raw = ''.join(item.get('raw_text', '') for item in chunk['generation'].get('outputs', []))
+    if not normalize(raw) or chunk.get('text') or chunk.get('words'):
+        return None
+    words = chunk.get('raw_words') or []
+    if words and not any(w['start'] == w['end'] for w in words):
+        return None
+    value = {'raw_text': raw, 'input_range': chunk.get('input'), 'owner_range': chunk.get('owner'),
+             'time_status': 'unplaced', 'reason': 'missing_or_zero_duration_alignment',
+             'raw_alignment': copy.deepcopy(words), 'warnings': copy.deepcopy(chunk.get('warnings', [])),
+             'processed_range': [record['start'], record['end']]}
+    if chunk.get('generation'):
+        value['generation'] = copy.deepcopy(chunk['generation'])
+    value['candidate_id'] = digest([record.get('source'), record.get('profile'), value])
+    return value
+
+
+def assembled(records, lo, hi):
+    segments, seams, cuts = assemble(records)
+    selected = [r for r in records if r['end'] > lo and r['start'] < hi]
+    return {'segments': segments,
+            'metadata': {'qwen_alignment': {'timing_accuracy_verified': False, 'timestamp_class_step_seconds': .08,
+                'seams_requiring_review': [s['time'] for s in seams if s['requires_review'] and lo <= s['time'] <= hi],
+                'shared_pair_seams': sum(c['method'] == 'unique_shared_pair' for c in cuts),
+                'zero_duration_raw_units': sum(len(r['qwen_chunk']['warnings']) for r in records)}},
+            'diagnostics': {'unplaced_candidates': [value for r in selected if (value := unplaced(r)) is not None],
+                'generation_warnings': [{'range': [r['start'], r['end']],
+                    **{k: v for k, v in r['qwen_chunk']['generation'].items() if k != 'outputs'}}
+                    for r in selected if r.get('qwen_chunk', {}).get('generation', {}).get('requires_review')]}}
 
 
 def available(config):
@@ -65,7 +121,8 @@ def chunk_segments(chunk):
                        'words': [{'text': item['text'], 'start': item['start'], 'end': item['end'],
                                   'probability': None} for item in group],
                        'alignment': 'qwen_forced_alignment_estimate',
-                       'recognition': {'mean_word_probability': None, 'uncertain_words': [], 'flags': flags}})
+                       'recognition': {'mean_word_probability': None, 'uncertain_words': [], 'flags': flags,
+                                       'requires_review': bool(flags)}})
         first = index + 1
     return result
 
@@ -86,6 +143,7 @@ def assemble(records):
                 if any(seam['requires_review'] and segment['start'] - .5 <= seam['time'] <= segment['end'] + .5
                        for seam in group_seams):
                     segment['recognition']['flags'].append('qwen_seam_requires_review')
+                    segment['recognition']['requires_review'] = True
             segments.extend(selected)
         seams.extend(group_seams)
         cuts.extend(group_cuts)
@@ -99,6 +157,7 @@ def decode(data, lo, hi, directory, config, context, emit):
     if hi - lo > 60.001:
         raise ReaderError('Qwen source intervals must be at most 60 seconds')
     options = config['qwen']
+    generation = engine_identity(config)
     timeout = options.get('timeout_seconds', 300)
     if type(timeout) not in (int, float) or not 1 <= timeout <= 600:
         raise ReaderError('Qwen timeout_seconds must be between 1 and 600')
@@ -139,7 +198,10 @@ def decode(data, lo, hi, directory, config, context, emit):
         if process:
             stop(process)
         raise
+    if engine_identity(config) != generation:
+        raise ReaderError('Speech model/runtime changed during decoding; completed older intervals are preserved')
     record = {'start': lo, 'end': hi, 'source': SOURCE, 'profile': profile(config, context),
+              'configuration_profile': legacy_profile(config, context), 'engine_identity': generation,
               'status': 'ready' if chunk['text'] else 'no_speech', 'qwen_chunk': chunk,
               'language': chunk.get('language'), 'language_probability': None, 'model': Path(options['model_path']).name,
               'context': context, 'segments': assemble([{'start': lo, 'qwen_chunk': chunk}])[0],
@@ -150,7 +212,6 @@ def decode(data, lo, hi, directory, config, context, emit):
                            'timing_accuracy_verified': False, 'mean_word_probability_available': False},
               'elapsed_seconds': round(time.monotonic() - started, 3), 'job_path': str(target),
               'scope': 'speech only; raw text and model-estimated timing, not native sound understanding'}
-    from .recognition import unplaced
     if unplaced(record):
         record['status'] = 'alignment_unresolved'
     write_json(target / 'record.json', record)

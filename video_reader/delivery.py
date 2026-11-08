@@ -157,6 +157,8 @@ def pages(result, text_budget, image_budget, *, reading=False):
         return [result]
     # Parts cover every field, including all word/OCR/correction evidence. Image
     # pixels travel separately with their original IDs; none are resized here.
+    first = reading_page(result, text_budget, image_budget) if reading else None
+    attached = {(frame['id'], frame['path']) for frame in _images(first)} if first else set()
     output, selected, used = [], [], 0
     for part in _parts(result, chunk_chars=max(1, (text_budget-700)//12)):
         size = len(encoded(part)) + 1
@@ -169,6 +171,10 @@ def pages(result, text_budget, image_budget, *, reading=False):
         output.append({'material_parts': selected})
     selected, used = [], 0
     for frame in images:
+        # The readable projection already attached these exact source assets.
+        # Canonical metadata is still retained losslessly in material_parts.
+        if (frame['id'], frame['path']) in attached:
+            continue
         size = Path(frame['path']).stat().st_size if Path(frame['path']).is_file() else 0
         if selected and used + size > image_budget:
             output.append({'visual': {'frames': selected}})
@@ -178,10 +184,8 @@ def pages(result, text_budget, image_budget, *, reading=False):
         used += size
     if selected:
         output.append({'visual': {'frames': selected}})
-    if reading:
-        first = reading_page(result, text_budget, image_budget)
-        if first:
-            output.insert(0, first)
+    if first:
+        output.insert(0, first)
     return output
 
 
@@ -189,8 +193,9 @@ def fingerprint(reader, session, parameters, result=None):
     from .review import document, state, material_id
     from .sources import file_identity
     data = reader.load(session)
+    options = {'speech_profile': parameters['speech_profile']} if parameters.get('speech_profile') is not None else {}
     speech = reader._speech(data, 0, data['metadata']['duration_seconds'],
-                            parameters.get('source', 'auto'), parameters.get('context'))
+                            parameters.get('source', 'auto'), parameters.get('context'), **options)
     snapshot, _ = document(speech)
     review = (result or {}).get('review') or (result or {}).get('speech', {}).get('review')
     if review:
@@ -253,6 +258,8 @@ def emit(reader, result, operation, parameters, remaining_frames=None):
     binding = fingerprint(reader, session, parameters, result)
     if operation == 'read' and result.get('speech', {}).get('next_offset') is not None:
         speech_parameters = {key: parameters[key] for key in ('session', 'start', 'end', 'source', 'verify', 'context', 'view')}
+        if parameters.get('speech_profile') is not None:
+            speech_parameters['speech_profile'] = parameters['speech_profile']
         speech_parameters.update(offset=result['speech']['next_offset'], limit=reader.config['page_transcript_segments'],
                                  transcribe=False, max_chunks=None)
         bridge = {'schema': 1, 'operation': 'transcript', 'binding': {**binding, 'parameters': speech_parameters},

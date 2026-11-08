@@ -33,11 +33,34 @@ def terms(value):
     return set(words)
 
 
-def _validate_assets(frames):
+def validate_assets(frames):
     for frame in frames:
         if frame.get('asset_sha256') and (not Path(frame['path']).is_file() or
                 hashlib.sha256(Path(frame['path']).read_bytes()).hexdigest() != frame['asset_sha256']):
             raise ReaderError('Native content image changed or disappeared')
+
+
+def evidence_frames(reader, session, requests, *, binding=None):
+    """Return local evidence for a material binding without exposing its layout."""
+    data = reader.load(session)
+    binding = binding or {}
+    cid = binding.get('cid')
+    if cid is not None and str(data.get('platform_metadata', {}).get('cid')) != str(cid):
+        raise ReaderError('Evidence part/CID changed; keep the original task snapshot')
+    if 'account_scope' in binding and binding['account_scope'] != (data.get('authentication') or {}).get('account_marker'):
+        raise ReaderError('Evidence belongs to another account scope')
+    if len(requests) > 4:
+        raise ReaderError('Requested evidence needs a narrower set')
+    frames = []
+    for request in requests:
+        points = request.get('timestamps') or [(request['start'] + request['end']) / 2]
+        if len(points) > 6:
+            raise ReaderError('Evidence request exceeds six exact frames')
+        material = reader.read(session, start=request['start'], end=request['end'], timestamps=points,
+                               max_frames=len(points), verify=False, temporal=False, _delivery=False)
+        frames.extend({**frame, 'asset_sha256': hashlib.sha256(Path(frame['path']).read_bytes()).hexdigest()}
+                      for frame in material['visual']['frames'])
+    return frames
 
 
 def _capture(reader, target, source, context, offline, refresh=False):
@@ -76,7 +99,7 @@ def _capture(reader, target, source, context, offline, refresh=False):
         captured = read_json(native_path)
         if captured['binding']['account_scope'] != scope:
             raise ReaderError('Native content belongs to another account')
-        _validate_assets(captured['frames'])
+        validate_assets(captured['frames'])
         return captured
     from .platform import PlatformError
     options = {'density': 'dense', 'max_frames': 48}
@@ -142,7 +165,7 @@ def _directory(reader, captured, block_seconds):
     reused = path.is_file()
     if reused:
         result = read_json(path)
-        _validate_assets(result.get('frame_assets',[]))
+        validate_assets(result.get('frame_assets',[]))
     else:
         blocks = []
         for index in range(math.ceil(captured['duration']/block_seconds)):
@@ -188,8 +211,8 @@ def execute(reader, target, action='index', query='', block_ids=None, source='au
             current = read_json(native)
         if {**current['binding'], 'block_seconds': binding['block_seconds']} != binding:
             raise ReaderError('Content source/speech/review changed; rebuild the directory')
-        _validate_assets(current['frames'])
-        _validate_assets(saved.get('frame_assets',[]))
+        validate_assets(current['frames'])
+        validate_assets(saved.get('frame_assets',[]))
         return {'index_id': index_id, 'binding': binding, 'valid': True}
     if action not in ('index', 'query', 'storyboard', 'material'):
         raise ReaderError('Content action must be index/query/storyboard/material/validate')

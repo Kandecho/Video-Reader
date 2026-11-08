@@ -207,9 +207,10 @@ class CorrectionTests(unittest.TestCase):
         class Model:
             def transcribe(self, *args, **kwargs):
                 return iter([segment]), SimpleNamespace(language='zh', language_probability=.99)
-        with patch.dict(speech._models, {('fixture', 'cpu', 'int8'): Model()}), patch('video_reader.speech.run'):
+        config = {'asr': {'model_path': 'fixture', 'device': 'cpu', 'compute_type': 'int8'}}
+        with patch.dict(speech._models, {speech.model_key(config): Model()}), patch('video_reader.speech.run'):
             result = speech.decode({'metadata': {'duration_seconds': 10}, 'media_path': 'fixture'},
-                                   0, 10, self.root, {'asr': {'model_path': 'fixture', 'device': 'cpu', 'compute_type': 'int8'}},
+                                   0, 10, self.root, config,
                                    '', lambda s: None)
         self.assertEqual(len(result['segments'][0]['words']), 2)
         self.assertEqual(len(result['segments'][0]['recognition']['uncertain_words']), 1)
@@ -222,9 +223,10 @@ class CorrectionTests(unittest.TestCase):
                 assert kwargs['without_timestamps'] is False
                 assert kwargs['word_timestamps'] is False
                 return iter([segment]), SimpleNamespace(language='zh', language_probability=.99)
-        with patch.dict(speech._models, {('fixture', 'cpu', 'int8'): Model()}), patch('video_reader.speech.run') as ffmpeg:
+        config = {'asr': {'model_path': 'fixture', 'device': 'cpu', 'compute_type': 'int8'}}
+        with patch.dict(speech._models, {speech.model_key(config): Model()}), patch('video_reader.speech.run') as ffmpeg:
             result = speech.decode({'metadata': {'duration_seconds': 100}, 'media_path': 'fixture'},
-                                   10,20,self.root,{'asr': {'model_path': 'fixture','device': 'cpu','compute_type': 'int8'}},
+                                   10,20,self.root,config,
                                    '',lambda s: None,precise_words=False)
         command=ffmpeg.call_args.args[0]
         self.assertEqual(command[command.index('-ss')+1],'10')
