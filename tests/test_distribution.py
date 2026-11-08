@@ -26,6 +26,9 @@ class SourceDistributionTests(unittest.TestCase):
             self.assertTrue((output / 'scroll_agent/mcp_server.py').is_file())
             self.assertTrue((output / 'tools/build_dsh_index.py').is_file())
             self.assertTrue((output / 'tools/build_mcpb.py').is_file())
+            for script in ('install_scroll_task.ps1', 'run_scroll_daily.ps1', 'manage_scroll_background.ps1',
+                           'run_scroll_background.ps1', 'scheduled_task_action.ps1', 'run_scheduled_hidden.py'):
+                self.assertEqual((output / 'tools' / script).read_bytes(), (ROOT / 'tools' / script).read_bytes())
             self.assertEqual(json.loads((output / 'adapters/mcpb/scroll/manifest.json').read_text())['name'], 'scroll-agent')
             self.assertEqual(json.loads((output / 'discovery/dsh/index.json').read_text(encoding='utf-8'))['format'], 1)
             bundle = json.loads((output / 'adapters/dsh/package.json').read_text(encoding='utf-8'))

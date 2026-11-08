@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.5.5'
+VERSION = '0.5.6'
 MARKETPLACE = 'video-reader-local'
 CORE_NOTICE = ("Use Video Reader MCP tools when connected. Otherwise use the prototype's `run.ps1` CLI. "
                "The prototype root is the parent directory of this `skill` directory.")
