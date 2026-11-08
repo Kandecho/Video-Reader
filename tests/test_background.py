@@ -133,6 +133,25 @@ class BackgroundTests(unittest.TestCase):
         self.assertEqual(self.bg.consumer.load(result['run']['run_id'])['background_token'],token)
         self.assertEqual(self.bg.control.usage()['tasks_started'],1)
 
+    def test_lost_permit_link_recovers_the_original_run_and_its_checkpoint(self):
+        run=self.bg.tick(force=True)['run']['run_id']
+        state=self.bg.consumer.load(run)
+        state.update(next_block=4,phase='reading')
+        self.bg.consumer.save(state,'running')
+        token=self.bg.control.slots()[0]['token']
+        # Simulate the lost association only; the originally bound run survives.
+        with self.bg.control.store.connect() as db:
+            db.execute("UPDATE task_background_slots SET run_id=NULL,status='reserved' WHERE token=?",(token,))
+        self.reader.job.reset_mock()
+        result=self.bg.consume(force=True)
+        self.assertEqual(result['status'],'running')
+        self.assertEqual(result['run']['run_id'],run)
+        self.assertEqual(self.bg.control.permit_for_run(run)['token'],token)
+        self.assertEqual(self.bg.consumer.load(run)['next_block'],4)
+        self.assertEqual(self.bg.control.usage()['tasks_started'],1)
+        self.assertTrue(self.reader.job.call_args_list)
+        self.assertTrue(all(call.args[0]=='status' for call in self.reader.job.call_args_list))
+
     def test_failed_model_quota_latches_pause_without_auto_clear(self):
         run=self._ready_run()
         with patch('reading_tasks.consume.invoke',side_effect=HostError('usage limit reached',self.root/'missing.log')):

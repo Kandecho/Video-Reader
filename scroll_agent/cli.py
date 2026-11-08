@@ -57,6 +57,17 @@ def dispatch(reader, args):
         if not args.payload:
             return {'settings': reader.config['agent']}
         return configure(args.config, read_json(args.payload))
+    if args.action in ('memory','forget'):
+        from .memory import Memory
+        memory = Memory.from_reader(reader)
+        if args.action == 'forget':
+            return memory.forget(int(args.value))
+        if args.payload:
+            data = read_json(args.payload)
+            return memory.remember(data['text'],data.get('kind',args.kind),data.get('source',args.source))
+        if args.value:
+            return memory.remember(args.value,args.kind,args.source)
+        return {'items':memory.recall(args.query)}
     agent = Agent(reader, offline=args.offline)
     if args.action == 'status':
         return agent.status(args.value or None)
@@ -87,15 +98,6 @@ def dispatch(reader, args):
         return agent.deliver(args.value)
     if args.action == 'test-message':
         return agent.test_message(confirm=args.confirm)
-    if args.action == 'memory':
-        if args.payload:
-            data = read_json(args.payload)
-            return agent.memory.remember(data['text'], data.get('kind', args.kind), data.get('source', args.source))
-        if args.value:
-            return agent.memory.remember(args.value, args.kind, args.source)
-        return {'items': agent.memory.recall(args.query)}
-    if args.action == 'forget':
-        return agent.memory.forget(int(args.value))
     if args.action == 'tick':
         return agent.tick(args.query or args.value)
     if not math.isfinite(args.poll_seconds) or args.poll_seconds < 1:

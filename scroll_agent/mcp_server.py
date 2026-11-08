@@ -7,6 +7,7 @@ from mcp.types import ImageContent, TextContent
 from video_reader.reader import Reader
 from video_reader.mcp_content import pack
 from .agent import Agent
+from .memory import Memory
 
 mcp = FastMCP('Scroll Agent', instructions=(
     'Personal feed, explicit preference/feedback, local records and authorized delivery live here. '
@@ -59,7 +60,7 @@ def scroll_memory(action: str = 'recall', query: str = '', text: str = '', kind:
     """Account-scoped recall/remember/forget. Only actual user statements are preference or feedback.
     Include the video URL as source for feedback; agent conclusions remain observation.
     """
-    memory = Agent(Reader()).memory
+    memory = Memory.from_reader(Reader())
     if action == 'recall':
         return pack({'items': memory.recall(query)})
     if action == 'remember':
@@ -250,7 +251,8 @@ def main():
     import sys
     if sys.platform == 'win32' and Reader().config.get('vision', {}).get('enabled', True):
         try:
-            import rapidocr_onnxruntime  # noqa: F401
+            from video_reader.vision import warmup
+            warmup()
         except ImportError:
             pass
     mcp.run(transport='stdio')

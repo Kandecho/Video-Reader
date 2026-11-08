@@ -81,30 +81,22 @@ class Background:
         return bool(item['task'].strip())
 
     def _needs_attention(self,item):
-        with self.consumer.store.connect() as db:
-            row=db.execute('SELECT id,status,task_identity,payload FROM task_runs WHERE scope=? AND item_id=? ORDER BY created DESC LIMIT 1',
-                           (self.control.scope,item['id'])).fetchone()
-            if row and row['status']=='failed' and self._transient_host_failure(json.loads(row['payload'])):
-                slot=db.execute("SELECT host_retries FROM task_background_slots WHERE scope=? AND run_id=? AND status IN ('active','waiting')",(self.control.scope,row['id'])).fetchone()
-                if slot and slot['host_retries']<self.control.state()['policy']['max_host_retries']:return False
-        return bool(row and row['status'] in ('failed','needs_attention') and row['task_identity']==digest([item['canonical'],item['task']]))
+        run=self.consumer.latest_run(item['id'])
+        if run and run['status']=='failed' and self._transient_host_failure(run):
+            slot=self.control.permit_for_run(run['run_id'])
+            if slot and slot['host_retries']<self.control.state()['policy']['max_host_retries']:return False
+        return bool(run and run['status'] in ('failed','needs_attention') and run['task_matches'])
 
     def _start(self,item,token):
-        with self.consumer.store.connect() as db:
-            prior=db.execute('SELECT task_identity FROM task_runs WHERE scope=? AND item_id=? ORDER BY created DESC LIMIT 1',
-                             (self.control.scope,item['id'])).fetchone()
-        changed=bool(prior and prior['task_identity']!=digest([item['canonical'],item['task']]))
+        prior=self.consumer.latest_run(item['id'])
+        changed=bool(prior and not prior['task_matches'])
         return self.consumer.start(item['id'],background_token=token,wait_seconds=0,refresh=changed)
 
     def _recover_reserved(self,slot):
-        with self.consumer.store.connect() as db:
-            rows=db.execute('SELECT id,payload FROM task_runs WHERE scope=? AND item_id=? ORDER BY created DESC',
-                            (self.control.scope,slot['item_id'])).fetchall()
-        for row in rows:
-            state=json.loads(row['payload'])
-            if state.get('background_token')==slot['token']:
-                self.control.bind(slot['token'],{**state,'run_id':row['id']})
-                return row['id']
+        run=self.consumer.run_for_permit(slot['item_id'],slot['token'])
+        if run:
+            self.control.bind(slot['token'],run)
+            return run['run_id']
         return None
 
     def tick(self,*,force=False):
@@ -168,8 +160,7 @@ class Background:
                 elif state['status']=='superseded':
                     self.control.mark(slot['token'],'abandoned')
                 elif state['status'] in ('failed','interrupted','waiting'):
-                    actual=self.consumer.load(run_id)
-                    try:self.consumer._verify_task(actual)
+                    try:self.consumer.validate_resume(run_id)
                     except ControlWait:raise
                     except ReaderError:
                         self.control.mark(slot['token'],'abandoned')
@@ -178,8 +169,7 @@ class Background:
                         if self._transient_host_failure(state) and slot['host_retries']<policy['max_host_retries']:
                             finished=(state.get('job') or {}).get('finished_at')
                             if finished is None:
-                                with self.consumer.store.connect() as db:
-                                    finished=db.execute('SELECT updated FROM task_runs WHERE scope=? AND id=?',(self.control.scope,run_id)).fetchone()[0]
+                                finished=self.consumer.run_info(run_id)['updated_at']
                             if int(self.clock()//60)-int(finished//60)<policy['queue_interval_minutes']:
                                 return {'status':'waiting','reason':'host_retry_backoff','run':state,'messages_sent':0}
                             self.control.host_retry(slot['token'])
@@ -226,10 +216,10 @@ class Background:
         lock=self.control.store.path.with_name(self.control.store.path.name+'.background-'+digest(self.control.scope)+'.queue.lock')
         with FileLock(str(lock),timeout=0):
             self.control.basic_guard()
-            state=self.consumer.load(run_id)
-            if state['status']!='failed' or not state.get('background_token'):
+            state=self.consumer.run_info(run_id)
+            if state['status']!='failed' or not state['permit_token']:
                 raise ReaderError('Explicit background retry requires a failed background run')
-            original=next((s for s in self.control.slots(active_only=False) if s['token']==state['background_token']),None)
+            original=self.control.permit_for_run(run_id,active_only=False)
             if not original:raise ReaderError('Original background permit is missing')
             self._resources(self.control.state()['policy'])
             self.control.host_retry(original['token'],automatic=False)

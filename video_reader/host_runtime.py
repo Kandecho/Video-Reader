@@ -41,9 +41,21 @@ class HostError(ReaderError):
     def __init__(self, message, log_path, *, returncode=None, timeout=False):
         self.details = {**diagnostics(log_path), 'returncode': returncode, 'timed_out': timeout}
         cause = self.details['message']
-        self.category = ('host_timeout' if timeout else 'host_transport' if cause and any(
-            word in cause.lower() for word in ('timed out', 'connection', 'websocket', 'transport', 'dns', 'workspace routing')) else 'host_failed')
         super().__init__(message + (f': {cause}' if cause else '') + f'; log: {log_path}')
+        self.category = classify_failure(message,cause,timeout=timeout)
+
+
+def classify_failure(message, cause=None, *, timeout=False):
+    """Normalize host diagnostics once; callers retain their existing retry/pause policies."""
+    detail = (message + (' '+cause if cause else '')).lower()
+    if any(term in detail for term in ('usage limit','rate limit','quota','insufficient credits','429')):
+        return 'host_quota'
+    if timeout:
+        return 'host_timeout'
+    if cause and any(term in cause.lower() for term in (
+            'timed out','connection','websocket','transport','dns','workspace routing')):
+        return 'host_transport'
+    return 'host_failed'
 
 
 def model_options(options):

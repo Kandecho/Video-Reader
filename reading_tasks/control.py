@@ -5,7 +5,7 @@ import re
 import time
 import uuid
 
-from video_reader.common import ReaderError, read_json
+from video_reader.common import ReaderError
 from video_reader.resources import sample
 from .queue import Queue
 
@@ -160,17 +160,8 @@ class Controls:
         return p
 
     def foreground_job(self, own_job=None):
-        from video_reader.jobs import CURRENT, Jobs, TERMINAL
-        current=CURRENT.get()
-        excluded={own_job,current.job_id if current else None}
-        jobs=Jobs(self.reader)
-        for path in jobs.root.glob('j_*.json'):
-            if path.name.endswith('.result.json') or path.stem in excluded: continue
-            raw=read_json(path)
-            if raw.get('status') in TERMINAL: continue
-            state=jobs.status(path.stem)
-            if state['status'] not in TERMINAL: return state['job_id']
-        return None
+        jobs = self.reader.active_jobs(exclude=[own_job] if own_job else [])
+        return jobs[0]['job_id'] if jobs else None
 
     def reserve_task(self,item_id):
         p=self.basic_guard()
@@ -193,7 +184,8 @@ class Controls:
             row=db.execute('SELECT * FROM task_background_slots WHERE token=? AND scope=?',(token,self.scope)).fetchone()
             if not row or row['item_id']!=state['item_id'] or row['run_id'] not in (None,state['run_id']):
                 raise ReaderError('Background permit does not belong to this task/run')
-            if state.get('background_token')!=token:raise ReaderError('Task run has a different execution permit')
+            if state.get('permit_token',state.get('background_token'))!=token:
+                raise ReaderError('Task run has a different execution permit')
             day=row['day']
             if row['run_id'] is None:
                 policy=json.loads(db.execute('SELECT policy FROM task_background_control WHERE scope=?',(self.scope,)).fetchone()[0])
@@ -236,6 +228,9 @@ class Controls:
             rows=db.execute('SELECT * FROM task_background_slots WHERE scope=?'+
                 (" AND status IN ('reserved','active','waiting')" if active_only else '')+' ORDER BY created', (self.scope,)).fetchall()
         return [dict(r) for r in rows]
+
+    def permit_for_run(self, run_id, *, active_only=True):
+        return next((slot for slot in self.slots(active_only) if slot['run_id']==run_id),None)
 
     def mark(self,token,status):
         if status not in ('active','waiting','completed','failed','abandoned'): raise ReaderError('Invalid permit state')

@@ -12,6 +12,22 @@ KINDS = ('preference', 'feedback', 'observation')
 
 
 class Memory(Store):
+    @classmethod
+    def from_reader(cls, reader):
+        """Open the logged-in account's memory without recommendation or transport setup."""
+        from video_reader.bilibili_auth import BilibiliAuth
+        from video_reader.platform import PlatformError
+        directory = reader.config['agent']['directory']
+        if not isinstance(directory,str) or not directory.strip():
+            raise ReaderError('agent.directory must be a nonempty path')
+        auth = BilibiliAuth(reader.config)
+        if not auth.options['enabled']:
+            raise PlatformError('managed_login_disabled')
+        scope = auth.account_scope()
+        if scope is None:
+            raise PlatformError('login_required')
+        return cls((reader.config_path.parent/directory).resolve(),scope)
+
     def __init__(self, directory, scope):
         super().__init__(directory,scope,database=Path(directory)/'memory.sqlite3')
         with self.connect() as connection:

@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
+import shutil
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock,patch
 
@@ -9,6 +11,8 @@ from reading_tasks.store import Store
 from reading_tasks.api import execute
 from video_reader.common import ReaderError,read_json,write_json
 from video_reader.reader import Reader
+from video_reader.bilibili_auth import BilibiliAuth
+from video_reader.platform import PlatformError
 from video_reader.reading_policy import READING_POLICY
 from scroll_agent.inbox import configured_sender
 from scroll_agent import reports
@@ -84,6 +88,37 @@ class IndependentTasks(unittest.TestCase):
         self.reader.config['agent']['delivery']['recipient_uid']=222
         self.assertEqual(str(configured_sender(self.reader)),'111')
 
+    def test_memory_cli_and_mcp_are_independent_of_recommendation_and_delivery_configuration(self):
+        from scroll_agent.cli import dispatch
+        from scroll_agent import mcp_server
+        self.reader.config['agent']['max_recommendations']=0
+        self.reader.config['agent']['delivery'].update(enabled=True,recipient_uid=None)
+        arguments=SimpleNamespace(action='memory',value='具体视频的用户反馈',kind='feedback',
+                                  source=URL,payload=None,query='')
+        with patch.object(BilibiliAuth,'account_scope',return_value='memory-account'), \
+                patch('scroll_agent.cli.Agent',side_effect=AssertionError('unrelated recommendation setup')), \
+                patch('scroll_agent.mcp_server.Agent',side_effect=AssertionError('unrelated recommendation setup')), \
+                patch('scroll_agent.mcp_server.Reader',return_value=self.reader), \
+                patch('video_reader.platform.Platform',side_effect=AssertionError('no acquisition transport')):
+            created=dispatch(self.reader,arguments)
+            self.assertEqual(created['kind'],'feedback')
+            mcp_server.scroll_memory(action='remember',text='本轮Agent观察',source=URL)
+            remembered=Memory.from_reader(self.reader).recall()
+            self.assertEqual({r['kind'] for r in remembered},{'feedback','observation'})
+            self.assertTrue(all(r['scope']=='memory-account' for r in remembered))
+            mcp_server.scroll_memory(action='forget',memory_id=created['id'])
+            arguments.value=''
+            arguments.query='用户反馈'
+            self.assertEqual(dispatch(self.reader,arguments)['items'],[])
+
+    def test_memory_factory_preserves_login_disabled_and_missing_account_boundaries(self):
+        with patch.object(BilibiliAuth,'account_scope',return_value=None):
+            with self.assertRaisesRegex(PlatformError,'login_required'):
+                Memory.from_reader(self.reader)
+        self.reader.config['bilibili_auth']['enabled']=False
+        with self.assertRaisesRegex(PlatformError,'managed_login_disabled'):
+            Memory.from_reader(self.reader)
+
     def test_report_preview_does_not_acquire_material_and_send_is_idempotent(self):
         item=self.queue.enqueue(URL,title='测试视频')['item']
         with patch.object(self.reader,'preview',side_effect=AssertionError('no reading')), \
@@ -118,8 +153,17 @@ class IndependentTasks(unittest.TestCase):
         core=Path(__file__).resolve().parents[1]
         self.assertIn(READING_POLICY,(core/'skill/SKILL.md').read_text(encoding='utf-8'))
         from tools.build_plugins import build
-        # Existing plugin tests cover path portability; this checks the actual new policy.
-        output=build(core)
+        # Render the real source Skills against an isolated core, never this installation.
+        isolated=self.root/'plugin-core'
+        for relative in ('.venv/Scripts/python.exe','launch_mcp.py','launch_scroll.py','run.ps1','config.json'):
+            target=isolated/relative
+            target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_text('',encoding='utf-8')
+        for relative in ('skill/SKILL.md','scroll-skill/SKILL.md'):
+            target=isolated/relative
+            target.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(core/relative,target)
+        output=build(isolated)
         for host in output['hosts'].values():
             self.assertIn(READING_POLICY,(Path(host['plugin_root'])/'skills/video-read/SKILL.md').read_text(encoding='utf-8'))
 

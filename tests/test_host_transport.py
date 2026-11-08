@@ -9,6 +9,24 @@ from video_reader.host_runtime import HostError,host_environment
 
 
 class HostTransportTests(unittest.TestCase):
+    def test_quota_category_preserves_existing_pause_terms_without_log_path_matching(self):
+        with tempfile.TemporaryDirectory() as directory:
+            missing=Path(directory)/'quota-429'/'missing.log'
+            for message in ('usage limit reached','rate limit reached','model quota exceeded',
+                            'insufficient credits','HTTP 429'):
+                with self.subTest(message=message):
+                    self.assertEqual(HostError(message,missing).category,'host_quota')
+            self.assertEqual(HostError('Task host failed',missing).category,'host_failed')
+            self.assertEqual(HostError('Task host timed out',missing,timeout=True).category,'host_timeout')
+
+    def test_diagnostic_quota_is_classified_before_transport_retry(self):
+        with tempfile.TemporaryDirectory() as directory:
+            log=Path(directory)/'host.log'
+            log.write_text(json.dumps({'type':'turn.failed','error':{'message':'connection rejected: usage limit reached'}}),encoding='utf-8')
+            error=HostError('Task host failed',log)
+            self.assertEqual(error.category,'host_quota')
+            self.assertIn('connection rejected',str(error))
+
     def test_windows_system_proxy_reaches_child_environment_without_mutating_parent(self):
         with patch.dict(os.environ,{'NO_PROXY':'localhost,127.0.0.1','KEEP':'unchanged'},clear=True), \
                 patch('video_reader.host_runtime.os.name','nt'), \

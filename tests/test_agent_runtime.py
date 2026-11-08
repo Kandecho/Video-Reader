@@ -16,6 +16,27 @@ from video_reader.common import ReaderError, read_json, write_json
 
 
 class RuntimeTests(AgentFixture):
+    def test_scroll_server_preserves_windows_vision_warmup_gate_and_importerror_handling(self):
+        self.reader.config['vision']['enabled']=True
+        with patch('scroll_agent.mcp_server.Reader',return_value=self.reader), \
+                patch('video_reader.vendor.runtime.configure_stdio'), \
+                patch.object(mcp_server.mcp,'run') as serve, \
+                patch('sys.platform','win32'), \
+                patch('video_reader.vision.warmup',side_effect=ImportError('optional OCR unavailable')) as warmup:
+            mcp_server.main()
+            warmup.assert_called_once_with()
+            serve.assert_called_once_with(transport='stdio')
+        for platform,enabled in (('win32',False),('linux',True)):
+            self.reader.config['vision']['enabled']=enabled
+            with self.subTest(platform=platform,enabled=enabled), \
+                    patch('scroll_agent.mcp_server.Reader',return_value=self.reader), \
+                    patch('video_reader.vendor.runtime.configure_stdio'), \
+                    patch.object(mcp_server.mcp,'run'), \
+                    patch('sys.platform',platform), \
+                    patch('video_reader.vision.warmup') as warmup:
+                mcp_server.main()
+                warmup.assert_not_called()
+
     def source_reader(self):
         self.reader.read = Mock(return_value={
             'title': 'Cached source', 'metadata': {'duration_seconds': 12},
@@ -27,10 +48,13 @@ class RuntimeTests(AgentFixture):
     def test_cached_reader_contract_preserves_part_and_truncation(self):
         self.source_reader()
         url = URL.replace('p=1', 'p=2')
-        write_json(self.reader.cache / 'v_fixture' / 'manifest.json', {
-            'id': 'v_fixture', 'source': {'canonical': url},
-            'authentication': {'account_marker': self.agent.scope}})
-        material = self.agent._cached_material({'url': url})
+        self.reader.materials=Mock(return_value={url:[
+            {'session_id':'v_foreign','account_scope':'other','media_available':True},
+            {'session_id':'v_missing','account_scope':self.agent.scope,'media_available':False},
+            {'session_id':'v_fixture','account_scope':self.agent.scope,'media_available':True}]})
+        with patch('scroll_agent.agent.read_json',side_effect=AssertionError('private cache scan')):
+            material = self.agent._cached_material({'url': url})
+        self.reader.materials.assert_called_once_with([url])
         self.assertEqual(material['part'], 2)
         self.assertEqual(len(material['frames']), 1)
         self.assertIn('speech_page_truncated', material['gaps'])

@@ -12,6 +12,7 @@ from filelock import FileLock
 from video_reader.common import ReaderError, digest, error_details, read_json, write_json
 from video_reader.host_runtime import invoke
 from video_reader.jobs import report
+from video_reader.speech import validate_source
 from .queue import Queue
 
 
@@ -52,6 +53,44 @@ class Consumer:
         if not row:
             raise ReaderError('Task run not found in this library')
         return {**json.loads(row['payload']), **{key:row[key] for key in ('status','job_id','result_id')}}
+
+    def run_info(self, run_id):
+        """Stable scheduling facts; checkpoints and their storage remain private."""
+        self.directory(run_id)
+        with self.store.connect() as db:
+            row = db.execute('SELECT * FROM task_runs WHERE scope=? AND id=?',
+                             (self.queue.scope,run_id)).fetchone()
+        if not row:
+            raise ReaderError('Task run not found in this library')
+        payload = json.loads(row['payload'])
+        item = self.queue.show(row['item_id'],include_material=False)
+        return {'run_id':row['id'],'item_id':row['item_id'],'status':row['status'],
+            'updated_at':row['updated'],'error':payload.get('error'),
+            'permit_token':payload.get('background_token'),
+            'task_matches':row['task_identity']==digest([item['canonical'],item['task']])}
+
+    def latest_run(self, item_id):
+        self.queue.show(item_id,include_material=False)
+        with self.store.connect() as db:
+            row = db.execute('SELECT id FROM task_runs WHERE scope=? AND item_id=? ORDER BY created DESC LIMIT 1',
+                             (self.queue.scope,item_id)).fetchone()
+        return self.run_info(row['id']) if row else None
+
+    def run_for_permit(self, item_id, token):
+        """Find the original task association without exposing its checkpoint payload."""
+        self.queue.show(item_id,include_material=False)
+        with self.store.connect() as db:
+            rows = db.execute('SELECT id,payload FROM task_runs WHERE scope=? AND item_id=? ORDER BY created DESC',
+                              (self.queue.scope,item_id)).fetchall()
+        for row in rows:
+            state = json.loads(row['payload'])
+            if state.get('background_token') == token:
+                return self.run_info(row['id'])
+        return None
+
+    def validate_resume(self, run_id):
+        """Check current task and permit policy without exposing checkpoint data."""
+        self._verify_task(self.load(run_id))
 
     def save(self, state, status=None, *, checkpoint_epoch=None):
         if status:
@@ -95,8 +134,9 @@ class Consumer:
         request = request or item['task']
         if not isinstance(request,str) or not request.strip() or len(request)>8000:
             raise ReaderError('Supply a concrete reading request (at most 8000 characters)')
-        if source not in ('auto','captions','asr','qwen') or type(refresh) is not bool or type(offline) is not bool:
-            raise ReaderError('Use an existing speech source and boolean refresh/offline')
+        validate_source(source)
+        if type(refresh) is not bool or type(offline) is not bool:
+            raise ReaderError('Use boolean refresh/offline')
         extras = []
         for value in context_files or []:
             path = Path(value).resolve()
@@ -211,8 +251,7 @@ class Consumer:
         self.save(state,'running')
 
     def _host(self,state,packet,kind='read'):
-        from video_reader.content import _validate_assets
-        _validate_assets(packet.get('frames',[]))
+        self.reader.validate_assets(packet.get('frames',[]))
         packet_id = digest([state['request'],state['context_files'],kind,packet])
         packet = {**packet,'packet_id':packet_id}
         attempt_id = uuid.uuid4().hex
@@ -243,7 +282,7 @@ class Consumer:
         if background_options:background_options['checkpoint']()
         if state.get('background_token') and type(response.get('task_satisfied')) is not bool:
             raise ReaderError('Background host must explicitly report task_satisfied')
-        _validate_assets(packet.get('frames',[]))
+        self.reader.validate_assets(packet.get('frames',[]))
         if response.get('packet_id') != packet_id:
             raise ReaderError('Host response belongs to a different packet')
         expected_segments = {s['segment_id'] for s in packet.get('segments',[])}
@@ -267,20 +306,7 @@ class Consumer:
             if state['offline']:
                 raise ReaderError('Offline evidence needs an owned media session')
             session = self.reader.open(state['canonical'])['session_id']
-        data = self.reader.load(session)
-        cid = state['binding'].get('cid')
-        if cid is not None and str(data.get('platform_metadata',{}).get('cid')) != str(cid):
-            raise ReaderError('Evidence part/CID changed; keep the original task snapshot')
-        frames = []
-        for request in requests:
-            points = request.get('timestamps') or [(request['start']+request['end'])/2]
-            if len(points)>6:
-                raise ReaderError('Evidence request exceeds six exact frames')
-            material = self.reader.read(session,start=request['start'],end=request['end'],timestamps=points,
-                max_frames=len(points),verify=False,temporal=False,_delivery=False)
-            frames.extend({**f,'asset_sha256':hashlib.sha256(Path(f['path']).read_bytes()).hexdigest()}
-                          for f in material['visual']['frames'])
-        return frames
+        return self.reader.evidence_frames(session,requests,binding=state['binding'])
 
     def execute(self,run_id):
         directory = self.directory(run_id)
@@ -371,8 +397,7 @@ class Consumer:
                 from .control import ControlWait, Controls
                 from video_reader.host_runtime import HostError
                 if state.get('background_token') and isinstance(error,HostError):
-                    detail=str(error).lower()
-                    if any(term in detail for term in ('usage limit','rate limit','quota','insufficient credits','429')):
+                    if error.category == 'host_quota':
                         Controls(self.reader).pause('model_quota')
                         self.save(state,'waiting')
                         raise

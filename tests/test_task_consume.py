@@ -38,6 +38,20 @@ class TaskConsumeTests(unittest.TestCase):
             'summary':'实际观察后的摘要','notes':'# 实际阅读笔记\n\n保留源内容与时间。',
             'uncertainties':['没有连续视觉观察'],'evidence_requests':[]}
 
+    def test_public_run_facts_detect_changed_tasks_without_exposing_checkpoints(self):
+        self.assertIsNone(self.consumer.latest_run(self.item['id']))
+        run=self.consumer.start(self.item['id'])['run_id']
+        info=self.consumer.latest_run(self.item['id'])
+        self.assertEqual(info['run_id'],run)
+        self.assertTrue(info['task_matches'])
+        self.assertIsNone(info['permit_token'])
+        self.assertNotIn('payload',info)
+        self.assertNotIn('observations',info)
+        self.consumer.queue.update(self.item['id'],task='另一个明确请求')
+        self.assertFalse(self.consumer.run_info(run)['task_matches'])
+        with self.assertRaisesRegex(ReaderError,'changed'):
+            self.consumer.validate_resume(run)
+
     def test_claim_replay_result_and_registered_artifact_search(self):
         started=self.consumer.start(self.item['id'])
         same=Consumer(self.reader).start(self.item['id'])

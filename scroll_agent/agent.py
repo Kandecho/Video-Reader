@@ -120,13 +120,11 @@ class Agent:
             self._active_runtime.update(stage, checkpoint=packet['checkpoint'])
 
     def _cached_material(self, item):
-        for path in self.reader.cache.glob('v_*/manifest.json'):
+        for record in self.reader.materials([item['url']])[item['url']]:
+            if record['account_scope'] != self.scope or not record['media_available']:
+                continue
             try:
-                data = read_json(path)
-                if (data['source'].get('canonical') != item['url']
-                        or data.get('authentication', {}).get('account_marker') != self.scope):
-                    continue
-                return self._source_material(data['id'], item, transcribe=False)
+                return self._source_material(record['session_id'],item,transcribe=False)
             except (ReaderError, OSError, ValueError, KeyError):
                 continue
         return None

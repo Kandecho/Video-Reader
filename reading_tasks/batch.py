@@ -16,6 +16,7 @@ from video_reader.delivery import original_page
 from video_reader.platform import credentials, PlatformError
 from video_reader.review import overlay
 from video_reader.sources import resolve
+from video_reader.speech import validate_source
 
 
 class Batch:
@@ -53,8 +54,9 @@ class Batch:
     def start(self, sources, task='', source='auto'):
         if not isinstance(sources, list) or not 1 <= len(sources) <= 20 or any(not isinstance(item, str) for item in sources):
             raise ReaderError('Choose 1..20 video sources or existing session IDs')
-        if not isinstance(task, str) or len(task) > 4000 or source not in ('auto','captions','asr','qwen'):
-            raise ReaderError('Use a task of at most 4000 characters and an existing speech source')
+        if not isinstance(task, str) or len(task) > 4000:
+            raise ReaderError('Use a task of at most 4000 characters')
+        validate_source(source)
         items = []
         for value in sources:
             item = {'source': value, 'status': 'pending', 'phase': 'open', 'delivered_segment_ids': [], 'failures': []}
