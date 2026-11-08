@@ -7,6 +7,8 @@
 ## 共享运行任务（0.10.0rc5）
 
 普通 MCP 与 CLI 的 open/read/transcript 默认等 1 秒，未完成返回 job_id 与运行状态。
+动态 `:next` 续页也采用同一机制：`video_continue(..., wait_seconds=1)` 或 `continue SESSION CURSOR --wait 1`。通用 job start 支持 operation=continue_read，参数为 session/cursor。
+同次 read 已生成的剩余画面在首次交付时冻结，数字游标直接取页，可与增量转写并行；后续画面页省去首批字幕，原语音/校对版本仍在 binding 保留。查看新增语音另发 transcript；文字续读仍严格检查版本。
 wait_seconds / CLI --wait 可设 0..30；不把长调用是否结束作为唯一进度反馈。
 用 video_job(action="status", job_id=ID) 或 job status ID 查询；状态查询不取得材料锁。
 用 action="result", wait_seconds=10，或 job result ID --wait 10，等待并取第一份材料页。
@@ -54,7 +56,7 @@ CLI 需要对组件 cache、auth 状态目录有适当写权限。更新后重�
 & 'D:\IA\apps\video-reader\run.ps1' transcript 'v_会话ID' --source asr --no-verify
 ```
 
-`coverage.complete` 表示指定音轨区间已处理，`missing_ranges` 给出缺口；它不表示所有页已被 Agent 阅读，也不表示识别正确。静音处理完成后无需重跑。ASR 保留解码与低置信词信息；概率并非事实正确率。`--context` 可提供不超过 1000 字符的术语提示，默认只用本视频标题。
+`coverage.complete` 表示指定音轨区间已处理，`missing_ranges` 给出缺口；它不表示所有页已被 Agent 阅读，也不表示识别正确。静音处理完成后无需重跑。ASR 保留解码与低置信词信息；概率并非事实正确率。`--context` 可提供不超过 1000 字符的术语提示；新 Whisper 解码不自动用标题，旧标题提示轨按兼容规则可回查。
 
 AI 字幕和 ASR 在未校对时默认用本地 OCR 比对当前返回页；已校对及定点返读的规则见“返读来源一致与按需 OCR”一节。两帧中近乎相同的整行文案可标出差异；`--view evidence` 展开独立的 `screen_candidate`、`raw_text` 和时间戳证据，默认正文只保留疑点标记。OCR 不覆盖原始记录；后续宿主校对单独保存。整片实测发现高置信且稳定的 OCR 仍可能漏字、错字，因此不能自动覆盖语音文字。`not_corroborated` 不等于已核准。宿主应查看重要冲突后形成回答。CC 默认不比对，可用 `--verify` 显式检查；`--no-verify` 跳过比对。
 
@@ -107,7 +109,11 @@ AI 字幕和 ASR 在未校对时默认用本地 OCR 比对当前返回页；已�
 
 ## 可选 Qwen
 
-日常 `transcript` / `read` / `review` 及对应 MCP 工具支持显式 `source=qwen`。它使用组件内已有 Qwen3-ASR-0.6B 和 ForcedAligner，当前配置针对中文、Windows CUDA GPU。`auto` 仍优先字幕、无字幕用 Whisper；`source=asr` 仍明确表示 Whisper。未修改用户 config.json，也不自动换引擎、下载模型或启用云端。
+日常 `transcript` / `read` / `review` 及对应 MCP 工具支持显式 `source=qwen`。它使用组件内已有 Qwen3-ASR-0.6B 和 ForcedAligner，本机已验证 Windows CUDA GPU。2026-11-06 起 `qwen.language` 默认 null（或 auto），由 Qwen 识别语言；可显式配置官方支持的语言名。`auto` 仍优先字幕、无字幕用 Whisper；`source=asr` 仍明确表示 Whisper。未修改用户 config.json，也不自动换引擎、下载模型或启用云端。
+
+自动语言与旧固定中文轨道独立；旧原文、段 ID 及校对保留。模型资产、运行时或解码政策改变后，新解码使用独立 profile，不向旧轨拼接。读取旧轨时，从 `available_profiles` 选择已保存的身份，向 read/transcript/review/export 传 `speech_profile`（CLI `--speech-profile`）。显式选择只读取已有材料，不启动解码；后续继续保持同一 source/context/profile。`profile_status=historical` 表示历史轨，`current_profile` 表示当前能力身份。新轨不能继承旧轨校对。
+
+新 worker 保留解析前 raw_output、实际生成 token 数（含结束符）、4096 上限及触顶、后处理变化诊断。可疑生成在段落标记和 recognition_assessment 中可见，未定位候选保留生成依据。不会把空结果当作声学无人声证明，也不靠降低 token 上限修复循环。
 
 ```powershell
 & 'D:\IA\apps\video-reader\run.ps1' transcript 'v_会话ID' --source qwen
@@ -168,11 +174,11 @@ Python 包和已验证版本在 `requirements-runtime-windows.txt`：包含 MCP 
 
 CLI 与两个 MCP 在进程入口显式将标准输入、输出和错误流设为 UTF-8，复用同一个配置函数。不要依赖 `PYTHONIOENCODING`：当前 `-I` 启动会忽略 `PYTHON*` 环境变量。修复覆盖转写日志中的中文和连接号，避免宿主按 UTF-8 读取 GBK 后关闭日志管道。已运行的旧 MCP 需重连才能加载；不改变 Windows 全局编码。见 [UTF-8 修复验收](../validation/utf8-20261027/report.txt)。
 
-`mcp-config.json` 含当前安装路径的启动配置，交给其他宿主接入即可。默认 20 工具：`video_job`、`video_search`、`video_discover`、`video_uploader_videos`、`video_preview`、`video_preview_batch`、`video_open`、`video_read`、`video_transcript`、`video_review`、`video_relisten`、`bilibili_login`、`video_continue`、`video_frame`、`video_sound`、`video_export`、`video_youtube_status`、`video_comments`、`video_danmaku`、`video_tasks`。通用任务见[任务参考](tasks.md)。评论、楼中楼和弹幕分页见[材料参考](material-reference.md)。更新工具列表后，需要重启已连接的 MCP 进程。
+`mcp-config.json` 含当前安装路径的启动配置，交给其他宿主接入即可。本地默认 21 工具（已发布资产仍 20）：`video_job`、`video_search`、`video_discover`、`video_uploader_videos`、`video_preview`、`video_preview_batch`、`video_open`、`video_read`、`video_transcript`、`video_review`、`video_relisten`、`bilibili_login`、`video_continue`、`video_frame`、`video_sound`、`video_export`、`video_youtube_status`、`video_comments`、`video_danmaku`、`video_tasks`、`video_content`。目录、词法候选、storyboard 与历史笔记回查见[内容参考](content-index.md)。通用任务见[任务参考](tasks.md)。评论、楼中楼和弹幕分页见[材料参考](material-reference.md)。更新工具列表后，需要重启已连接的 MCP 进程。
 
 ## Codex / Claude Code 薄插件 0.5.5
 
-共享核心版本为 0.10.0rc6，生成适配器版本为 0.5.5。插件仅含清单、双 MCP 启动配置、两个分工明确的 Skill 和短说明，每端 5 文件。源码、`.venv`、Qwen 环境、模型、凭据和缓存仍在安装目录，不复制进插件。共用磁盘数据，不是共用单个内存进程；Qwen 仍错峰使用。
+共享核心版本为 0.10.0rc6，本地生成适配器版本为 0.5.6（已发布资产仍为 0.5.5）。插件仅含清单、双 MCP 启动配置、两个分工明确的 Skill 和短说明，每端 5 文件。源码、`.venv`、Qwen 环境、模型、凭据和缓存仍在安装目录，不复制进插件。共用磁盘数据，不是共用单个内存进程；Qwen 仍错峰使用。
 
 包名保留 `video-reader@video-reader-local`，包含 `video-reader` / `scroll-agent` 两个独立 MCP。两个 Skill 分别为 `$video-reader:video-read` 与 `$video-reader:scroll-agent`；自然语言也可自动路由。生成成功不表示某个宿主已经安装或启用；以宿主查询结果为准。更新后重新连接 MCP 才加载新的工具表，日推脚本不依赖这个会话。
 
@@ -242,7 +248,7 @@ Gemini 仅保留为可选入口。需要使用时，用户显式将本组件 `co
 
 ## 阅读流程说明
 
-身份：当前 0.10.0rc6 工作区 / 薄插件 0.5.5 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
+身份：当前 0.10.0rc6 工作区 / 本地薄插件 0.5.6 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
 
 使用入口见 [README](../README.md)，现有操作步骤见 [阅读 Skill](../skill/SKILL.md)；历史计数和测试范围回到对应验收。
 
@@ -255,3 +261,7 @@ Gemini 仅保留为可选入口。需要使用时，用户显式将本组件 `co
 元数据获取新增 extracting_source_metadata / retrying_source_metadata 阶段，仅明确网页瞬时超时或断连恢复一次；限制、预算耗尽和暂停不自动恢复。最终 AcquisitionError / job.error.details 保留 stage 与 attempts，成功也保留 acquisition.metadata_extraction 的恢复记录。下载前重新核对 B 站 part/CID。预览会在缓存写入前检查索引与图格，在线旁路旧坏缓存并至多一次有界重取；离线保留缺口。
 
 Windows 状态读写共享 job 的短时 .status.lock，包括启动失败兜底，避免读 JSON 与原子替换交错。它不持有视频材料锁。详见 [修复验收](../validation/diagnosis-repairs-20261031/report-source.md)。续期不在本轮验证范围。
+
+## 后台任务控制（本地阶段 6）
+
+Scroll 新增 scroll_background，脚本检查不调用模型，满足条件才使用现有阅读宿主。本地 Reader / Scroll 分别为 21 / 8 个工具，旧下载资产为 20 / 7；旧连接需重启。时段、上限、等待原因与 Windows 任务入口见[后台操作](background-consumption.md)。

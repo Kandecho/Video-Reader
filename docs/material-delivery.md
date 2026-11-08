@@ -5,6 +5,8 @@
 
 大阅读的 `view=reading` 先提供 `reading_projection`，包含原像素取样图和容得下的完整字幕段。它是阅读入口，`delivery.next_cursor` 后仍保留 canonical 无损材料；并未减少处理深度或全片覆盖要求。投影只交付一部分时，用 `remaining_in_snapshot` 明示，暂不暴露可能跳过材料的 speech/visual 下一页入口。单图本身超图片预算时仍明确延后。既有冻结页不重排。
 
+2026-11-08 起新建快照中，投影已附带的同一源图不会在该快照后续页重复附带；原始字段、OCR／词证据仍完整保存在 canonical 材料。去重仅限本次快照，不假设其他聊天已收到图片。重新请求或显式证据读取仍可附图，旧冻结页保持原样。
+
 `text_status=unverified_candidate` 表示可疑机器识别原文；`recognition_assessment` 与 source_processed 处理覆盖分开。Qwen 的 `alignment_unresolved` / `unplaced_candidates` 保留 raw_text、input_range、owner_range、raw_alignment，不制造归属时间；该状态不等于声学无人声，尚存候选时 review.complete 为 false。处理过的旧缓存直接派生这些字段，原 profile、段 ID 与校对历史不变。新动态游标绑定诊断变化，旧冻结页仍可读。
 
 元数据获取新增 extracting_source_metadata / retrying_source_metadata 阶段，仅明确网页瞬时超时或断连恢复一次；限制、预算耗尽和暂停不自动恢复。最终 AcquisitionError / job.error.details 保留 stage 与 attempts，成功也保留 acquisition.metadata_extraction 的恢复记录。下载前重新核对 B 站 part/CID。预览会在缓存写入前检查索引与图格，在线旁路旧坏缓存并至多一次有界重取；离线保留缺口。
@@ -19,6 +21,10 @@ CLI/MCP use adaptive initial extraction (up to 12 frames). Legacy Python Reader 
 Read responses expose processing/cache use and delivery JSON/image bytes. Transcription defaults to one missing chunk per CLI/MCP call, while `max_chunks=null` / `--complete-range` retains blocking complete-range processing. Decoding checkpoints survive failure. Paging ready material never starts more ASR. Repeat the original transcript request to process remaining ranges, then consume the new snapshot; segment IDs identify reused material. Qwen seam assembly can change its snapshot when new neighbors arrive, so old cursors never silently mix the two.
 
 ## Durable continuation
+
+Fixed locally on 2026-11-06: a read now freezes all its already generated visual pages at first delivery and links ordinary snapshots with `delivery.next_cursor`. Continuing those pages does not re-enter read, wait for transcription, or repeat the initial speech. Each snapshot retains one canonical JSON payload, original pixels, the initial speech/review binding and frozen audience state; audience frame joins follow that page's frames. New speech is obtained through a fresh transcript request. See the [stage 1 verification](../validation/stage1-interaction-20261106/report-source.md) and [original VR-FLOW-20261105-01 diagnosis](../validation/paging-flow-20261105/report-source.md).
+
+Existing `:next` cursors retain their strict binding checks. Dynamic continuation through MCP/CLI now uses the shared short-wait job mechanism (`wait_seconds` / `--wait`, default 1, range 0..30); status/result retains lock waits and errors. Numeric frozen pages remain immediate, without creating a worker. Synchronous Python continuation remains compatible. No source/review check was relaxed.
 
 Core 0.10.0rc4 supports optional timestamped audience material through `include_danmaku=False` on open/read and export (CLI `--include-danmaku`). Enabled reads provide a separate `danmaku` section for the same Bilibili session part/CID and `[start,end)` range. Default requests do not acquire it.
 

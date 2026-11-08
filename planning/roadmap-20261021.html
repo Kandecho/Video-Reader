@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="Answer me with HTML 0.4.14">
-<title>Video Reader：六阶段开发路线</title>
+<title>Video Reader：当前开发计划</title>
 <style>
 html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -734,312 +734,256 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>Video Reader：六阶段开发路线</h1><p class="am-sub">2026-11-05 更新 · 六阶段顺序沿用 11 月 4 日决定 · 安装与发现贯穿维护</p><div class="am-intro am-md"><div class="am-md"><p>身份：当前能力、缺口、开发顺序和验收条件的主维护源，同名 HTML 为派生阅读版。重要取舍见<a href="../docs/decisions.md">决定记录</a>。<a href="roadmap-through-20261104-publication.md">排期前快照</a>保留旧进展和研究细节；旧建议不覆盖本页的新顺序。</p>
+<header class="am-head"><h1>Video Reader：当前开发计划</h1><p class="am-sub">2026-11-06 · 后台试跑已启用 · 当前待办只列未完成内容</p><div class="am-intro am-md"><div class="am-md"><p>后台已按你确认的时段与上限启用。下一步关注真实视频运行与推荐收益；完成的 6A/6B 实施证据移至<a href="../validation/stage6-background-20261106/report-source.md">阶段 6 验证</a>，阶段 1–5 见<a href="roadmap-through-stage5-20261106.md">历史快照</a>。</p>
 </div></div></header>
 <div class="am-doc-layout">
-<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 目标与排期原则</a><a href="#panel-B">B · 执行约束与职责</a><a href="#panel-C">C · 当前基线</a><a href="#panel-D">D · 验证与研究入口</a><a href="#panel-E">E · 已知问题与保留边界</a><a href="#panel-F">F · 六阶段路线与独立验收</a><a href="#panel-G">G · 查阅与接续</a></nav><div class="am-doc-body">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 当前运行方式</a><a href="#panel-B">B · 执行约束</a><a href="#panel-C">C · 验证与基线</a><a href="#panel-D">D · 仍需处理的具体问题</a><a href="#panel-E">E · 冻结架构基线修复</a><a href="#panel-F">F · 下一阶段与验收</a><a href="#panel-G">G · 查阅与接续</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
-<header class="am-panel-head"><span class="am-panel-id">A</span><h2>目标与排期原则</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>让现有 Agent 像读图片、文字一样使用视频。用户可先看再聊，也可带着问题深入；笔记是可选产物。完整性、准确性、响应速度和成本共同服务于日常交互。</p>
-<p>以日常交互体验优先、保全已有可靠能力、避免为改善体验引入不必要的复杂度作为排期原则。不规定时间盒，每阶段达到验收条件后再进入下一阶段。</p>
-<p>当前接续位置为阶段 1 的具体摩擦点检查，尚未启动实施。每阶段开始时先检查现有交互，保留已经顺畅的部分，针对确认的问题讨论和改进。阶段可以独立验收，不要求一次实施全部路线。</p>
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>当前运行方式</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>运行需电脑开机、当前 Windows 用户保持登录。时段为北京时间 09:00–23:00。入队检测每 60 分钟，队列执行/恢复独立每 5 分钟。</p>
+<p>真正读片才调用现有模型。每天最多启动 3 条，同时 1 条。额度不足暂停；忙时保留待办，回来查进度和结果。</p>
+</div>
+<figure class="am-diagram am-flow"><svg viewBox="0 0 1420 134" width="1420" height="134" role="img" aria-label="流程图：转发视频、脚本收件、待办队列、条件允许?、宿主阅读、等待、笔记与进度、真实反馈" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M94,67 L122.1,67 Q150.1,67 178.2,67 L206.3,67" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="118" y="58" width="64.3" height="18" rx="3"/><text x="150.1" y="67" text-anchor="middle" dominant-baseline="central">每 60 分钟</text></g></g><g data-step="1"><path class="am-edge" d="M286.3,67 L297.8,67 Q309.3,67 320.8,67 L332.3,67" marker-end="url(#am1-arrow)"/></g><g data-step="2"><path class="am-edge" d="M412.3,67 L444.5,67 Q476.7,67 508.9,67 L541.1,67" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="436.3" y="58" width="80.8" height="18" rx="3"/><text x="476.7" y="67" text-anchor="middle" dominant-baseline="central">独立每 5 分钟</text></g></g><g data-step="3"><path class="am-edge" d="M651.7,75.7 L720.9,89.1 Q790.1,102.5 849.1,102.5 L908.1,102.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="696" y="93.5" width="188" height="18" rx="3"/><text x="790.1" y="102.5" text-anchor="middle" dominant-baseline="central">明确要求 / 资源 / 时段 / 本地上限</text></g></g><g data-step="4"><path class="am-edge am-edge--dashed" d="M651.7,58.3 L720.9,44.9 Q790.1,31.5 853.1,31.5 L916.1,31.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="762.1" y="22.5" width="56" height="18" rx="3"/><text x="790.1" y="31.5" text-anchor="middle" dominant-baseline="central">条件不足</text></g></g><g data-step="5"><path class="am-edge" d="M988.1,102.5 L999.6,102.5 Q1011.1,102.5 1022.6,102.5 L1034.1,102.5" marker-end="url(#am1-arrow)"/></g><g data-step="6"><path class="am-edge" d="M1127.1,102.5 L1138.6,102.5 Q1150.1,102.5 1161.6,102.5 L1173.1,102.5" marker-end="url(#am1-arrow)"/></g><g data-step="7"><path class="am-edge" d="M1253.1,102.5 L1264.6,102.5 Q1276.1,102.5 1287.6,102.5 L1299.1,102.5" marker-end="url(#am1-arrow)"/></g></g><g><g class="am-node am-node--rect" data-key="转发视频" data-step="0"><rect class="am-node-shape" x="14" y="49.5" width="80" height="35" rx="3"/><text x="54" y="67" text-anchor="middle" dominant-baseline="central">转发视频</text></g><g class="am-node am-node--rect" data-key="脚本收件" data-step="0"><rect class="am-node-shape" x="206.3" y="49.5" width="80" height="35" rx="3"/><text x="246.3" y="67" text-anchor="middle" dominant-baseline="central">脚本收件</text></g><g class="am-node am-node--rect" data-key="待办队列" data-step="1"><rect class="am-node-shape" x="332.3" y="49.5" width="80" height="35" rx="3"/><text x="372.3" y="67" text-anchor="middle" dominant-baseline="central">待办队列</text></g><g class="am-node am-node--diamond" data-key="条件允许?" data-step="2"><polygon class="am-node-shape" points="606.6,39 672,67 606.6,95 541.1,67"/><text x="606.6" y="67" text-anchor="middle" dominant-baseline="central">条件允许?</text></g><g class="am-node am-node--rect" data-key="宿主阅读" data-step="3"><rect class="am-node-shape" x="908.1" y="85" width="80" height="35" rx="3"/><text x="948.1" y="102.5" text-anchor="middle" dominant-baseline="central">宿主阅读</text></g><g class="am-node am-node--rect" data-key="等待" data-step="4"><rect class="am-node-shape" x="916.1" y="14" width="64" height="35" rx="3"/><text x="948.1" y="31.5" text-anchor="middle" dominant-baseline="central">等待</text></g><g class="am-node am-node--rect" data-key="笔记与进度" data-step="5"><rect class="am-node-shape" x="1034.1" y="85" width="93" height="35" rx="3"/><text x="1080.6" y="102.5" text-anchor="middle" dominant-baseline="central">笔记与进度</text></g><g class="am-node am-node--rect" data-key="真实反馈" data-step="6"><rect class="am-node-shape" x="1173.1" y="85" width="80" height="35" rx="3"/><text x="1213.1" y="102.5" text-anchor="middle" dominant-baseline="central">真实反馈</text></g><g class="am-node am-node--rect" data-key="推荐收益对照" data-step="7"><rect class="am-node-shape" x="1299.1" y="85" width="106" height="35" rx="3"/><text x="1352.1" y="102.5" text-anchor="middle" dominant-baseline="central">推荐收益对照</text></g></g></svg></figure>
+<div class="am-md"><p>入队与队列已分开计时和调度，时段与间隔统一从配置生成。原三条任务已由当前会话补齐。后台代理继承遗漏已定位并修复，原模型真实读图与结构化返回通过。临时错误仍最多自动重试 2 次，不新增任务名额。实时情况查 background-status。<a href="../docs/background-consumption.md">控制方法</a>。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-B">
-<header class="am-panel-head"><span class="am-panel-id">B</span><h2>执行约束与职责</h2></header>
-<div class="am-panel-body"><div class="am-md"><ul>
-<li>交互优化优先做减法和局部调整。尽可能复用 Reader、任务和队列接口，不为顺畅体验重新设计任务状态、缓存体系或宿主编排。</li>
-<li>已有可靠行为应有相关回归测试；按实际变更验证，避免改善一个场景破坏其他场景。检查通过后不为形式反复扩测。</li>
-<li>阶段 1、2 允许交叉推进。共同原因可一起解决；影响答案正确性的明确错误及时修复，不因阶段顺序延后。</li>
-<li>性能优化保留回答质量、必要正文和原始清晰度。足以回答与全片已核查分开，先处理影响当前答案的疑点，再按需深入。</li>
-</ul>
-<p>Reader 负责来源、账号、材料获取、预览、字幕/ASR、帧/OCR、复听、分页、修订和导出。reading_tasks 负责通用队列、附言、分流、批读、任务历史与结果。Scroll 负责 Inbox 与原消息历史、个人推荐、偏好和投递。宿主负责理解、语义校对及回答。</p>
-<p>三域共享安装、模型、登录和材料，两套 MCP 保持既有边界，不另建阅读核心。默认本地、Gemini 关闭，失败不自动转云端。原文、时间、来源/分 P、账号域和修订保留；处理、交付、观察、校对和任务完成分别记录。<a href="../docs/architecture.md">当前架构</a>。</p>
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>执行约束</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>复用 Reader、reading_tasks 与 Scroll；默认本地，不自动转云或换模型，不改既有 20:00 日推。原消息、附言、处理、观察、校对与完成分开记录。三条独立附言仅按本次明确确认关联，以后仍不自动配对。</p>
+<p>供应商余额未知，本地任务上限不能当成余额。脚本能查 CPU、内存与 Reader job，不能判断所有前台聊天；需要留余量用 hold/pause。外部核查不足时保存草稿并保持任务待办。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-C">
-<header class="am-panel-head"><span class="am-panel-id">C</span><h2>当前基线</h2></header>
-<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
-<thead>
-<tr>
-<th>已有能力</th>
-<th>当前状态与边界</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>视频材料与追问</td>
-<td>B 站、YouTube、本地文件有真实使用；支持字幕/ASR、精确帧、裁切、评论、回复和可选弹幕。语义理解由宿主完成</td>
-</tr>
-<tr>
-<td>续读与后台处理 job</td>
-<td>短等待、阶段/心跳/真实进展、锁等待、跨 CLI/MCP 接续、冻结分页和修订导出已实现；job 不自动形成理解结果</td>
-</tr>
-<tr>
-<td>阅读默认行为</td>
-<td>Skill、MCP 和生成插件已同步及时回答与按疑点深入。默认复用已有核验，新 OCR 按需；补帧不再等待长会话锁</td>
-</tr>
-<tr>
-<td>通用任务与结果</td>
-<td>独立 reading_tasks；队列、附言意图、来源、历史、显式分流/批读、结果及汇报接口已有实现。六项指定任务已完成</td>
-</tr>
-<tr>
-<td>Scroll</td>
-<td>独立 B 站账号、显式同步主号来信、小号首页、偏好与授权私信已有真实使用。新视频在同步时入队；常驻同步和持续消费未接入</td>
-</tr>
-<tr>
-<td>发布和接入</td>
-<td>核心 0.10.0rc6；Codex/Claude 适配器 0.5.5，DSH 和 MCPB 各 0.1.0。整包源码、MIT 及双 MCPB 已发布，两服务已登记官方 MCP Registry；DSH 开放插件市场已收录 0.1.0，Awesome PR 已合并收录</td>
-</tr>
-</tbody></table></div>
-<p>Reader 20 工具、Scroll 7 工具。两份 MCPB 连接同一预装 Windows 核心；DSH CLI 搜索、安装和调用已通过。宿主 MCPB 安装界面、DSH GUI 点击、跨机/其他系统和全新可选模型环境仍未全面验收。安装前提与具体支持范围见<a href="../docs/capabilities.md">能力状态</a>和<a href="../docs/installation.md">安装参考</a>。</p>
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>验证与基线</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>本地能力与工具范围见<a href="../docs/capabilities.md">能力说明</a>。阶段 6 的<a href="../validation/stage6-background-20261106/report-source.md">结论</a>和<a href="../validation/stage6-background-20261106/improvement-log-source.md">具体改进日志</a>分开保存。真实强杀恢复、重复触发和暂停晚包已有验证；连续运行与真实视频消费仍需观察。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-D">
-<header class="am-panel-head"><span class="am-panel-id">D</span><h2>验证与研究入口</h2></header>
-<div class="am-panel-body"><div class="am-md"><ul>
-<li><a href="../validation/release-20261104/report-source.md">发布验收</a>、<a href="../validation/mcp-registry-20261104/report-source.md">MCPB/Registry 验收</a>：已发布版本、干净安装和实际接入范围。</li>
-<li><a href="../validation/architecture-fixes-20261104/report-source.md">任务与架构修复</a>、<a href="../docs/tasks.md">当前任务参考</a>：任务职责、六项结果、附言和汇报接口。</li>
-<li><a href="../validation/task-reading-20261028/report-source.md">真实阅读</a>、<a href="../validation/reading-pair-20261103/report-source.md">双片观察</a>：日常阅读、重复字幕、响应与补读摩擦的既有样本。</li>
-<li><a href="../research/sense-now-comparison-20261104/report-source.md">Sense Now / See Now 对照</a>：内容目录与分块检索参考；未据合成 benchmark 承诺性能。</li>
-<li><a href="../docs/history-index.md">历史索引</a>：各版诊断、平台和宿主证据。历史测试只说明对应版本，不充当新阶段验收。</li>
-</ul>
-</div></div>
-</section>
-<section class="am-panel" id="panel-E">
-<header class="am-panel-head"><span class="am-panel-id">E</span><h2>已知问题与保留边界</h2></header>
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>仍需处理的具体问题</h2></header>
 <div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
 <thead>
 <tr>
 <th>问题</th>
-<th>当前事实与后续位置</th>
+<th>处理方式</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>VR-ASR-20261031-09：Qwen 中文退化</td>
-<td>强制 Chinese 退化与后处理遮蔽已定位，候选保全已修，识别策略未修。阶段 2 处理；无听辨真值不宣称全片无人声。<a href="../validation/asr-followup-20261031/report-source.md">同窗追查</a></td>
+<td>后台完整消费的连续性</td>
+<td>代理继承已修、单次真实读图通过；后续新任务验证完整后台消费，不重跑已完成任务</td>
 </tr>
 <tr>
-<td>VR-COMMUNITY-20261030-01：评论尾页计数</td>
-<td>总数、根评口径与分页结束信号存在歧义，AIRI 也保留 partial。阶段 2 核对并修复续读/结束呈现，不把报告数当作全量保证。<a href="../validation/community-stress-20261030/report-source.md">原案</a></td>
+<td>推荐收益证据不足</td>
+<td>现有 1 条正反馈、1 条探索偏好不足以评估推荐改善；按 6C 对照真实用途与阅读收益</td>
 </tr>
 <tr>
-<td>VR-DANMAKU-20261030-02：弹幕诊断</td>
-<td>一次 MCP 失败、另一通路成功，当前错误过于笼统。阶段 2 定位并提供可操作原因；未确认环境或平台根因。<a href="../validation/community-stress-20261030/report-source.md">原案</a></td>
+<td>ASR 整句遗漏与词级错误</td>
+<td>按疑点回原图、邻域与复听；不把处理完成当原文无遗漏</td>
 </tr>
 <tr>
-<td>重复字幕与多余交互</td>
-<td>长访谈存在过渡重复条目，Scroll 有重复携带字幕；减少展示仍需保留原始段、时间和修订。阶段 1 先查真实摩擦</td>
+<td>模型冷启动和宿主等待</td>
+<td>区分获取、处理、宿主通路与成文耗时，按影响体验的实际案例修正</td>
 </tr>
 <tr>
-<td>VR-VISUAL-20261103-11：短动作选图</td>
-<td>已修本次攻略选图，尚不证明组件能自行找到所有关键帧。阶段 5 小规模验证邻域与候选帧。<a href="../validation/guide-image-selection-20261103/report-source.md">选图复验</a></td>
+<td>历史 Windows 原子替换拒绝访问</td>
+<td>WinError 5 外因未定；再次触发时保留现场，不以本批通过宣称已修复</td>
 </tr>
 <tr>
-<td>SCROLL-STATE-20261103-01：日轮中断</td>
-<td>状态、错误链和显式留档恢复已修；宿主路由超时的外部根因仍未确认。缺候选不重选冒充恢复，不自动补发。<a href="../validation/scroll-state-20261104/report-source.md">验收</a></td>
+<td>发布与接入</td>
+<td>本地新能力未更新下载包；MCP 旧连接重启后加载新工具</td>
 </tr>
 </tbody></table></div>
-<p>默认深检查、补帧长锁、短链预算旁路及任务/Inbox 耦合已有修复，不再作为待做项目重复排期。Windows OCR 预导入有既有启动约束，保留有效行为；不为局部体验重写存储或启动体系。</p>
-<p>YouTube 长期登录维持、连续声音语义、校对后逐词重对齐和大规模准确率研究按真实需求再评估。B 站续期轮换及指定浏览器退出场景保留原未测范围，不为了验收触发。当前没有独立语义初校模型。</p>
 </div></div>
 </section>
-<section class="am-panel" id="panel-F">
-<header class="am-panel-head"><span class="am-panel-id">F</span><h2>六阶段路线与独立验收</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>下面顺序由用户于 2026-11-04 确认。验收条件是各阶段的完成依据；具体样本和实现从当阶段确认的摩擦点出发，不预先指定模型、框架或固定性能门槛。</p>
+<section class="am-panel" id="panel-E">
+<header class="am-panel-head"><span class="am-panel-id">E</span><h2>冻结架构基线修复</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>2026-11-08 用户授权按<a href="../validation/architecture-audit-20261108/README.md">完整审计</a>自主完成 fix 类问题。审计、对应源码和既有验证已冻结，具体证据在<a href="../validation/architecture-fixes-20261108/README.md">修复记录</a>。不重复审计，按变化运行相关验证。</p>
 <div class="am-table-wrap"><table>
 <thead>
 <tr>
-<th>顺序</th>
-<th>工作方向</th>
-<th>具体安排</th>
+<th>当前修复范围</th>
+<th>状态与验收</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>1</td>
-<td>日常交互优化</td>
-<td>减少重复字幕展示、冗余输出和不必要操作；改善任务状态、阅读结果及追问的呈现与衔接</td>
+<td>联网规则、认证与重复平台协议</td>
+<td>已完成；受控请求保留匿名／Cookie／托管登录，账号隔离、分 P 与覆盖回归通过</td>
 </tr>
 <tr>
-<td>2</td>
-<td>阅读可靠性与性能</td>
-<td>修复 Qwen 中文退化、评论尾页计数和弹幕诊断；测量并优化首次回答与追问耗时</td>
+<td>音频续点、作业配置与图像重复交付</td>
+<td>已完成；续读位置根据本次请求生成，配置漂移明确失败，新快照两张图只附带两次，完整材料无损</td>
 </tr>
 <tr>
-<td>3</td>
-<td>长视频内容检索</td>
-<td>先做轻量时间块目录和 storyboard，再接按问题选块、局部补证与阅读结果复用</td>
+<td>派生能力身份与识别能力接口</td>
+<td>已完成；缓存绑定实际输入与版本，speech_profile 保全历史原文／校对／导出，不自动换模型</td>
 </tr>
 <tr>
-<td>4</td>
-<td>队列消费最小闭环</td>
-<td>复用现有接口，验证宿主自动处理单条任务、保存检查点和中断接续；不急于引入持续调度</td>
+<td>材料、任务、调度、记忆与宿主边界</td>
+<td>已完成；消费者使用公开接口，原 run／许可／暂停／提交和发送语义回归通过</td>
 </tr>
 <tr>
-<td>5</td>
-<td>初校与视觉支持</td>
-<td>小规模实验验证疑点定位、候选帧选择和基础初校的收益，再决定是否正式集成</td>
-</tr>
-<tr>
-<td>6</td>
-<td>后台自动消费与 Scroll 优化</td>
-<td>根据真实使用需求，分别推进自动调度、资源分配和推荐质量改善</td>
+<td>构建入口与测试隔离</td>
+<td>已完成；补齐已有运行脚本，测试使用临时核心，本地适配器 0.5.6 已生成，未发布</td>
 </tr>
 </tbody></table></div>
-<h3>1. 日常交互优化</h3>
-<p>先观察普通读片、任务查询、结果回看和追问中的具体摩擦，优先删掉重复展示与无用操作，复用现有接口。减少字幕展示时，原始文本、段 ID、时间和修订仍可回查；已有分页与跨会话续读保持有效。</p>
-<p>验收：已确认的摩擦在同类任务中得到改善；状态能说明实际进度及下一步，已有结果能接续追问。相关回归通过，没有丢正文、错误标记完成或破坏已顺畅的流程。</p>
-<h3>2. 阅读可靠性与性能</h3>
-<p>对三类已知问题分别定位和复验。测量首次准备、材料处理、宿主阅读/补证和首个可用回答，另记后续追问耗时。启动等待与宿主通路不混作核心处理耗时。与阶段 1 同因的问题允许一起解决。</p>
-<p>验收：三类问题有针对性修复与复验，评论覆盖和失败原因如实呈现。同片或可比条件有前后耗时记录，相关可靠行为回归通过；性能收益不靠删必要材料、降清晰度或省略影响答案的核查取得。</p>
-<h3>3. 长视频内容检索</h3>
-<p>先复用字幕和已有画面生成轻量时间块目录，再把原生分镜、预览和拼图对应到源帧、绝对时间与文字。随后接按问题选块、精确帧/裁切/复听补证，以及阅读结果和块级作业复用。目录绑定来源、分 P、账号域、修订和覆盖缺口。</p>
-<p>验收：长访谈反复追问、中后段无字幕操作、字幕缺失或错误三类任务可定位并回到原材料；修订后不误用旧目录，文本未命中可继续补看。记录召回、遗漏和复用成本，完整建索引不成为每次回答的前置条件。</p>
-<h3>4. 队列消费最小闭环</h3>
-<p>以一条要求明确且获准执行的任务，贯通领取、Reader 材料处理、宿主实际阅读、结果保存和状态回查。优先复用现有队列、批读、共享 job 与结果接口，验证检查点和中断接续；本阶段不以持续调度或完整额度调度为前提。</p>
-<p>验收：单条任务能由宿主自动处理并保存实际产物、覆盖范围和完成依据；中断后能接续，重复启动不重复领取或丢进度。材料就绪、交付完毕、宿主读完和任务完成仍可区分，结果能在会话继续讨论。</p>
-<h3>5. 初校与视觉支持</h3>
-<p>用既有疑点和选图案例做小规模实验，比较疑点定位、候选帧与基础初校。记录正确收益、误改、关键漏报和时间/成本。语义校对责任、可选模型及集成方式根据结果讨论，不预先增加模型或独立服务。</p>
-<p>验收：有可回查的对照材料、收益与失败边界，并形成是否集成及适用范围的结论。证据不足时保留现有可靠流程；不把一次局部成功写成全片自动初校保证。</p>
-<h3>6. 后台自动消费与 Scroll 优化</h3>
-<p>根据单条任务验证和真实使用需求，分别确定自动触发/收件窗口、前后台资源分配。再确定模型额度入口与未知余量策略，以及推荐/分流的改进项。复用已有结果汇报与发送账本，保留显式偏好和 Agent 判断的区别。</p>
-<p>验收：按本轮选定子项分别验证。自动运行可暂停、恢复、查询等待或失败原因，给日常会话留余量；推荐变化能由真实反馈或案例说明收益。未知额度不当作充足，不把未回复当偏好，发送和日试用保持既定授权边界。</p>
-<p>安装与对外发现是贯穿性维护，有明确安装故障及时修复，不单独占据主线。DSH 社区目录维护、宿主安装界面、短演示及下游检索按实际需要处理；不把跨机、其他系统或新模型环境自动加入每阶段门槛。社区最新状态见<a href="../validation/dsh-community-20261105/report-source.md">收录确认</a>。</p>
+<p>整合 448 项及单独真实 MCP 协议 2 项均通过，共 450 个用例。Skill／适配器更新后另通过相关 19 项复验（不累加为不同用例）。独立代码复核无实质发现。旧审计及源码归档保持冻结，修复结果与非阻塞项见本批记录。</p>
+<p>仅修复已证实问题和必要的兼容缺口。按任务选块、视觉短会话、推荐变化、新发送渠道和新增回答引用能力不在本批实施。长期稳定性、实际识别准确率、推荐收益及宿主侧未知指标继续登记，不能由架构修复代替验收。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-F">
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>下一阶段与验收</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>待完成项</th>
+<th>工作与验收</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>阶段 6 实际运行</td>
+<td>核对真实任务的进度、结果与等待原因；核论据/找原版未满足时明确待补查，不以视频笔记代替完成</td>
+</tr>
+<tr>
+<td>6C 推荐与分流收益</td>
+<td>以明确反馈和实际阅读案例对照推荐理由与用途；区分用户偏好、单次要求和 Agent 观察，未回复不推成偏好</td>
+</tr>
+</tbody></table></div>
+<p>6C 已核对现有反馈并修正推荐提示中的预设价值与单例泛化问题；尚无足够结果对照，暂不验收推荐质量提升。后台不增加自动偏好学习或新发送。新发现按所属问题穿插修正。</p>
+<p>2026-11-08 用户提出的后续方向已完成首轮<a href="../research/moondigest-context-20261108/report-source.md">源码对照与有限复现</a>。下列内容先登记，尚未启动实施，也不改变上述运行许可。</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>后续方向</th>
+<th>待验证内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分层提速与全任务损耗</td>
+<td>参考 MoonDigest 的候选初筛、字幕阅读和按需取帧；复用现有轻预览与目录，比较按任务选块、包大小、宿主固定输入、参考全文、成文和失败重试；完整任务覆盖与准确性不能降级</td>
+</tr>
+<tr>
+<td>视觉证据上下文生命周期</td>
+<td>组件新快照的重复图像交付已在本批修复，两帧只附带两次且保留完整元数据。独立宿主重试和主聊天历史重放仍分别看待；主聊天后续携带 N 次未知。请求级观测、视觉短会话和主上下文只用证据记录的收益继续作为后续验证方向</td>
+</tr>
+<tr>
+<td>回答级溯源与按需补看</td>
+<td><a href="../research/zhenxun-comparison-20261108/report-source.md">帧寻视频及公开源码对照</a>：区分画面、语音、画面文字、外部资料和推断；引用绑定本次成功交付的证据、材料身份与修订，不把附近有材料当成宿主已看过或结论已证实。参考其浏览器小循环移除旧截图、向主模型只返回文字来源的分工，与视觉短会话一并验证，不照搬整套前端</td>
+</tr>
+</tbody></table></div>
+<p>上述顺序是调研建议。验收同时比较首次可用答案、全任务耗时、输入/缓存/输出、重试与事实质量；拿不到的宿主指标标未知，不将文件缓存或 <code>--ephemeral</code> 当作图片退出上下文。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-G">
 <header class="am-panel-head"><span class="am-panel-id">G</span><h2>查阅与接续</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>使用从 <a href="../README.md">README</a>、<a href="../docs/getting-started.md">首次使用</a>或<a href="../docs/README.md">文档首页</a>开始。开发从 <a href="../docs/handoff.md">handoff</a>和<a href="../docs/registry.md">知识路由</a>定位；当前排期只在本页维护。</p>
-<p>完整源码与双 MCPB 见 <a href="https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0">mcpb-v0.1.0</a>，核心首版见 <a href="https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6">v0.10.0rc6</a>。目录发布不代表所有 Agent 已自动接入，实际查询见 <a href="../docs/mcp-registry.md">MCP Registry 指南</a>。</p>
-<p>旧路线的批次日志、历史建议和详细问题链保存在<a href="roadmap-through-20261104-publication.md">排期前快照</a>及<a href="../docs/history-index.md">历史索引</a>，不再作为当前实施次序。本次登记和文档整理未启动功能开发、模型、发送或新调度。</p>
+<div class="am-panel-body"><div class="am-md"><p>从<a href="../docs/handoff.md">handoff</a>与<a href="../docs/registry.md">registry</a>接续。<a href="../docs/decisions.md">有效决定</a>维护取舍；已完成阶段见<a href="roadmap-through-stage5-20261106.md">1–5 快照</a>、<a href="../validation/stage6-background-20261106/report-source.md">6A/6B 记录</a>；原阶段 6 计划见<a href="roadmap-before-stage6-20261106.md">实施前快照</a>。</p>
 </div></div>
 </section>
 </div>
 </div>
 </main>
-<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-11-05 01:29</footer>
+<div class="am-lightbox" hidden aria-modal="true" role="dialog" aria-label="图表查看" data-expand="展开查看图表">
+<div class="am-lightbox-backdrop"></div>
+<div class="am-lightbox-header">
+<div class="am-lightbox-title">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+<span class="am-lightbox-title-text"></span>
+</div>
+<div class="am-lightbox-actions">
+<button class="am-lightbox-close" data-action="close" title="关闭" aria-label="关闭">✕</button>
+</div>
+</div>
+<div class="am-lightbox-stage">
+<div class="am-lightbox-canvas am-diagram"></div>
+</div>
+</div>
+<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-11-09 00:14</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
-title: Video Reader：六阶段开发路线
-subtitle: 2026-11-05 更新 · 六阶段顺序沿用 11 月 4 日决定 · 安装与发现贯穿维护
+title: Video Reader：当前开发计划
+subtitle: 2026-11-06 · 后台试跑已启用 · 当前待办只列未完成内容
 template: doc
 theme: paper
 lang: zh
 ---
 
-身份：当前能力、缺口、开发顺序和验收条件的主维护源，同名 HTML 为派生阅读版。重要取舍见[决定记录](../docs/decisions.md)。[排期前快照](roadmap-through-20261104-publication.md)保留旧进展和研究细节；旧建议不覆盖本页的新顺序。
+后台已按你确认的时段与上限启用。下一步关注真实视频运行与推荐收益；完成的 6A/6B 实施证据移至[阶段 6 验证](../validation/stage6-background-20261106/report-source.md)，阶段 1–5 见[历史快照](roadmap-through-stage5-20261106.md)。
 
-## A 目标与排期原则
+## A 当前运行方式
 
-让现有 Agent 像读图片、文字一样使用视频。用户可先看再聊，也可带着问题深入；笔记是可选产物。完整性、准确性、响应速度和成本共同服务于日常交互。
+运行需电脑开机、当前 Windows 用户保持登录。时段为北京时间 09:00–23:00。入队检测每 60 分钟，队列执行/恢复独立每 5 分钟。
 
-以日常交互体验优先、保全已有可靠能力、避免为改善体验引入不必要的复杂度作为排期原则。不规定时间盒，每阶段达到验收条件后再进入下一阶段。
+真正读片才调用现有模型。每天最多启动 3 条，同时 1 条。额度不足暂停；忙时保留待办，回来查进度和结果。
 
-当前接续位置为阶段 1 的具体摩擦点检查，尚未启动实施。每阶段开始时先检查现有交互，保留已经顺畅的部分，针对确认的问题讨论和改进。阶段可以独立验收，不要求一次实施全部路线。
+```flow LR
+转发视频 -&gt; 脚本收件: 每 60 分钟
+脚本收件 -&gt; 待办队列
+待办队列 -&gt; {条件允许?}: 独立每 5 分钟
+{条件允许?} -&gt; 宿主阅读: 明确要求 / 资源 / 时段 / 本地上限
+{条件允许?} --&gt; 等待: 条件不足
+宿主阅读 -&gt; 笔记与进度
+笔记与进度 -&gt; 真实反馈
+真实反馈 -&gt; 推荐收益对照
+```
 
-## B 执行约束与职责
+入队与队列已分开计时和调度，时段与间隔统一从配置生成。原三条任务已由当前会话补齐。后台代理继承遗漏已定位并修复，原模型真实读图与结构化返回通过。临时错误仍最多自动重试 2 次，不新增任务名额。实时情况查 background-status。[控制方法](../docs/background-consumption.md)。
 
-- 交互优化优先做减法和局部调整。尽可能复用 Reader、任务和队列接口，不为顺畅体验重新设计任务状态、缓存体系或宿主编排。
-- 已有可靠行为应有相关回归测试；按实际变更验证，避免改善一个场景破坏其他场景。检查通过后不为形式反复扩测。
-- 阶段 1、2 允许交叉推进。共同原因可一起解决；影响答案正确性的明确错误及时修复，不因阶段顺序延后。
-- 性能优化保留回答质量、必要正文和原始清晰度。足以回答与全片已核查分开，先处理影响当前答案的疑点，再按需深入。
+## B 执行约束
 
-Reader 负责来源、账号、材料获取、预览、字幕/ASR、帧/OCR、复听、分页、修订和导出。reading_tasks 负责通用队列、附言、分流、批读、任务历史与结果。Scroll 负责 Inbox 与原消息历史、个人推荐、偏好和投递。宿主负责理解、语义校对及回答。
+复用 Reader、reading_tasks 与 Scroll；默认本地，不自动转云或换模型，不改既有 20:00 日推。原消息、附言、处理、观察、校对与完成分开记录。三条独立附言仅按本次明确确认关联，以后仍不自动配对。
 
-三域共享安装、模型、登录和材料，两套 MCP 保持既有边界，不另建阅读核心。默认本地、Gemini 关闭，失败不自动转云端。原文、时间、来源/分 P、账号域和修订保留；处理、交付、观察、校对和任务完成分别记录。[当前架构](../docs/architecture.md)。
+供应商余额未知，本地任务上限不能当成余额。脚本能查 CPU、内存与 Reader job，不能判断所有前台聊天；需要留余量用 hold/pause。外部核查不足时保存草稿并保持任务待办。
 
-## C 当前基线
+## C 验证与基线
 
-| 已有能力 | 当前状态与边界 |
+本地能力与工具范围见[能力说明](../docs/capabilities.md)。阶段 6 的[结论](../validation/stage6-background-20261106/report-source.md)和[具体改进日志](../validation/stage6-background-20261106/improvement-log-source.md)分开保存。真实强杀恢复、重复触发和暂停晚包已有验证；连续运行与真实视频消费仍需观察。
+
+## D 仍需处理的具体问题
+
+| 问题 | 处理方式 |
 |---|---|
-| 视频材料与追问 | B 站、YouTube、本地文件有真实使用；支持字幕/ASR、精确帧、裁切、评论、回复和可选弹幕。语义理解由宿主完成 |
-| 续读与后台处理 job | 短等待、阶段/心跳/真实进展、锁等待、跨 CLI/MCP 接续、冻结分页和修订导出已实现；job 不自动形成理解结果 |
-| 阅读默认行为 | Skill、MCP 和生成插件已同步及时回答与按疑点深入。默认复用已有核验，新 OCR 按需；补帧不再等待长会话锁 |
-| 通用任务与结果 | 独立 reading_tasks；队列、附言意图、来源、历史、显式分流/批读、结果及汇报接口已有实现。六项指定任务已完成 |
-| Scroll | 独立 B 站账号、显式同步主号来信、小号首页、偏好与授权私信已有真实使用。新视频在同步时入队；常驻同步和持续消费未接入 |
-| 发布和接入 | 核心 0.10.0rc6；Codex/Claude 适配器 0.5.5，DSH 和 MCPB 各 0.1.0。整包源码、MIT 及双 MCPB 已发布，两服务已登记官方 MCP Registry；DSH 开放插件市场已收录 0.1.0，Awesome PR 已合并收录 |
+| 后台完整消费的连续性 | 代理继承已修、单次真实读图通过；后续新任务验证完整后台消费，不重跑已完成任务 |
+| 推荐收益证据不足 | 现有 1 条正反馈、1 条探索偏好不足以评估推荐改善；按 6C 对照真实用途与阅读收益 |
+| ASR 整句遗漏与词级错误 | 按疑点回原图、邻域与复听；不把处理完成当原文无遗漏 |
+| 模型冷启动和宿主等待 | 区分获取、处理、宿主通路与成文耗时，按影响体验的实际案例修正 |
+| 历史 Windows 原子替换拒绝访问 | WinError 5 外因未定；再次触发时保留现场，不以本批通过宣称已修复 |
+| 发布与接入 | 本地新能力未更新下载包；MCP 旧连接重启后加载新工具 |
 
-Reader 20 工具、Scroll 7 工具。两份 MCPB 连接同一预装 Windows 核心；DSH CLI 搜索、安装和调用已通过。宿主 MCPB 安装界面、DSH GUI 点击、跨机/其他系统和全新可选模型环境仍未全面验收。安装前提与具体支持范围见[能力状态](../docs/capabilities.md)和[安装参考](../docs/installation.md)。
+## E 冻结架构基线修复
 
-## D 验证与研究入口
+2026-11-08 用户授权按[完整审计](../validation/architecture-audit-20261108/README.md)自主完成 fix 类问题。审计、对应源码和既有验证已冻结，具体证据在[修复记录](../validation/architecture-fixes-20261108/README.md)。不重复审计，按变化运行相关验证。
 
-- [发布验收](../validation/release-20261104/report-source.md)、[MCPB/Registry 验收](../validation/mcp-registry-20261104/report-source.md)：已发布版本、干净安装和实际接入范围。
-- [任务与架构修复](../validation/architecture-fixes-20261104/report-source.md)、[当前任务参考](../docs/tasks.md)：任务职责、六项结果、附言和汇报接口。
-- [真实阅读](../validation/task-reading-20261028/report-source.md)、[双片观察](../validation/reading-pair-20261103/report-source.md)：日常阅读、重复字幕、响应与补读摩擦的既有样本。
-- [Sense Now / See Now 对照](../research/sense-now-comparison-20261104/report-source.md)：内容目录与分块检索参考；未据合成 benchmark 承诺性能。
-- [历史索引](../docs/history-index.md)：各版诊断、平台和宿主证据。历史测试只说明对应版本，不充当新阶段验收。
-
-## E 已知问题与保留边界
-
-| 问题 | 当前事实与后续位置 |
+| 当前修复范围 | 状态与验收 |
 |---|---|
-| VR-ASR-20261031-09：Qwen 中文退化 | 强制 Chinese 退化与后处理遮蔽已定位，候选保全已修，识别策略未修。阶段 2 处理；无听辨真值不宣称全片无人声。[同窗追查](../validation/asr-followup-20261031/report-source.md) |
-| VR-COMMUNITY-20261030-01：评论尾页计数 | 总数、根评口径与分页结束信号存在歧义，AIRI 也保留 partial。阶段 2 核对并修复续读/结束呈现，不把报告数当作全量保证。[原案](../validation/community-stress-20261030/report-source.md) |
-| VR-DANMAKU-20261030-02：弹幕诊断 | 一次 MCP 失败、另一通路成功，当前错误过于笼统。阶段 2 定位并提供可操作原因；未确认环境或平台根因。[原案](../validation/community-stress-20261030/report-source.md) |
-| 重复字幕与多余交互 | 长访谈存在过渡重复条目，Scroll 有重复携带字幕；减少展示仍需保留原始段、时间和修订。阶段 1 先查真实摩擦 |
-| VR-VISUAL-20261103-11：短动作选图 | 已修本次攻略选图，尚不证明组件能自行找到所有关键帧。阶段 5 小规模验证邻域与候选帧。[选图复验](../validation/guide-image-selection-20261103/report-source.md) |
-| SCROLL-STATE-20261103-01：日轮中断 | 状态、错误链和显式留档恢复已修；宿主路由超时的外部根因仍未确认。缺候选不重选冒充恢复，不自动补发。[验收](../validation/scroll-state-20261104/report-source.md) |
+| 联网规则、认证与重复平台协议 | 已完成；受控请求保留匿名／Cookie／托管登录，账号隔离、分 P 与覆盖回归通过 |
+| 音频续点、作业配置与图像重复交付 | 已完成；续读位置根据本次请求生成，配置漂移明确失败，新快照两张图只附带两次，完整材料无损 |
+| 派生能力身份与识别能力接口 | 已完成；缓存绑定实际输入与版本，speech_profile 保全历史原文／校对／导出，不自动换模型 |
+| 材料、任务、调度、记忆与宿主边界 | 已完成；消费者使用公开接口，原 run／许可／暂停／提交和发送语义回归通过 |
+| 构建入口与测试隔离 | 已完成；补齐已有运行脚本，测试使用临时核心，本地适配器 0.5.6 已生成，未发布 |
 
-默认深检查、补帧长锁、短链预算旁路及任务/Inbox 耦合已有修复，不再作为待做项目重复排期。Windows OCR 预导入有既有启动约束，保留有效行为；不为局部体验重写存储或启动体系。
+整合 448 项及单独真实 MCP 协议 2 项均通过，共 450 个用例。Skill／适配器更新后另通过相关 19 项复验（不累加为不同用例）。独立代码复核无实质发现。旧审计及源码归档保持冻结，修复结果与非阻塞项见本批记录。
 
-YouTube 长期登录维持、连续声音语义、校对后逐词重对齐和大规模准确率研究按真实需求再评估。B 站续期轮换及指定浏览器退出场景保留原未测范围，不为了验收触发。当前没有独立语义初校模型。
+仅修复已证实问题和必要的兼容缺口。按任务选块、视觉短会话、推荐变化、新发送渠道和新增回答引用能力不在本批实施。长期稳定性、实际识别准确率、推荐收益及宿主侧未知指标继续登记，不能由架构修复代替验收。
 
-## F 六阶段路线与独立验收
+## F 下一阶段与验收
 
-下面顺序由用户于 2026-11-04 确认。验收条件是各阶段的完成依据；具体样本和实现从当阶段确认的摩擦点出发，不预先指定模型、框架或固定性能门槛。
+| 待完成项 | 工作与验收 |
+|---|---|
+| 阶段 6 实际运行 | 核对真实任务的进度、结果与等待原因；核论据/找原版未满足时明确待补查，不以视频笔记代替完成 |
+| 6C 推荐与分流收益 | 以明确反馈和实际阅读案例对照推荐理由与用途；区分用户偏好、单次要求和 Agent 观察，未回复不推成偏好 |
 
-| 顺序 | 工作方向 | 具体安排 |
-|---|---|---|
-| 1 | 日常交互优化 | 减少重复字幕展示、冗余输出和不必要操作；改善任务状态、阅读结果及追问的呈现与衔接 |
-| 2 | 阅读可靠性与性能 | 修复 Qwen 中文退化、评论尾页计数和弹幕诊断；测量并优化首次回答与追问耗时 |
-| 3 | 长视频内容检索 | 先做轻量时间块目录和 storyboard，再接按问题选块、局部补证与阅读结果复用 |
-| 4 | 队列消费最小闭环 | 复用现有接口，验证宿主自动处理单条任务、保存检查点和中断接续；不急于引入持续调度 |
-| 5 | 初校与视觉支持 | 小规模实验验证疑点定位、候选帧选择和基础初校的收益，再决定是否正式集成 |
-| 6 | 后台自动消费与 Scroll 优化 | 根据真实使用需求，分别推进自动调度、资源分配和推荐质量改善 |
+6C 已核对现有反馈并修正推荐提示中的预设价值与单例泛化问题；尚无足够结果对照，暂不验收推荐质量提升。后台不增加自动偏好学习或新发送。新发现按所属问题穿插修正。
 
-### 1. 日常交互优化
+2026-11-08 用户提出的后续方向已完成首轮[源码对照与有限复现](../research/moondigest-context-20261108/report-source.md)。下列内容先登记，尚未启动实施，也不改变上述运行许可。
 
-先观察普通读片、任务查询、结果回看和追问中的具体摩擦，优先删掉重复展示与无用操作，复用现有接口。减少字幕展示时，原始文本、段 ID、时间和修订仍可回查；已有分页与跨会话续读保持有效。
+| 后续方向 | 待验证内容 |
+|---|---|
+| 分层提速与全任务损耗 | 参考 MoonDigest 的候选初筛、字幕阅读和按需取帧；复用现有轻预览与目录，比较按任务选块、包大小、宿主固定输入、参考全文、成文和失败重试；完整任务覆盖与准确性不能降级 |
+| 视觉证据上下文生命周期 | 组件新快照的重复图像交付已在本批修复，两帧只附带两次且保留完整元数据。独立宿主重试和主聊天历史重放仍分别看待；主聊天后续携带 N 次未知。请求级观测、视觉短会话和主上下文只用证据记录的收益继续作为后续验证方向 |
+| 回答级溯源与按需补看 | [帧寻视频及公开源码对照](../research/zhenxun-comparison-20261108/report-source.md)：区分画面、语音、画面文字、外部资料和推断；引用绑定本次成功交付的证据、材料身份与修订，不把附近有材料当成宿主已看过或结论已证实。参考其浏览器小循环移除旧截图、向主模型只返回文字来源的分工，与视觉短会话一并验证，不照搬整套前端 |
 
-验收：已确认的摩擦在同类任务中得到改善；状态能说明实际进度及下一步，已有结果能接续追问。相关回归通过，没有丢正文、错误标记完成或破坏已顺畅的流程。
-
-### 2. 阅读可靠性与性能
-
-对三类已知问题分别定位和复验。测量首次准备、材料处理、宿主阅读/补证和首个可用回答，另记后续追问耗时。启动等待与宿主通路不混作核心处理耗时。与阶段 1 同因的问题允许一起解决。
-
-验收：三类问题有针对性修复与复验，评论覆盖和失败原因如实呈现。同片或可比条件有前后耗时记录，相关可靠行为回归通过；性能收益不靠删必要材料、降清晰度或省略影响答案的核查取得。
-
-### 3. 长视频内容检索
-
-先复用字幕和已有画面生成轻量时间块目录，再把原生分镜、预览和拼图对应到源帧、绝对时间与文字。随后接按问题选块、精确帧/裁切/复听补证，以及阅读结果和块级作业复用。目录绑定来源、分 P、账号域、修订和覆盖缺口。
-
-验收：长访谈反复追问、中后段无字幕操作、字幕缺失或错误三类任务可定位并回到原材料；修订后不误用旧目录，文本未命中可继续补看。记录召回、遗漏和复用成本，完整建索引不成为每次回答的前置条件。
-
-### 4. 队列消费最小闭环
-
-以一条要求明确且获准执行的任务，贯通领取、Reader 材料处理、宿主实际阅读、结果保存和状态回查。优先复用现有队列、批读、共享 job 与结果接口，验证检查点和中断接续；本阶段不以持续调度或完整额度调度为前提。
-
-验收：单条任务能由宿主自动处理并保存实际产物、覆盖范围和完成依据；中断后能接续，重复启动不重复领取或丢进度。材料就绪、交付完毕、宿主读完和任务完成仍可区分，结果能在会话继续讨论。
-
-### 5. 初校与视觉支持
-
-用既有疑点和选图案例做小规模实验，比较疑点定位、候选帧与基础初校。记录正确收益、误改、关键漏报和时间/成本。语义校对责任、可选模型及集成方式根据结果讨论，不预先增加模型或独立服务。
-
-验收：有可回查的对照材料、收益与失败边界，并形成是否集成及适用范围的结论。证据不足时保留现有可靠流程；不把一次局部成功写成全片自动初校保证。
-
-### 6. 后台自动消费与 Scroll 优化
-
-根据单条任务验证和真实使用需求，分别确定自动触发/收件窗口、前后台资源分配。再确定模型额度入口与未知余量策略，以及推荐/分流的改进项。复用已有结果汇报与发送账本，保留显式偏好和 Agent 判断的区别。
-
-验收：按本轮选定子项分别验证。自动运行可暂停、恢复、查询等待或失败原因，给日常会话留余量；推荐变化能由真实反馈或案例说明收益。未知额度不当作充足，不把未回复当偏好，发送和日试用保持既定授权边界。
-
-安装与对外发现是贯穿性维护，有明确安装故障及时修复，不单独占据主线。DSH 社区目录维护、宿主安装界面、短演示及下游检索按实际需要处理；不把跨机、其他系统或新模型环境自动加入每阶段门槛。社区最新状态见[收录确认](../validation/dsh-community-20261105/report-source.md)。
+上述顺序是调研建议。验收同时比较首次可用答案、全任务耗时、输入/缓存/输出、重试与事实质量；拿不到的宿主指标标未知，不将文件缓存或 `--ephemeral` 当作图片退出上下文。
 
 ## G 查阅与接续
 
-使用从 [README](../README.md)、[首次使用](../docs/getting-started.md)或[文档首页](../docs/README.md)开始。开发从 [handoff](../docs/handoff.md)和[知识路由](../docs/registry.md)定位；当前排期只在本页维护。
-
-完整源码与双 MCPB 见 [mcpb-v0.1.0](https://github.com/Kandecho/Video-Reader/releases/tag/mcpb-v0.1.0)，核心首版见 [v0.10.0rc6](https://github.com/Kandecho/Video-Reader/releases/tag/v0.10.0rc6)。目录发布不代表所有 Agent 已自动接入，实际查询见 [MCP Registry 指南](../docs/mcp-registry.md)。
-
-旧路线的批次日志、历史建议和详细问题链保存在[排期前快照](roadmap-through-20261104-publication.md)及[历史索引](../docs/history-index.md)，不再作为当前实施次序。本次登记和文档整理未启动功能开发、模型、发送或新调度。
+从[handoff](../docs/handoff.md)与[registry](../docs/registry.md)接续。[有效决定](../docs/decisions.md)维护取舍；已完成阶段见[1–5 快照](roadmap-through-stage5-20261106.md)、[6A/6B 记录](../validation/stage6-background-20261106/report-source.md)；原阶段 6 计划见[实施前快照](roadmap-before-stage6-20261106.md)。
 </textarea>
 <script>
 (() => {

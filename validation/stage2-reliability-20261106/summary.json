@@ -1,0 +1,169 @@
+{
+  "date": "2026-11-06",
+  "stage": 2,
+  "status": "implemented_engineering_validation_passed",
+  "deployment": "local_source_only",
+  "issues": {
+    "VR-ASR-20261031-09": "auto_language_and_generation_diagnostics_fixed",
+    "VR-COMMUNITY-20261030-01": "pagination_and_count_scope_presentation_fixed",
+    "VR-DANMAKU-20261030-02": "actionable_diagnostics_added_historical_external_cause_unknown",
+    "VR-PERF-20261106-01": "cold_process_overhead_recorded_not_eliminated"
+  },
+  "full_suite": {
+    "command": "python -m unittest discover -s tests -v",
+    "tests": 360,
+    "seconds": 66.716,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "OK"
+  },
+  "model_comparison": [
+    {
+      "sample": "problem",
+      "language_policy": "Chinese",
+      "max_new_tokens": 128,
+      "audio_sha256": "3434a59ad882fa7cbcfc2e1159c11e985f949af9f31282f31a61f5cabb648d5c",
+      "audio_preparation_seconds": 0.15672490000724792,
+      "model_load_seconds_separate": 61.102788499963935,
+      "processing_seconds_warm": 12.007657499983907,
+      "language": "Chinese",
+      "generation": {
+        "available": true,
+        "max_new_tokens": 128,
+        "generated_tokens": 128,
+        "limit_reached": true,
+        "postprocessing_changed_text": true,
+        "requires_review": true
+      }
+    },
+    {
+      "sample": "problem",
+      "language_policy": null,
+      "max_new_tokens": 128,
+      "audio_sha256": "3434a59ad882fa7cbcfc2e1159c11e985f949af9f31282f31a61f5cabb648d5c",
+      "audio_preparation_seconds": 0.15672490000724792,
+      "model_load_seconds_separate": 61.102788499963935,
+      "processing_seconds_warm": 0.4568536000442691,
+      "language": "",
+      "generation": {
+        "available": true,
+        "max_new_tokens": 128,
+        "generated_tokens": 4,
+        "limit_reached": false,
+        "postprocessing_changed_text": false,
+        "requires_review": false
+      }
+    },
+    {
+      "sample": "problem",
+      "language_policy": null,
+      "max_new_tokens": 4096,
+      "audio_sha256": "3434a59ad882fa7cbcfc2e1159c11e985f949af9f31282f31a61f5cabb648d5c",
+      "audio_preparation_seconds": 0.15672490000724792,
+      "model_load_seconds_separate": 61.102788499963935,
+      "processing_seconds_warm": 0.47593890002463013,
+      "language": "",
+      "generation": {
+        "available": true,
+        "max_new_tokens": 4096,
+        "generated_tokens": 4,
+        "limit_reached": false,
+        "postprocessing_changed_text": false,
+        "requires_review": false
+      }
+    },
+    {
+      "sample": "opening",
+      "language_policy": null,
+      "max_new_tokens": 4096,
+      "audio_sha256": "515898d7c434a3d7982bb2f769f3eecabd36807b3aa26262dab8ba0aed3d1741",
+      "audio_preparation_seconds": 0.10411600000225008,
+      "model_load_seconds_separate": 61.102788499963935,
+      "processing_seconds_warm": 2.21571610000683,
+      "language": "English",
+      "generation": {
+        "available": true,
+        "max_new_tokens": 4096,
+        "generated_tokens": 22,
+        "limit_reached": false,
+        "postprocessing_changed_text": false,
+        "requires_review": false
+      }
+    },
+    {
+      "sample": "chinese_control",
+      "language_policy": null,
+      "max_new_tokens": 4096,
+      "audio_sha256": "5f66f9160476dbc21b14df68b993460955408d620be099c6beb612378f343880",
+      "audio_preparation_seconds": 0.09804700000677258,
+      "model_load_seconds_separate": 61.102788499963935,
+      "processing_seconds_warm": 5.555722100019921,
+      "language": "Chinese",
+      "generation": {
+        "available": true,
+        "max_new_tokens": 4096,
+        "generated_tokens": 55,
+        "limit_reached": false,
+        "postprocessing_changed_text": false,
+        "requires_review": false
+      }
+    }
+  ],
+  "reader_timing": {
+    "imports_and_setup_seconds": 0.2604183999937959,
+    "initial_visual_preparation_seconds": 0.5709205999737605,
+    "transcript_worker_wall_seconds": 30.714333400013857,
+    "first_material_ready_at": 1793943750.7483826,
+    "local_initial_total_seconds": 31.54820129997097,
+    "followup_material_seconds": 0.2779461999889463,
+    "followup_material_ready_at": 1793943828.026066,
+    "host_active_observation_started_at": 1793943851.7192326,
+    "host_active_answer_ready_at": 1793943875.2111633,
+    "host_active_observation_seconds": 23.491930723190308,
+    "host_timing_note": "Focused reinspection of already delivered material; earlier interleaved development time is excluded. Not a continuous first-answer latency.",
+    "review_revision": 1
+  },
+  "comment_tail_offline_replay": [
+    {
+      "page": 30,
+      "status": "partial",
+      "reported_total": 2013,
+      "reported_total_with_replies": 2013,
+      "reported_total_scope": "unresolved_may_include_replies",
+      "page_complete": false,
+      "collection_complete": false,
+      "next_page": 31,
+      "retry_page": 30,
+      "end_reason": null,
+      "pagination_end_confirmed": false
+    },
+    {
+      "page": 31,
+      "status": "partial",
+      "reported_total": 2013,
+      "reported_total_with_replies": 2013,
+      "reported_total_scope": "unresolved_may_include_replies",
+      "page_complete": false,
+      "collection_complete": false,
+      "next_page": null,
+      "retry_page": 31,
+      "end_reason": "empty_page_unconfirmed",
+      "pagination_end_confirmed": false
+    }
+  ],
+  "boundaries": {
+    "production_token_limit": 4096,
+    "user_config_modified": false,
+    "old_chinese_profile_preserved": true,
+    "original_production_review_modified": false,
+    "isolated_review_revision": 1,
+    "independent_audio_ground_truth": false,
+    "new_models": false,
+    "new_resident_model_service": false,
+    "sent_messages": 0,
+    "new_schedulers": 0,
+    "released_assets_updated": false
+  },
+  "next_stage": 3
+}

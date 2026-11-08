@@ -23,6 +23,7 @@
 [Scroll](scroll-reference.md) 提供个人推荐、偏好、收件和授权投递。普通读片不需要初始化这些功能。
 
 - [私信 Inbox](inbox-queue.md)：同步授权来信并保留原消息。
+- [后台收件与阅读](background-consumption.md)：明确启用后定时检查，在资源允许时处理任务。
 - [粗读分流](triage.md)：提出处理建议，保留待定和等待用户的任务。
 - [显式批读](scroll-batch.md)：在会话中逐项读取队列。
 

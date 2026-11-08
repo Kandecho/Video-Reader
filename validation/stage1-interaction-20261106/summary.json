@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-06",
+  "stage": 1,
+  "status": "implemented_engineering_validation_passed",
+  "issue": "VR-FLOW-20261105-01",
+  "deployment": "local_source_only",
+  "full_suite": {
+    "command": "python -m unittest discover -s tests -v",
+    "tests": 347,
+    "seconds": 72.383,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "OK"
+  },
+  "evidence": {
+    "synthetic_frames": [12, 20],
+    "real_local_ffmpeg_and_workers": true,
+    "original_user_video_rerun": false,
+    "real_asr_model_rerun": false,
+    "independent_review": "no_remaining_blocking_findings",
+    "initial_sandbox_mcp_attempt": "interrupted_at_asyncio_loopback_socketpair",
+    "full_suite_loopback_enabled": true
+  },
+  "boundaries": {
+    "raw_text_preserved": true,
+    "original_pixels_preserved": true,
+    "dynamic_cursor_binding_preserved": true,
+    "legacy_cursors_preserved": true,
+    "new_models": false,
+    "sent_messages": 0,
+    "new_schedulers": 0,
+    "released_assets_updated": false
+  },
+  "next_stage": 2,
+  "runtime_note": "Restart connected Reader MCP processes; old dynamic cursors retain their original strict binding."
+}

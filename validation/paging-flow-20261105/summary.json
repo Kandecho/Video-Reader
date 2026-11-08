@@ -1,0 +1,41 @@
+{
+  "control": {
+    "first_frames": 8,
+    "next_frames": 4,
+    "continued_without_mutation": true
+  },
+  "after_asr": {
+    "normal_asr_addition_invalidates_visual_next": true,
+    "error": "Material changed (source/speech/review revision); restart the original request. Frozen delivered pages remain readable.",
+    "frozen_first_page_replays": true,
+    "same_media_and_frame_assets_unchanged": true,
+    "fresh_same_session_page_returns_original_tail": true
+  },
+  "during_asr": {
+    "waited_on_transcription_session_lock": true,
+    "lock_stages_observed": [
+      "waiting_for_session_lock",
+      "reading_material",
+      "packing_delivery"
+    ],
+    "post_read_binding_error_reproduced": true,
+    "same_media_and_frame_assets_unchanged": true,
+    "asr": "partial",
+    "error": "Material changed while continuing; restart the original request",
+    "fixture_elapsed_seconds": 0.078,
+    "fixture_time_is_not_asr_performance_benchmark": true
+  },
+  "real_asr_executed": false,
+  "production_materials_changed": false,
+  "runtime_code_changed": false,
+  "issue_id": "VR-FLOW-20261105-01",
+  "date": "2026-11-05",
+  "status": "confirmed_not_fixed",
+  "existing_delivery_tests": {
+    "tests_run": 6,
+    "failures": 0,
+    "errors": 0,
+    "success": true,
+    "temporary_directory": "component private test directory"
+  }
+}

@@ -10,7 +10,11 @@ Reader 0.10.0rc3 新增 `video_comments` 和 `video_danmaku`，CLI 分别为 `co
 
 评论每页 1–20 条，可按 newest / likes / replies 排序；`root` 指定根评论读取楼中楼。保留 ID、原文、作者、时间、点赞和父子关系，置顶单列，内嵌回复只是预览。评论跨视频分 P；平台 count 可能包含楼中楼，不能当根评论的准确数量。短页或重复会保留 partial / retry_page，并在有 next_page 时继续。平台动态删改也可能影响翻页。
 
+2026-11-06 起返回 `reported_total_scope` 和 `end_reason`。楼中楼或平台分别报告根评/含回复数量时可按相应计数推尾（scoped_count_boundary）；口径未明时不据总数计算根评页数。无明确结束信号的空页返回 partial、empty_page_unconfirmed、retry_page，next_page=null 表示不自动推测下一页；可显式重查该页或指定后页，不能声称已取得全部评论。`pagination_end_confirmed` 区分平台明确结束/空集合与计数推断；collection_complete 仍不代表此前页或历史全量已读取。
+
 弹幕按 URL 的 p 选择 CID，按平台分段元数据读取，返回源时间、正文、ID、模式和创建时间。每次交付 limit=100（1–200）；`next` 原样续读，同段的 snapshot_id 锁定已抓取内容，空段继续后续分段。`collection_complete` 仅说明当前调用本身交付完声明的集合；宿主需累计页/段并保留缺口。当前弹幕池不等于历史全量，BAS/特殊专包和互动弹幕本轮未纳入。
+
+独立和对齐弹幕的获取/解析失败保留 `error.code/type/stage/next_action`，区分账号检查、来源元数据、弹幕元数据、分段请求与解析；原稳定错误码可回查。平台暂停、额度、登录、网络及坏响应分别提供后续动作，查询不自动恢复或换账号。可选弹幕失败仍保留语音、画面和成功分段。旧历史 danmaku_unavailable 快照不反推根因，需显式重取才能得到新诊断。
 
 ## UP 主原生作品分页
 

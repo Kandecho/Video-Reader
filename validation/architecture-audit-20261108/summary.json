@@ -1,0 +1,77 @@
+{
+  "status": "frozen pre-fix audit",
+  "audit_date": "2026-11-08",
+  "frozen_source_commit": "13565e85a64e8fb8e9495262daa9b983e7ffbe69",
+  "parent_head": "4a9f9817c97b0bd50f6c8307e77fa4f798077c3d",
+  "scope": {
+    "python_files": 71,
+    "lines": 11811,
+    "by_package": {
+      "reading_tasks": 10,
+      "scroll_agent": 15,
+      "video_reader": 46
+    },
+    "unique_module_edges": 226
+  },
+  "baseline_tests": {
+    "passed": 415,
+    "native_stdio_pending": 2
+  },
+  "supplement": "one source-only gap check; prior evidence reused",
+  "confirmed_probes": {
+    "configuration_drift": {
+      "job_binding_model": "model-A",
+      "worker_config_model": "model-B",
+      "fingerprint_matches": false,
+      "executed": [
+        "model-B"
+      ],
+      "final_status": "completed"
+    },
+    "ocr_cache_identity": {
+      "cached_lines_returned": [
+        {
+          "text": "old-engine-result",
+          "confidence": 0.99,
+          "box": []
+        }
+      ],
+      "new_engine_called": false,
+      "condition": "same image stat and FRAME_REVISION; no model/runtime identity in cache"
+    },
+    "duplicate_delivery": {
+      "source_images": 2,
+      "native_mcp_image_blocks": 4,
+      "image_id_occurrences": [
+        "frame-0",
+        "frame-1",
+        "frame-0",
+        "frame-1"
+      ],
+      "scope": "delivery pages+pack only; no model request or usage measurement"
+    },
+    "release_closure": {
+      "selected_background_code": true,
+      "selected_background_docs": true,
+      "missing_runtime_entrypoints": [
+        "tools/install_scroll_task.ps1",
+        "tools/run_scroll_daily.ps1",
+        "tools/manage_scroll_background.ps1",
+        "tools/run_scroll_background.ps1",
+        "tools/scheduled_task_action.ps1",
+        "tools/run_scheduled_hidden.py"
+      ],
+      "scope": "static candidate selection, not published archive or live task execution"
+    },
+    "side_effects": "only synthetic temporary images and this evidence JSON; no actual jobs/models/network/adapters"
+  },
+  "local_only_evidence": [
+    "complete-audit-source.md",
+    "synthesis-source.md",
+    "structure-evidence.json",
+    "test-summary.json",
+    "raw test output",
+    "baseline-source.zip"
+  ],
+  "subsequent_fixes": "../architecture-fixes-20261108/README.md"
+}

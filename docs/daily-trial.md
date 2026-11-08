@@ -16,8 +16,8 @@
 
 | 组件 | 职责 | MCP |
 |---|---|---|
-| Video Reader | 通用搜索、热门、轻预览、读取、转写、校对、复听及组件登录 | `video-reader`，20 个工具，含 video_tasks |
-| Scroll Agent | 个人工作流：账号流策略、记忆、Inbox、日记录和投递，通用任务保留兼容适配 | `scroll-agent`，`scroll_round` / `scroll_memory` / `scroll_batch` / `scroll_inbox` / `scroll_queue` / `scroll_triage` / `scroll_report` |
+| Video Reader | 通用搜索、热门、轻预览、读取、转写、校对、复听及组件登录 | 本地 `video-reader` 21 个工具，含 video_tasks / video_content；已发布资产 20 个 |
+| Scroll Agent | 个人工作流：账号流策略、记忆、Inbox、日记录和投递，通用任务保留兼容适配 | 本地 8 个工具，新增独立授权的 scroll_background；已发布资产 7 个 |
 
 “帮我挑两条视频”是通用自然语言请求，不需要固定品牌口令。普通主题选片可直接用 Reader；个人首页、偏好与日常投递由 Scroll Agent 编排，Reader 是其默认组件。
 
@@ -25,14 +25,14 @@
 
 当前薄插件 0.5.5 将两个独立 MCP 与两个明确分工的 Skill 组合安装，每端 5 个小文件。可单独使用 Reader，不要求启用个人工作流。旧 `video_agent` / `video_memory` 已从 Reader MCP 移除，改由 Scroll MCP 提供；旧 `run.ps1 agent ...` 仅保留惰性 CLI 兼容桥，日常入口为 `scroll.ps1`。
 
-2026-11-04 新增的[Inbox/队列](inbox-queue.md)由会话显式同步主号来信，不在本日推任务中轮询、不启动读取或叠加触发器。上方“不监听私信”仍是日试用规则；它不禁止用户另行授权的显式 Inbox 同步。
+2026-11-04 新增的[Inbox/队列](inbox-queue.md)不在本日推任务中轮询。11 月 6 日用户另行授权[后台收件与阅读](background-consumption.md)，使用独立任务；本日试用规则和 20:00 任务不变。上方“不监听私信”是日试用规则。
 
 ## 外部依赖与运行条件
 
 | 依赖 | 用途及边界 |
 |---|---|
 | Windows Task Scheduler | 任务 `ScrollAgent-HomepageFirst-RECIPIENT_UID`；本机调度，不依赖 Codex 窗口常开 |
-| PowerShell 7 | 任务使用已解析的 `pwsh.exe` 绝对路径；`-NoProfile -NonInteractive -WindowStyle Hidden` |
+| PowerShell 7 | 公共 `pwsh.exe` 绝对路径；由同一 Python 安装的 GUI `pythonw.exe` 以 CREATE_NO_WINDOW 启动，避免先弹终端再隐藏 |
 | 当前 Windows 用户 | Interactive、Limited；不保存 Windows 密码，不使用管理员或系统账户 |
 | 电脑状态 | 需要开机、未休眠、该 Windows 用户已登录；锁屏可运行，注销/关机/休眠时错过则不补跑，不主动唤醒电脑 |
 | 公共 Python 与本项目 `.venv` | 共用原运行环境，没有新建第二套；不迁移或复制模型及登录 |
@@ -48,7 +48,7 @@
 ## 入口、状态与反馈
 
 - 安装/更新时间：`tools/install_scroll_task.ps1`，从 `agent.daily` 读取时间和启用状态。
-- 任务入口：`tools/run_scroll_daily.ps1` → `launch_scroll.py daily --deliver --scheduled`。
+- 任务入口：`tools/run_scheduled_hidden.py --task Daily` → `tools/run_scroll_daily.ps1` → `launch_scroll.py daily --deliver --scheduled`。
 - 手动普通选片：`scroll.ps1 run`，默认仅留档。
 - 查状态：`scroll.ps1 status` 或 `scroll_round(action="status")`。包含当天候选、判断、投递结果、最近日记录及任务最后退出码。
 - 指定轮次：`scroll.ps1 status ROUND_ID --offline` 或 `scroll_round(action="status", run_id=...)`，查看阶段、执行者、检查点、错误链与事件。显式 `recover ROUND_ID` 只留档续做，不能用于自动补发；见[单轮恢复](scroll-reference.md#单轮状态与显式恢复2026-11-04)。

@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-06",
+  "scope": "stage5_small_host_guided_comparison",
+  "status": "completed_with_explicit_limits",
+  "videos": [
+    "BV1LB4a6DEWL",
+    "BV1W64h6hEvf"
+  ],
+  "cases": 14,
+  "final_corrected_segments": 10,
+  "unchanged_controls": 3,
+  "unresolved_cases": 1,
+  "provisional_edits_retracted": 1,
+  "direct_audio_truth_by_host": false,
+  "blind_benchmark": false,
+  "overall_accuracy_measured": false,
+  "automatic_suspect_recall_measured": false,
+  "independent_proofreading_model_added": false,
+  "integration_decision": "retain optional host-guided local source frames/neighbourhood/relisten and minimal reviews; no default independent proofreading",
+  "reviews": {
+    "latest": {
+      "snapshot_id": "1ed58d3657494d1c6fe175ba",
+      "revision": 10,
+      "reviewed_segments": 9,
+      "total_segments": 1164,
+      "complete": false,
+      "corrected_segments": 6,
+      "unresolved_segments": 1,
+      "unresolved_candidates": 0,
+      "author": "host_agent",
+      "exactness_guaranteed": false
+    },
+    "superagent": {
+      "snapshot_id": "10e42437350f182a41b081c1",
+      "revision": 5,
+      "reviewed_segments": 5,
+      "total_segments": 754,
+      "complete": false,
+      "corrected_segments": 4,
+      "unresolved_segments": 0,
+      "unresolved_candidates": 0,
+      "author": "host_agent",
+      "exactness_guaranteed": false
+    }
+  },
+  "missing_speech": {
+    "range": [
+      13,
+      30
+    ],
+    "baseline_text": "",
+    "relisten_candidates": 6,
+    "baseline_modified": false,
+    "job_id": "3a8565389eeb442ab8201960",
+    "elapsed_seconds": 24.73588930000551,
+    "quality": "unverified_candidate"
+  },
+  "timing": {
+    "latest_open_and_full_speech_seconds": 1811.8839087999659,
+    "latest_open_seconds_approximately": 45.6,
+    "candidate_frame_seconds_superagent": 3.6632118999259546,
+    "candidate_frame_seconds_latest": 8.378565899969544,
+    "candidate_cache": "mixed warm/reused and new extraction; not cold benchmark",
+    "host_reading_time": "not independently measured",
+    "host_token_cost": "not measured"
+  },
+  "history_path": [
+    "queue-search",
+    "queue-show",
+    "registered_result_artifact",
+    "canonical_or_session",
+    "video_content",
+    "source_frame_or_relisten"
+  ],
+  "history_fixes": [
+    "unicode_case_punctuation_normalization",
+    "hash_valid_registered_artifact_text",
+    "result_bearing_tasks_first",
+    "inbox_same_message_replay_after_task_edit"
+  ],
+  "global_transcript_semantic_search": false,
+  "task_results_registered": true,
+  "full_video_verified": false,
+  "TAS": "read-only background; no project edits or processes started",
+  "stage6_started": false,
+  "messages_sent": 0,
+  "tests": {
+    "earlier_full_suite": {
+      "tests": 378,
+      "seconds": 60.965,
+      "status": "passed",
+      "log": ".test-work/stage34-final-unittest.log"
+    },
+    "final_full_suite": {
+      "tests": 379,
+      "seconds": 74.985,
+      "passed": 378,
+      "errors": 1,
+      "status": "failed",
+      "error": "WinError 5 at unchanged common.write_json/os.replace in local batch test",
+      "log": ".test-work/stage345-final-unittest.log"
+    },
+    "same_permission_targeted_recheck": {
+      "tests": 6,
+      "seconds": 5.252,
+      "status": "passed",
+      "log": ".test-work/stage5-batch-unsandboxed.log"
+    },
+    "sandbox_recheck": "affected by sandbox temporary-directory permissions; retained separately",
+    "storage_external_cause": "unknown; not claimed fixed"
+  },
+  "evidence": [
+    {
+      "path": "data/stage5-validation-20261106/experiment-summary.json",
+      "sha256": "f223eda95e0c1cd816c85a42daaca685b701fc730ff0f3a3e94e9efdc3c24a6b"
+    },
+    {
+      "path": "data/stage5-validation-20261106/latest-review-results.json",
+      "sha256": "64f69544d928547a26db0c0d816343165d2bde33df9c1c6acdf8fe759648a0a5"
+    },
+    {
+      "path": "data/stage5-validation-20261106/latest-latent-retraction-result.json",
+      "sha256": "42e1338047695cb1dce4fbd2197d053bd1c0eb58930026e2f4c01137edae7cd5"
+    },
+    {
+      "path": "data/stage5-validation-20261106/superagent-review-results.json",
+      "sha256": "5c50b8b852a2a8c0a15a1872d36fbba1dd91a32825f40adce8d9d5e686e361ef"
+    },
+    {
+      "path": "data/stage5-validation-20261106/latest-gap-relisten.json",
+      "sha256": "9c8ff1114621ce0a549647be882176e35546fd4f994695d2824d609be07381ba"
+    },
+    {
+      "path": "data/stage5-validation-20261106/original-screening-preserved.json",
+      "sha256": "9cfc3ff78c779805b48d8feb1051aa9fb9e5fe81b106f6cf25078c6159fe88bd"
+    },
+    {
+      "path": "data/reading-results/20261106/higgs-duplex-tas-detailed.md",
+      "sha256": "8b84369e079b678b72a390aabbd1696c36f23d7ad54b5fdad673d8d9ebfc1ffd"
+    },
+    {
+      "path": "data/reading-results/20261106/superagent-notes.md",
+      "sha256": "bab96ee2ffb18354c4280847da88fdc41be6aa1e52ade6f6ff4b05aa8d39e1e9"
+    }
+  ],
+  "document_layout": {
+    "video_notes": [
+      "data/reading-results/20261106/higgs-duplex-tas-detailed.md",
+      "data/reading-results/20261106/superagent-notes.md"
+    ],
+    "test_conclusions": "validation/stage5-reading-support-20261106/report-source.md",
+    "detailed_test_log": "validation/stage5-reading-support-20261106/improvement-log-source.md"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-06",
+  "scope": "local_stage3_and_stage4",
+  "features": [
+    "video_content",
+    "task_history_search",
+    "explicit_single_task_host_consumer"
+  ],
+  "reader_tools_local": 21,
+  "reader_tools_released_assets": 20,
+  "scroll_tools": 7,
+  "release_updated": false,
+  "real_host_run": {
+    "run_id": "r_10618fa9f7d741be88744145d1c9f8e9",
+    "job_id": "j_a5354c2ab753480aa54c5b00",
+    "status": "completed",
+    "result_id": 1,
+    "elapsed_seconds_approximately": 478.603,
+    "frames_requested": [
+      2,
+      6
+    ],
+    "correctly_reported": "red then blue; subtitle green conflicts; ignored source injection",
+    "timing_includes": "host transport reconnect/timeouts and extra synthesis",
+    "real_forced_interrupt_tested": false
+  },
+  "checkpoint_late_response_and_concurrency": "covered by focused tests, separate from real-host forced termination",
+  "tests": {
+    "earlier_full_suite": {
+      "tests": 378,
+      "seconds": 60.965,
+      "status": "passed",
+      "log": ".test-work/stage34-final-unittest.log"
+    },
+    "final_full_suite": {
+      "tests": 379,
+      "seconds": 74.985,
+      "passed": 378,
+      "errors": 1,
+      "status": "failed",
+      "error": "WinError 5 at unchanged common.write_json/os.replace in local batch test",
+      "log": ".test-work/stage345-final-unittest.log"
+    },
+    "same_permission_targeted_recheck": {
+      "tests": 6,
+      "seconds": 5.252,
+      "status": "passed",
+      "log": ".test-work/stage5-batch-unsandboxed.log"
+    },
+    "sandbox_recheck": "affected by sandbox temporary-directory permissions; retained separately",
+    "storage_external_cause": "unknown; not claimed fixed"
+  },
+  "persistent_consumer_started": false,
+  "new_scheduler_started": false,
+  "new_model_added": false,
+  "messages_sent": 0
+}

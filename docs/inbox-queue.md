@@ -69,4 +69,4 @@ queue-update 还支持 --priority、--task、--revision，或 --payload 指定 U
 
 复用 `data/agent/memory.sqlite3`，新增 inbox_feeds、inbox_messages、queue_items、queue_links、queue_events、queue_meta，任务使用稳定库身份，Inbox 按来源账号隔离。旧推荐、日轮、发送账本和校对不改。查通用任务/历史不需要登录；材料获取仍按对应来源账号授权。查询不验证登录或清除暂停。
 
-CLI 立即使用当前源码。已运行的 MCP 连接需重启，加载 scroll_inbox / scroll_queue 及后续的 scroll_triage；Scroll 共 7 个工具，Reader 为 20 个。旧消息历史游标新增来源账号绑定，旧游标失效时重新查询。当前未增加调度或前端。收件实测与限制见[原批验收](../validation/inbox-queue-20261104/report-source.md)。
+CLI 立即使用当前源码。已运行的 MCP 连接需重启，加载 scroll_inbox / scroll_queue 及后续的 scroll_triage；本地 Scroll 共 8 个工具，Reader 为 21 个；旧发布资产分别为 7 / 20 个。旧消息历史游标新增来源账号绑定，旧游标失效时重新查询。Inbox 同步入口本身不创建调度；另行授权的[后台收件与消费](background-consumption.md)复用此入口。收件实测与限制见[原批验收](../validation/inbox-queue-20261104/report-source.md)。
