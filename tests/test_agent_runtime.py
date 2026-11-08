@@ -167,6 +167,7 @@ class HostTests(AgentFixture):
             directory / 'host' / 'decision.json', {'decisions': []})
         options = {**self.agent.options['host'], 'executable': str(Path(subprocess.__file__))}
         with patch('scroll_agent.host.subprocess.Popen', return_value=process) as spawn, \
+                patch('video_reader.processes.identity', return_value=None), \
                 patch('scroll_agent.host.model_options', return_value=[]):
             self.assertEqual(agent_host.decide(packet, directory, options), {'decisions': []})
         command = spawn.call_args.args[0]
@@ -180,6 +181,7 @@ class HostTests(AgentFixture):
         write_json(directory / 'host' / 'decision.json', {'decisions': []})
         options = {**self.agent.options['host'], 'executable': str(Path(subprocess.__file__))}
         with patch('scroll_agent.host.subprocess.Popen', return_value=Mock(returncode=0)), \
+                patch('video_reader.processes.identity', return_value=None), \
                 patch('scroll_agent.host.model_options', return_value=[]), \
                 self.assertRaisesRegex(ReaderError, 'failed'):
             agent_host.decide({'previews': []}, directory, options)

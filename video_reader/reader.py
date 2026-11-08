@@ -52,6 +52,16 @@ class Reader:
         if isinstance(sources,str): sources=[sources]
         return lookup(self.cache,sources,scopes={source:account_scope(self.config,source) for source in sources})
 
+    def content(self, target, action='index', query='', block_ids=None, source='auto', context=None,
+                block_seconds=120, offset=0, limit=20, index_id=None, offline=False, refresh=False, _delivery=True):
+        from .content import execute
+        return execute(self, target, action, query, block_ids, source, context,
+                       block_seconds, offset, limit, index_id, offline, refresh, _delivery)
+
+    def consume_task(self, run_id):
+        from reading_tasks.consume import Consumer
+        return Consumer(self).execute(run_id)
+
     def speech_index(self,session,source='auto',context=None):
         """Read-only identity/revision index for resumable consumers, without decoding or OCR."""
         from .review import overlay
@@ -227,12 +237,21 @@ class Reader:
             return comments(platform, source, page, page_size, sort, root)
 
     def danmaku(self, source, segment_index=1, offset=0, limit=100, offline=False, snapshot_id=None):
-        from .community import danmaku, danmaku_controls
+        from .community import danmaku, danmaku_controls, failure
         danmaku_controls(source, segment_index, offset, limit, snapshot_id)
         if not isinstance(offline, bool):
             raise ReaderError('offline must be true or false')
-        with self._material_platform(offline or snapshot_id is not None) as platform:
-            return danmaku(platform, source, segment_index, offset, limit, snapshot_id)
+        checking_account = True
+        try:
+            with self._material_platform(offline or snapshot_id is not None) as platform:
+                checking_account = False
+                return danmaku(platform, source, segment_index, offset, limit, snapshot_id)
+        except (ReaderError, OSError, ValueError) as error:
+            if not checking_account:
+                raise
+            return failure({'material_level': 'danmaku', 'source': source, 'segment_index': segment_index,
+                'items': [], 'segment_complete': False, 'collection_complete': False,
+                'is_full_population': False, 'next': None, 'notice': UNTRUSTED}, error, 'checking_account')
 
     def _cached_preview(self, platform, source, density, max_frames, make_sheet):
         """Reuse owned source material without ASR/OCR or another media download."""
@@ -476,6 +495,9 @@ class Reader:
         if include_danmaku:
             from .aligned_danmaku import attach
             result = attach(self, result, data, full, danmaku_snapshot_id)
+        # Carry the frames captured under this read's lock to the delivery
+        # decorator. Never reload a potentially replaced read to build its tail.
+        result['_remaining_frames'] = record['frames'][(page+1)*page_size:]
         return result
 
     def _context(self, data, context=None, source='auto'):

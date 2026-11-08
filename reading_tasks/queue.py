@@ -136,6 +136,12 @@ class Queue:
             existing = db.execute('SELECT q.* FROM queue_items q JOIN queue_links l ON l.item_id=q.id AND l.scope=q.scope '
                                   'WHERE q.scope=? AND l.message_id=? AND q.canonical=? AND q.task=? ORDER BY q.row_id LIMIT 1',
                                   (self.scope, message_id, canonical, task)).fetchone()
+            if existing is None and actor=='inbox':
+                # Sync replays the source message, not the user's later task
+                # edits. Reuse its original link even after manual completion.
+                existing = db.execute('SELECT q.* FROM queue_items q JOIN queue_links l ON l.item_id=q.id AND l.scope=q.scope '
+                    'WHERE q.scope=? AND l.message_id=? AND q.canonical=? ORDER BY q.row_id LIMIT 1',
+                    (self.scope,message_id,canonical)).fetchone()
         if existing is None and not new_task:
             existing = db.execute("SELECT * FROM queue_items WHERE scope=? AND canonical=? AND task=? "
                                   "AND state IN ('pending','paused') ORDER BY row_id LIMIT 1",
@@ -216,7 +222,7 @@ class Queue:
                    'ON CONFLICT(scope,item_id) DO UPDATE SET payload=excluded.payload',
                    (self.scope,item_id,json.dumps(intent,ensure_ascii=False)))
 
-    def record_result(self,item_id,payload,*,complete=False):
+    def record_result(self,item_id,payload,*,complete=False,expected_revision=None,run_id=None):
         import hashlib
         if not isinstance(payload,dict) or type(complete) is not bool:
             raise ReaderError('Result must be an object; complete must be boolean')
@@ -233,16 +239,46 @@ class Queue:
             artifacts.append({'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
         record={**payload,'summary':summary,'artifacts':artifacts,'task_complete':complete,
                 'full_video_verified':payload.get('full_video_verified',False)}
+        if run_id:
+            record['run_id'] = run_id
         with self.store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             item=self._item(db,item_id)
+            if run_id:
+                run = db.execute('SELECT * FROM task_runs WHERE scope=? AND id=? AND item_id=?',
+                                 (self.scope,run_id,item_id)).fetchone()
+                if not run:
+                    raise ReaderError('Task run does not belong to this task library/item')
+                if run['status']=='superseded':
+                    raise ReaderError('Superseded task run cannot commit a result')
+                if run['result_id']:
+                    return self.show(item_id)
+                if item['state'] != 'pending' or digest([item['canonical'],item['task']]) != run['task_identity']:
+                    raise ReaderError('Task changed or is no longer pending; old run cannot complete it')
+                run_payload=json.loads(run['payload'])
+                if run_payload.get('background_token'):
+                    from .control import ControlWait,in_window
+                    control=db.execute('SELECT * FROM task_background_control WHERE scope=?',(self.scope,)).fetchone()
+                    permit=db.execute('SELECT status,run_id FROM task_background_slots WHERE scope=? AND token=?',
+                                      (self.scope,run_payload['background_token'])).fetchone()
+                    if not control or not permit or permit['run_id']!=run_id or permit['status'] not in ('active','waiting'):
+                        raise ReaderError('Background permit is no longer active at result commit')
+                    policy=json.loads(control['policy'])
+                    if not policy['enabled'] or not policy['read_enabled'] or control['paused_reason'] or control['hold_until']>time.time() or not in_window(policy,time.time()):
+                        raise ControlWait('policy_changed_before_commit')
+            if expected_revision is not None and item['revision'] != expected_revision:
+                raise ReaderError('Task revision changed before result commit; resume against current task state')
             db.execute('INSERT INTO task_results(scope,item_id,created,record) VALUES(?,?,?,?)',
                        (self.scope,item_id,time.time(),json.dumps(record,ensure_ascii=False,allow_nan=False)))
+            result_id = db.execute('SELECT last_insert_rowid()').fetchone()[0]
             self._event(db,'result_saved',item_id=item_id,result=record)
             if complete and item['state']!='done':
                 db.execute("UPDATE queue_items SET state='done',updated=?,revision=revision+1 WHERE scope=? AND id=?",(time.time(),self.scope,item_id))
                 self._event(db,'state_changed',item_id=item_id,previous=item['state'],current='done',basis='explicit_task_result')
                 self._bump(db)
+            if run_id:
+                db.execute('UPDATE task_runs SET status=?,result_id=?,updated=? WHERE scope=? AND id=?',
+                           ('completed' if complete else 'needs_attention',result_id,time.time(),self.scope,run_id))
         return self.show(item_id)
 
     def update(self, item_id, *, state=None, priority=None, task=None, reason='', expected_revision=None, first=False):
@@ -312,7 +348,9 @@ class Queue:
                 where.append('state=?')
                 params.append(state)
             if query:
-                where.append("instr(lower(title||' '||canonical||' '||task),lower(?))>0")
+                from video_reader.content import normalized
+                db.create_function('task_search',1,lambda value:normalized(value or ''))
+                where.append("instr(task_search(title||' '||canonical||' '||task),task_search(?))>0")
                 params.append(query)
             if page:
                 last = page.get('last')
@@ -330,6 +368,69 @@ class Queue:
             next_cursor = self._cursor('queue', filters, {'revision': revision, 'last': [last['priority'], last['order_at'], last['row_id']]})
         return {'items': self._decorate(items), 'counts': counts, 'revision': revision, 'next_cursor': next_cursor,
                 'video_reading_started': False}
+
+    def search(self,query,*,limit=20,cursor=None):
+        """Search registered task/result material, not arbitrary files or private Inbox."""
+        import hashlib
+        from video_reader.content import normalized
+        query=text_value(query,'query',200)
+        needle=normalized(query)
+        if not needle: raise ReaderError('History query must contain letters or numbers')
+        bounded_int(limit,'limit',1,100)
+        page=self._parse_cursor(cursor,'material_search',[query])
+        with self.store.connect() as db:
+            db.execute('BEGIN')
+            revision=db.execute('SELECT revision FROM queue_meta WHERE scope=?',(self.scope,)).fetchone()[0]
+            result_revision=db.execute('SELECT COALESCE(max(id),0) FROM task_results WHERE scope=?',(self.scope,)).fetchone()[0]
+            if page and [revision,result_revision]!=page.get('revision'):
+                raise ReaderError('Task/results changed while searching; restart the query')
+            items=[dict(r) for r in db.execute('SELECT * FROM queue_items WHERE scope=? ORDER BY updated DESC,row_id DESC',(self.scope,))]
+            records=db.execute('SELECT * FROM task_results WHERE scope=? ORDER BY id DESC',(self.scope,)).fetchall()
+        by_item={}
+        for row in records:
+            by_item.setdefault(row['item_id'],[]).append(json.loads(row['record']))
+        hits=[]
+        for item in items:
+            fields=[key for key in ('title','task','canonical') if needle in normalized(item[key])]
+            matches=[]
+            results=by_item.get(item['id'],[])
+            for index,result in enumerate(results):
+                if needle in normalized(str(result.get('summary',''))+' '+str(result.get('task_scope',''))):
+                    fields.append('result_summary')
+                for artifact in result.get('artifacts',[]):
+                    path=Path(artifact['path'])
+                    if not path.is_file():
+                        validity='missing'
+                    elif path.stat().st_size>2_000_000:
+                        validity='not_text_indexed_size'
+                    else:
+                        raw=path.read_bytes()
+                        validity='valid' if hashlib.sha256(raw).hexdigest()==artifact['sha256'] else 'changed'
+                        if validity=='valid' and path.suffix.lower() in ('.md','.txt'):
+                            text=raw.decode('utf-8-sig',errors='replace')
+                            if needle in normalized(text):
+                                fields.append('artifact_text')
+                                line=next((line for line in text.splitlines() if needle in normalized(line)),'')
+                                matches.append({'path':str(path),'snippet':line[:280],
+                                    'snippet_complete':len(line)<=280,'result_history_index':index})
+                    if index==0:
+                        artifact['current_validity']=validity
+            if fields:
+                hits.append({'item_id':item['id'],'title':item['title'],'task':item['task'],
+                    'canonical':item['canonical'],'state':item['state'],'matched_fields':sorted(set(fields)),
+                    'latest_result':results[0] if results else None,'artifact_matches':matches,
+                    'next_steps':{'show_task':item['id'],'content_target':item['canonical'],
+                                  'artifact_paths':[a['path'] for a in (results[0].get('artifacts',[]) if results else [])]}})
+        hits.sort(key=lambda hit:bool(hit['latest_result']),reverse=True)
+        offset=page.get('offset',0) if page else 0
+        bounded_int(offset,'search cursor offset',0,2147483647)
+        selected=hits[offset:offset+limit]
+        following=offset+len(selected)
+        return {'query':query,'items':selected,'total_matches':len(hits),
+            'next_cursor':self._cursor('material_search',[query],{'revision':[revision,result_revision],'offset':following}) if following<len(hits) else None,
+            'search_scope':'task fields, saved result summaries, hash-valid registered Markdown/text artifacts up to 2 MB',
+            'artifact_checks':'live; changed/missing files are not treated as their saved original',
+            'video_reading_started':False}
 
     def _decorate(self, items):
         from video_reader.catalog import lookup

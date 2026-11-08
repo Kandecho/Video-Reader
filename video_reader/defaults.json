@@ -76,6 +76,7 @@
     "chunk_seconds": 120
   },
   "qwen": {
+    "language": null,
     "model_path": "models/Qwen3-ASR-0.6B",
     "aligner_path": "models/Qwen3-ForcedAligner-0.6B",
     "runtime_dir": "runtimes/qwen",

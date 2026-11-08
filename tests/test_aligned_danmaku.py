@@ -161,15 +161,23 @@ class AlignedDanmakuTests(unittest.TestCase):
                 patch('video_reader.community.danmaku', side_effect=fetch), \
                 patch('video_reader.vendor.frames.extract_at_timestamps', return_value=(self.frames, {})):
             first = self.read(include_danmaku=True)
-        snapshot = read_json(self.reader.directory(self.sid) / 'deliveries' / (first['delivery']['snapshot_id'] + '.json'))
-        parts = []
-        for index in range(len(snapshot['pages'])):
-            page = self.reader.continue_read(self.sid, first['delivery']['snapshot_id'] + ':' + str(index))
-            self.assertLessEqual(len(delivery.encoded(page)), 24000)
-            parts.extend(page.get('material_parts', []))
-        restored = delivery.restore(parts)
-        self.assertEqual(restored['danmaku']['items'][0]['text'], long_text)
-        self.assertEqual(restored, snapshot['result'])
+        current, seen = first, []
+        while current:
+            identity = current['delivery']['snapshot_id']
+            snapshot = read_json(self.reader.directory(self.sid) / 'deliveries' / (identity + '.json'))
+            parts = []
+            for index in range(len(snapshot['pages'])):
+                page = self.reader.continue_read(self.sid, identity + ':' + str(index))
+                self.assertLessEqual(len(delivery.encoded(page)), 24000)
+                parts.extend(page.get('material_parts', []))
+            restored = delivery.restore(parts)
+            self.assertEqual(restored['danmaku']['items'][0]['text'], long_text)
+            self.assertEqual(restored, snapshot['result'])
+            seen.extend(frame['id'] for frame in restored['visual']['frames'])
+            cursor = page['delivery']['next_cursor']
+            current = self.reader.continue_read(self.sid, cursor) if cursor else None
+        self.assertEqual(len(seen), 2)
+        self.assertEqual(len(set(seen)), 2)
 
     def test_uncached_optional_failure_and_empty_export_are_explicit(self):
         self.prepare()
@@ -188,6 +196,19 @@ class AlignedDanmakuTests(unittest.TestCase):
             self.reader.export(self.sid, self.root / 'empty-export', 0, include_danmaku=True)
         exported = read_json(self.root / 'empty-export/evidence.json')
         self.assertEqual(exported['danmaku_status'], 'not_acquired')
+
+    def test_optional_parse_failure_preserves_core_material_and_diagnostic(self):
+        self.prepare()
+        self.platform.request.return_value = b'\x80'
+        with patch.object(self.reader, '_material_platform', return_value=nullcontext(self.platform)), \
+                patch('video_reader.vendor.frames.extract_at_timestamps', return_value=(self.frames, {})):
+            result = self.read(include_danmaku=True)
+        self.assertTrue(result['speech']['segments'])
+        self.assertTrue(result['visual']['frames'])
+        error = result['danmaku']['error']
+        self.assertEqual(error['code'], 'platform_invalid_protobuf_varint')
+        self.assertEqual(error['stage'], 'danmaku_metadata')
+        self.assertEqual(error['next_action'], 'inspect_platform_response')
 
     def test_reordered_or_replaced_platform_part_cannot_mix_with_cached_media(self):
         self.prepare()

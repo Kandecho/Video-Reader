@@ -207,7 +207,7 @@ def fingerprint(reader, session, parameters, result=None):
             'parameters': parameters}
 
 
-def emit(reader, result, operation, parameters):
+def emit(reader, result, operation, parameters, remaining_frames=None):
     if operation == 'review' and parameters.get('action') != 'prepare':
         return result
     session = parameters['session']
@@ -260,14 +260,44 @@ def emit(reader, result, operation, parameters):
         bridge_id = digest(bridge)
         write_json(reader.directory(session) / 'deliveries' / (bridge_id + '.json'), bridge)
         result['speech']['next_cursor'] = bridge_id + ':next'
+    next_delivery_cursor = None
+    if operation == 'read' and remaining_frames:
+        # Freeze already generated pixels now. Later visual pages do not need
+        # live speech, OCR, acquisition or the session's transcription lock.
+        page_size = reader.config['page_frames']
+        for offset in reversed(range(0, len(remaining_frames), page_size)):
+            visual_page = result['visual']['page'] + 1 + offset // page_size
+            tail = {key: copy.deepcopy(value) for key, value in result.items()
+                    if key not in ('speech', 'visual', 'processing', 'danmaku')}
+            tail['visual'] = {**copy.deepcopy(result['visual']),
+                'frames': remaining_frames[offset:offset+page_size], 'page': visual_page,
+                'next_page': visual_page+1 if offset+page_size < len(remaining_frames) else None}
+            if 'danmaku' in result:
+                from .aligned_danmaku import align
+                # align only needs these existing joins; preserve speech IDs
+                # while recomputing the nearest sampled frame for this page.
+                tail['danmaku'] = align(result['danmaku'], None, tail['visual']['frames'])
+            tail_binding = {**binding, 'parameters': {**parameters, 'page': visual_page}}
+            frozen = _freeze(reader, tail, operation, tail_binding, None,
+                             text_budget, image_budget, next_delivery_cursor)
+            next_delivery_cursor = frozen['delivery']['snapshot_id'] + ':0'
+        next_parameters = None
+    return _freeze(reader, result, operation, binding, next_parameters,
+                   text_budget, image_budget, next_delivery_cursor)
+
+
+def _freeze(reader, result, operation, binding, next_parameters, text_budget, image_budget,
+            next_delivery_cursor=None):
     page_budget = max(1000, text_budget - len(encoded(binding)) - 1500)
     record = {'schema': 1, 'operation': operation, 'binding': binding,
               'result': result, 'pages': pages(result, page_budget, image_budget,
-                  reading=operation == 'read' and parameters.get('view', 'reading') == 'reading'),
+                  reading=operation == 'read' and binding['parameters'].get('view', 'reading') == 'reading'),
               'image_identities': asset_identities(result),
               'next_parameters': next_parameters}
+    if next_delivery_cursor:
+        record['next_delivery_cursor'] = next_delivery_cursor
     identity = digest(record)
-    path = reader.directory(session) / 'deliveries' / (identity + '.json')
+    path = reader.directory(binding['session_id']) / 'deliveries' / (identity + '.json')
     if not path.exists():
         write_json(path, record)
     return _page(record, identity, 0)
@@ -285,9 +315,10 @@ def _page(record, identity, position):
             result.setdefault(key, original[key])
     if any(not Path(frame['path']).is_file() for frame in _images(result)):
         raise ReaderError('Frozen image evidence is missing; reopen the source instead of substituting different pixels')
-    following = position + 1 if position + 1 < len(record['pages']) else 'next' if record['next_parameters'] else None
+    following = (f'{identity}:{position+1}' if position+1 < len(record['pages']) else
+                 record.get('next_delivery_cursor') or (f'{identity}:next' if record['next_parameters'] else None))
     result['delivery'] = {'snapshot_id': identity, 'binding': record['binding'], 'page': position,
-        'pages_in_snapshot': len(record['pages']), 'next_cursor': f'{identity}:{following}' if following is not None else None,
+        'pages_in_snapshot': len(record['pages']), 'next_cursor': following,
         'payload_bytes': len(encoded(result)), 'image_bytes': sum(Path(f['path']).stat().st_size for f in _images(result) if Path(f['path']).is_file()),
         'observation': 'delivered_not_confirmed_observed',
         'fragment_format': 'JSON pointers; concatenate string spans in order. Every field is retained.' if 'material_parts' in result else None}
@@ -368,9 +399,10 @@ def delivered(function):
         arguments.apply_defaults()
         parameters = {key: value for key, value in arguments.arguments.items() if key != 'self'}
         result = function(self, *args, **kwargs)
+        remaining_frames = result.pop('_remaining_frames', None)
         if not delivery_enabled:
             return result
         from .jobs import report
         report('packing_delivery')
-        return emit(self, result, function.__name__, parameters)
+        return emit(self, result, function.__name__, parameters, remaining_frames)
     return wrapper

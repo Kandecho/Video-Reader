@@ -113,6 +113,54 @@ class JobTests(unittest.TestCase):
         self.assertNotEqual(fresh['job']['job_id'],first['job_id'])
         self.assertTrue(fresh['processing']['frame_cache_reused'])
 
+    def test_dynamic_continuation_returns_shared_job_while_waiting_for_lock(self):
+        from video_reader import mcp_server
+        data = self.reader.load(self.session)
+        data['speech'][0]['segments'] = [
+            {'start': 0, 'end': 1, 'text': 'first'}, {'start': 1, 'end': 2, 'text': 'second'}]
+        self.reader.save(data)
+        first = self.reader.transcript(self.session, source='captions', limit=1, verify=False)
+        cursor = first['delivery']['next_cursor']
+        self.assertTrue(cursor.endswith(':next'))
+        with FileLock(str(self.reader.directory(self.session)/'.lock')):
+            began = time.monotonic()
+            with patch.object(mcp_server, 'reader', self.reader):
+                response = mcp_server.video_continue(self.session, cursor, wait_seconds=0)
+            pending = json.loads(response[0].text)
+            self.assertLess(time.monotonic()-began, 2)
+            job_id = pending['job_id']
+            self.wait_stage(job_id, 'waiting_for_session_lock')
+            code, joined = self.cli('continue', self.session, cursor, '--wait', '0')
+            self.assertEqual(code, 0)
+            self.assertEqual(joined['job_id'], job_id)
+            self.assertTrue(joined['reused_running_job'])
+            payload = self.root/'continuation.json'
+            write_json(payload, {'session': self.session, 'cursor': cursor})
+            code, explicit = self.cli('job', 'start', '--operation', 'continue_read',
+                                      '--payload', str(payload), '--wait', '0')
+            self.assertEqual(code, 0)
+            self.assertEqual(explicit['job_id'], job_id)
+        completed = self.store.result(job_id, 15)
+        self.assertEqual(completed['job']['status'], 'completed', completed)
+        self.assertEqual(completed['segments'][0]['text'], 'second')
+
+    def test_frozen_visual_continuation_bypasses_jobs_and_session_lock_in_adapters(self):
+        from video_reader import mcp_server
+        self.reader.config['page_frames'] = 1
+        first = self.reader.read(self.session, timestamps=[.5, 1.5], verify=False, temporal=False)
+        cursor = first['delivery']['next_cursor']
+        self.assertFalse(cursor.endswith(':next'))
+        with FileLock(str(self.reader.directory(self.session)/'.lock')):
+            with patch.object(mcp_server, 'reader', self.reader), \
+                    patch.object(self.reader, 'job', side_effect=AssertionError('no job for frozen page')):
+                response = mcp_server.video_continue(self.session, cursor)
+            tail = json.loads(response[0].text)
+            code, cli_tail = self.cli('continue', self.session, cursor)
+        self.assertEqual(code, 0)
+        self.assertEqual(tail, cli_tail)
+        self.assertEqual(tail['visual']['frames'][0]['id'], first['read_id']+':1')
+        self.assertNotIn('speech', tail)
+
     def test_error_is_terminal_and_cli_exits_nonzero(self):
         result=self.store.start('read',{'session':'v_'+'a'*24},15)
         self.assertEqual(result['status'],'failed')

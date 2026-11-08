@@ -14,6 +14,20 @@ def parser():
     p = argparse.ArgumentParser(description="Read video as source material for an agent; JSON output")
     p.add_argument("--config")
     sub = p.add_subparsers(dest="command", required=True)
+    content = sub.add_parser('content', help='Revision-bound time directory, lexical retrieval and storyboard')
+    content.add_argument('target')
+    content.add_argument('--action', choices=('index','query','storyboard','material','validate'), default='index')
+    content.add_argument('--query', default='')
+    content.add_argument('--block-ids', nargs='+')
+    content.add_argument('--source', choices=('auto','captions','asr','qwen'), default='auto')
+    content.add_argument('--context')
+    content.add_argument('--block-seconds', type=int, default=120)
+    content.add_argument('--offset', type=int, default=0)
+    content.add_argument('--limit', type=int, default=20)
+    content.add_argument('--index-id')
+    content.add_argument('--offline', action='store_true')
+    content.add_argument('--refresh', action='store_true')
+    content.add_argument('--wait', type=float, default=1, dest='wait_seconds')
     agent = sub.add_parser('agent', help='Run, inspect or configure the lightweight video agent')
     agent.add_argument('action', choices=('status', 'config', 'candidates', 'preview', 'prepare', 'finish',
                                          'run', 'deliver', 'test-message', 'memory', 'forget', 'tick', 'watch', 'resume', 'recover', 'report', 'report-send',
@@ -109,6 +123,8 @@ def parser():
     continuation = sub.add_parser('continue', help='Resume exactly the material named by a persistent cursor')
     continuation.add_argument('session')
     continuation.add_argument('cursor')
+    continuation.add_argument('--wait', type=float, default=1, dest='wait_seconds',
+                              help='Wait at most 0..30 seconds for dynamic continuation')
     detail = sub.add_parser('frame', help='Expand a returned frame ID using original media pixels')
     detail.add_argument('session')
     detail.add_argument('frame_id')
@@ -158,7 +174,7 @@ def parser():
     job = sub.add_parser('job', help='Shared Reader jobs: query without waiting for the media lock')
     job.add_argument('action', choices=('start', 'status', 'result', 'list'))
     job.add_argument('job_id', nargs='?')
-    job.add_argument('--operation', choices=('open', 'read', 'transcript'))
+    job.add_argument('--operation', choices=('open', 'read', 'transcript', 'continue_read', 'content', 'consume_task'))
     job.add_argument('--payload', help='JSON parameters file for start; material data, never executable code')
     job.add_argument('--wait', type=float, default=0, dest='wait_seconds')
     for command_parser in (op, read, tr):
@@ -203,7 +219,7 @@ def main():
         elif args.command == "login":
             from .bilibili_auth import login_action
             result = login_action(reader.config, args.action, args.login_id, args.wait_seconds)
-        elif args.command in ('open', 'read', 'transcript'):
+        elif args.command in ('open', 'read', 'transcript', 'content'):
             options = vars(args).copy()
             operation = options.pop('command')
             options.pop('config')
@@ -217,7 +233,11 @@ def main():
             payload = json.loads(Path(args.payload).read_text(encoding='utf-8-sig')) if args.payload else None
             result = reader.job(args.action, args.job_id, args.operation, payload, args.wait_seconds)
         elif args.command == 'continue':
-            result = reader.continue_read(args.session, args.cursor)
+            if args.cursor.endswith(':next'):
+                result = reader.job('start', operation='continue_read',
+                    parameters={'session': args.session, 'cursor': args.cursor}, wait_seconds=args.wait_seconds)
+            else:
+                result = reader.continue_read(args.session, args.cursor)
         elif args.command == 'frame':
             result = reader.frame(args.session, args.frame_id, args.width, args.region)
         elif args.command == 'sound':

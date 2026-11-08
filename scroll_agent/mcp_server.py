@@ -227,6 +227,22 @@ def scroll_report(action: str = 'preview', item_ids_json: str = '',
     return pack(send(reader,report) if action=='send' else report)
 
 
+@mcp.tool(structured_output=False)
+def scroll_background(action: str = 'status', parameters_json: str = '') -> list[TextContent | ImageContent]:
+    """Control explicitly enabled work: status/config/pause/resume/intake/queue/retry/tick/hold.
+    Status and intake use no model. Intake only syncs the configured Inbox. Queue only handles
+    local task execution/recovery with its own interval; it never checks Inbox. Retry takes run_id
+    and retries the original failed background task without intake. Tick is a compatibility wrapper
+    running the two independent channels; an intake failure cannot gate queue work.
+    Blank requests wait for clarification; separate text messages are never auto-associated.
+    No sending, platform-pause reset, model switch or scheduler registration. Model quota failures
+    latch a reading pause until explicit resume. Transient host failures have bounded short retries;
+    intake_interval_minutes and queue_interval_minutes are independent policy fields.
+    """
+    from .background import dispatch
+    return pack(dispatch(Reader(),'background-'+action,json.loads(parameters_json) if parameters_json else None))
+
+
 def main():
     from video_reader.vendor.runtime import configure_stdio
     configure_stdio()

@@ -2,6 +2,7 @@ import copy
 import json
 from pathlib import Path
 import shutil
+import threading
 import unittest
 from unittest.mock import patch
 
@@ -23,6 +24,108 @@ class DeliveryTests(unittest.TestCase):
         self.data['speech'] = [{'start': 0, 'end': 300, 'source': 'captions', 'status': 'ready',
                                 'track': {'kind': 'manual'}, 'segments': segments}]
         self.reader.save(self.data)
+
+    def visual_read(self, count=20, **options):
+        self.data['metadata']['has_video'] = True
+        self.reader.config['page_frames'] = 8
+        self.reader.save(self.data)
+        frames = []
+        for index in range(count):
+            path = self.root / f'frame-{index}.jpg'
+            Image.new('RGB', (64, 64), (index, 0, 0)).save(path)
+            frames.append({'path': str(path), 'index': index, 'timestamp_seconds': index+1.0})
+        with patch('video_reader.vendor.frames.extract', return_value=frames):
+            return self.reader.read(self.sid, max_frames=count, temporal=False, verify=False, **options)
+
+    def test_visual_tail_survives_incremental_asr_and_process_restart(self):
+        first = self.visual_read(source='asr')
+        with patch('video_reader.speech.decode', side_effect=self.decode):
+            self.reader.transcript(self.sid, source='asr', max_chunks=1, verify=False)
+        seen = [frame['id'] for frame in first['visual']['frames']]
+        result = first
+        restarted = Reader(self.reader.config_path)
+        # Frozen page boundaries do not follow a later configuration change.
+        restarted.config['page_frames'] = 1
+        with patch.object(restarted, 'read', side_effect=AssertionError('frozen visual page')):
+            while result['delivery']['next_cursor']:
+                result = restarted.continue_read(self.sid, result['delivery']['next_cursor'])
+                self.assertNotIn('speech', result)
+                self.assertEqual(result['delivery']['binding']['speech_snapshot'],
+                                 first['delivery']['binding']['speech_snapshot'])
+                seen.extend(frame['id'] for frame in result['visual']['frames'])
+        self.assertEqual(seen, [f"{first['read_id']}:{index}" for index in range(20)])
+
+    def test_visual_tail_does_not_wait_for_active_transcription(self):
+        first = self.visual_read(count=12, source='asr')
+        entered, release = threading.Event(), threading.Event()
+        errors = []
+        def decode(*arguments):
+            entered.set()
+            if not release.wait(10):
+                raise AssertionError('transcription test timed out')
+            return self.decode(*arguments)
+        def transcribe():
+            try:
+                self.reader.transcript(self.sid, source='asr', max_chunks=1, verify=False)
+            except Exception as error:
+                errors.append(error)
+        with patch('video_reader.speech.decode', side_effect=decode):
+            worker = threading.Thread(target=transcribe)
+            worker.start()
+            try:
+                self.assertTrue(entered.wait(5))
+                with patch('video_reader.reader.session_lock', side_effect=AssertionError('must not wait for ASR')):
+                    tail = self.reader.continue_read(self.sid, first['delivery']['next_cursor'])
+                self.assertEqual(len(tail['visual']['frames']), 4)
+                self.assertIsNone(tail['delivery']['next_cursor'])
+                self.assertFalse(release.is_set())
+            finally:
+                release.set()
+                worker.join(5)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(errors, [])
+
+    def test_visual_tail_preserves_old_review_but_speech_cursor_rejects_change(self):
+        self.captions([{'start': index, 'end': index+1, 'text': str(index)} for index in range(3)])
+        self.reader.config['page_transcript_segments'] = 1
+        first = self.visual_read(count=12)
+        speech_cursor = first['speech']['next_cursor']
+        prepared = self.reader.review(self.sid)
+        self.reader.review(self.sid, 'commit', payload={'snapshot_id': prepared['snapshot_id'],
+            'base_revision': 0, 'reviewed_segment_ids': [prepared['segments'][0]['segment_id']]})
+        tail = self.reader.continue_read(self.sid, first['delivery']['next_cursor'])
+        self.assertNotIn('speech', tail)
+        self.assertEqual(tail['delivery']['binding']['review_revision'], 0)
+        with self.assertRaisesRegex(ReaderError, 'changed'):
+            self.reader.continue_read(self.sid, speech_cursor)
+
+    def test_visual_tail_rejects_changed_pixels_and_media(self):
+        from video_reader.sources import file_identity
+        self.data['media_identity'] = file_identity(self.data['media_path'])
+        first = self.visual_read(count=12)
+        cursor = first['delivery']['next_cursor']
+        tail = self.reader.continue_read(self.sid, cursor)
+        Path(tail['visual']['frames'][0]['path']).write_bytes(b'changed frozen pixels')
+        with self.assertRaisesRegex(ReaderError, 'changed or disappeared'):
+            self.reader.continue_read(self.sid, cursor)
+        Path(self.data['media_path']).write_bytes(b'changed media')
+        with self.assertRaisesRegex(ReaderError, 'media changed'):
+            self.reader.continue_read(self.sid, cursor)
+
+    def test_legacy_dynamic_visual_cursor_keeps_strict_binding(self):
+        first = self.visual_read(count=12, source='asr')
+        path = self.reader.directory(self.sid) / 'deliveries' / (first['delivery']['snapshot_id'] + '.json')
+        legacy = read_json(path)
+        legacy.pop('next_delivery_cursor')
+        legacy['next_parameters'] = {**legacy['binding']['parameters'], 'page': 1}
+        identity = 'f'*24
+        write_json(path.with_name(identity+'.json'), legacy)
+        cursor = identity+':next'
+        self.assertEqual(len(self.reader.continue_read(self.sid, cursor)['visual']['frames']), 4)
+        with patch('video_reader.speech.decode', side_effect=self.decode):
+            self.reader.transcript(self.sid, source='asr', max_chunks=1, verify=False)
+        with self.assertRaisesRegex(ReaderError, 'changed'):
+            self.reader.continue_read(self.sid, cursor)
 
     def test_long_unicode_single_segment_and_all_word_evidence_round_trip(self):
         text = '中文🙂\\\n"/路径  ' * 4000

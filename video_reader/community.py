@@ -38,10 +38,28 @@ def metadata(platform, source):
     return selected, info
 
 
-def failure(base, error):
-    code = error.code
+def diagnostic(error, stage, **details):
+    message = str(error)
+    code = getattr(error, 'code', None) or (message if re.fullmatch(r'platform_[a-zA-Z0-9_:.-]+', message)
+                                          else 'danmaku_' + type(error).__name__)
+    login = 'login' in code or code in ('platform_code:-101', 'platform_http_401')
+    paused = ('paused' in code or 'budget' in code or code in
+              ('platform_code:-352', 'platform_code:-412', 'platform_code:-799',
+               'platform_http_403', 'platform_http_412', 'platform_http_429'))
+    action = ('retry_online_if_authorized' if code == 'offline_cache_miss' else
+              'check_component_login' if login else
+              'inspect_platform_status_do_not_auto_retry' if paused else
+              'check_network_then_retry_explicitly' if 'unavailable' in code or 'http_' in code else
+              'inspect_platform_response' if 'protobuf' in code or 'invalid' in code else
+              'inspect_component_account_status' if stage.startswith('checking_') else 'inspect_error')
+    return {'code': code, 'type': type(error).__name__, 'stage': stage, 'next_action': action, **details}
+
+
+def failure(base, error, stage='fetching_comments'):
+    detail = diagnostic(error, stage)
+    code = detail['code']
     blocked = any(word in code for word in ('paused', 'budget', 'login', 'platform_code:', 'platform_http_'))
-    return {**base, 'status': 'blocked' if blocked else 'failed', 'error': {'code': code}}
+    return {**base, 'status': 'blocked' if blocked else 'failed', 'error': detail}
 
 
 def comment(item, *, children=True):
@@ -79,6 +97,7 @@ def comments(platform, source, page=1, page_size=20, sort='newest', root=None):
         data = platform.json('/x/v2/reply/reply' if root else '/x/v2/reply', params, ttl=600)
         paging = data.get('page') or {}
         total = paging.get('count')
+        all_total = paging.get('acount')
         size = paging.get('size')
         if (isinstance(total, bool) or not isinstance(total, int) or total < 0 or
                 isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 20 or paging.get('num') != page):
@@ -86,22 +105,49 @@ def comments(platform, source, page=1, page_size=20, sort='newest', root=None):
         rows = data.get('replies') or []
         items = [comment(row, children=not root) for row in rows]
         unique = {item['id']: item for item in items}
+        # Some platform responses report the same all-comments count in both
+        # count/acount. It cannot then predict the number of root-comment pages.
+        count_scoped = bool(root) or (type(all_total) is int and all_total > total)
+        cursor = data.get('cursor') or {}
+        explicit_end = cursor.get('is_end') if isinstance(cursor.get('is_end'), bool) else None
         expected = max(0, min(size, total - (page - 1) * size))
-        complete = len(rows) == expected and len(unique) == len(rows)
+        complete = len(unique) == len(rows) and (len(rows) == expected if count_scoped else
+                                                len(rows) == size or total == 0 and not rows or explicit_end is True)
+        if explicit_end is True:
+            next_page, end_reason = None, 'platform_end'
+        elif explicit_end is False:
+            next_page, end_reason = page + 1, None
+        elif not rows:
+            next_page, end_reason = None, 'empty_page_unconfirmed' if total else 'empty_collection'
+        elif count_scoped and page * size >= total and complete:
+            next_page, end_reason = None, 'scoped_count_boundary'
+        else:
+            next_page, end_reason = page + 1, None
+        if end_reason == 'empty_page_unconfirmed':
+            complete = False
+        if explicit_end is False and (total == 0 or count_scoped and page * size >= total):
+            complete = False
+            end_reason = 'count_end_signal_conflict'
         upper = (data.get('upper') or {}).get('top')
         pins = [upper] if isinstance(upper, dict) else []
         pins += [row for row in (data.get('top_replies') or []) if isinstance(row, dict)]
         if isinstance(data.get('top'), dict):
             pins += [row for row in data['top'].values() if isinstance(row, dict) and row.get('rpid')]
         pinned = list({str(row['rpid']): comment(row) for row in pins if row.get('rpid')}.values())
+        if total == 0 and (rows or pinned):
+            complete = False
+            end_reason = 'count_content_conflict'
         return {**base, 'items': list(unique.values()), 'pinned': pinned,
                 'thread_root': comment(data['root'], children=False) if isinstance(data.get('root'), dict) else None,
-                'reported_total': total, 'reported_total_with_replies': paging.get('acount'),
+                'reported_total': total, 'reported_total_with_replies': all_total,
+                'reported_total_scope': 'thread_replies' if root else 'top_level_comments' if count_scoped else 'unresolved_may_include_replies',
                 'page_size': size, 'page_complete': complete,
                 'collection_scope': 'thread_replies' if root else 'top_level_comments',
-                'collection_complete': page == 1 and complete and len(unique) == total,
+                'collection_complete': page == 1 and complete and explicit_end is not False and
+                                       (total == 0 or count_scoped and len(unique) == total),
                 'retry_page': page if not complete else None,
-                'next_page': page + 1 if page * size < total else None,
+                'next_page': next_page, 'end_reason': end_reason,
+                'pagination_end_confirmed': explicit_end is True or end_reason == 'empty_collection',
                 'status': 'ready' if complete else 'partial'}
     except PlatformError as error:
         return failure(base, error)
@@ -184,9 +230,11 @@ def danmaku(platform, source, segment_index=1, offset=0, limit=100, snapshot_id=
             'offset': offset, 'limit': limit, 'items': [], 'segment_complete': False,
             'collection_complete': False, 'is_full_population': False, 'notice': UNTRUSTED,
             'coverage_note': 'Current platform segmented pool, not all historical danmaku. Special/BAS packs and interactive overlays are excluded.'}
+    stage = 'resolving_source'
     try:
         selected = video(source)
         if snapshot_id:
+            stage = 'loading_snapshot'
             path = platform.root / f'danmaku-{snapshot_id}.json'
             if not path.is_file():
                 raise ReaderError('Danmaku snapshot not found; restart this segment with offset=0')
@@ -196,14 +244,17 @@ def danmaku(platform, source, segment_index=1, offset=0, limit=100, snapshot_id=
             base.update(saved['metadata'])
             items, state = saved['items'], saved['state']
         else:
+            stage = 'validating_continuation'
             if offset:
                 raise ReaderError('Use the returned snapshot_id when continuing a segment with offset')
+            stage = 'source_metadata'
             selected, info = metadata(platform, source)
             part = next((part for part in info.get('pages', []) if part.get('page') == selected['page']), None)
             if not part or not part.get('cid'):
                 raise ReaderError('Selected Bilibili part does not exist')
             params = {'type': 1, 'oid': part['cid'], 'pid': info['aid']}
             base.update(bvid=selected['bvid'], aid=str(info['aid']), cid=str(part['cid']), part=selected['page'])
+            stage = 'danmaku_metadata'
             meta = dict((n, v) for n, w, v in fields(binary(platform, '/x/v2/dm/web/view', params)))
             if meta.get(1, 0):
                 return {**base, 'status': 'closed', 'platform_state': meta[1]}
@@ -216,16 +267,21 @@ def danmaku(platform, source, segment_index=1, offset=0, limit=100, snapshot_id=
                         reported_pool_count=meta.get(8), collection_scope='current_segmented_pool')
             if total == 0 and segment_index == 1:
                 return {**base, 'status': 'ready', 'segment_complete': True, 'collection_complete': True, 'next': None}
+            stage = 'validating_continuation'
             if segment_index > total:
                 raise ReaderError('segment_index exceeds total_segments')
+            stage = 'danmaku_segment'
             blob = binary(platform, '/x/v2/dm/web/seg.so', {**params, 'segment_index': segment_index})
+            stage = 'decoding_danmaku'
             items, state = decode_danmaku(blob)
             snapshot_id = digest({'source': selected['canonical'], 'segment_index': segment_index, 'blob': blob.hex()})
             details = {key: base[key] for key in ('bvid', 'aid', 'cid', 'part', 'total_segments', 'segment_seconds', 'reported_pool_count', 'collection_scope')}
+            stage = 'saving_snapshot'
             write_json(platform.root / f'danmaku-{snapshot_id}.json', {'source': selected['canonical'], 'segment_index': segment_index,
                        'metadata': details, 'items': items, 'state': state})
         if state:
             return {**base, 'status': 'closed', 'platform_state': state}
+        stage = 'validating_continuation'
         if offset > len(items):
             raise ReaderError('offset exceeds segment item count')
         end = min(len(items), offset + limit)
@@ -237,6 +293,8 @@ def danmaku(platform, source, segment_index=1, offset=0, limit=100, snapshot_id=
                 'segment_complete': complete, 'collection_complete': total == 1 and offset == 0 and complete,
                 'next': continuation}
     except PlatformError as error:
-        return failure(base, error)
-    except (UnicodeError, TypeError, ValueError) as error:
-        raise ReaderError('platform_invalid_danmaku_response') from None
+        return failure(base, error, stage)
+    except (ReaderError, OSError, UnicodeError, TypeError, ValueError) as error:
+        if stage in ('loading_snapshot', 'validating_continuation'):
+            raise
+        return {**base, 'status': 'failed', 'error': diagnostic(error, stage)}

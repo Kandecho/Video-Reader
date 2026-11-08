@@ -14,6 +14,8 @@ def unplaced(record):
     chunk = record.get('qwen_chunk') or {}
     raw = chunk.get('raw_text', '')
     from .qwen_pipeline import normalize
+    if not normalize(raw) and chunk.get('generation', {}).get('requires_review'):
+        raw = ''.join(item.get('raw_text', '') for item in chunk['generation'].get('outputs', []))
     if not normalize(raw) or chunk.get('text') or chunk.get('words'):
         return None
     words = chunk.get('raw_words') or []
@@ -23,6 +25,8 @@ def unplaced(record):
              'time_status': 'unplaced', 'reason': 'missing_or_zero_duration_alignment',
              'raw_alignment': copy.deepcopy(words), 'warnings': copy.deepcopy(chunk.get('warnings', [])),
              'processed_range': [record['start'], record['end']]}
+    if chunk.get('generation'):
+        value['generation'] = copy.deepcopy(chunk['generation'])
     value['candidate_id'] = digest([record.get('source'), record.get('profile'), value])
     return value
 
@@ -33,7 +37,12 @@ def assess(records, segments, lo, hi):
                   if (value := unplaced(r)) is not None]
     status = ('alignment_unresolved' if unresolved else 'unverified_candidates' if suspects
               else 'candidate_text' if segments else 'no_transcript_returned')
+    generation = [{'range': [r['start'], r['end']],
+                   **{key: value for key, value in r['qwen_chunk']['generation'].items() if key != 'outputs'}}
+                  for r in records if r['end'] > lo and r['start'] < hi and
+                  r.get('qwen_chunk', {}).get('generation', {}).get('requires_review')]
     return {'revision': REVISION, 'text_status': status, 'suspect_segments': len(suspects),
+            'generation_warnings': generation,
             'suspect_ranges': [[s['start'], s['end']] for s in suspects],
             'unplaced_candidates': len(unresolved), 'confirmed_absence_of_speech': False,
             'notice': 'Machine candidates are not verified speech. Empty output is not an acoustic proof of silence.'}, unresolved

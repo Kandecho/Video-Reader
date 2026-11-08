@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from video_reader import qwen, speech
 from video_reader.cli import parser
-from video_reader.common import ReaderError, write_json
+from video_reader.common import ReaderError, digest, write_json
 from video_reader.qwen_pipeline import owned_chunk
 from video_reader.reader import Reader
 
@@ -71,6 +71,52 @@ class QwenTests(unittest.TestCase):
         self.assertEqual(self.reader.load(self.sid)['speech'][:2], before)
         self.assertEqual(self.reader.transcript(self.sid)['source'], 'captions')
         self.assertEqual(self.reader.transcript(self.sid, source='asr')['segments'][0]['text'], 'whisper')
+
+    def test_auto_profile_is_new_and_explicit_chinese_reads_original_review(self):
+        options = self.reader.config['qwen']
+        legacy = digest({'engine': qwen.SOURCE, 'revision': 1, 'model': options['model_path'],
+            'aligner': options['aligner_path'], 'runtime': options['runtime_dir'],
+            'context': '', 'language': 'Chinese', 'chunk_seconds': 60, 'padding_seconds': 2})
+        self.assertIsNone(qwen.language(self.reader.config))
+        self.assertNotEqual(qwen.profile(self.reader.config, ''), legacy)
+        self.reader.config['qwen']['language'] = 'Chinese'
+        self.assertEqual(qwen.profile(self.reader.config, ''), legacy)
+        self.load_qwen()
+        prepared = self.reader.review(self.sid, source='qwen')
+        self.reader.review(self.sid, 'commit', source='qwen', payload={'snapshot_id': prepared['snapshot_id'],
+            'base_revision': 0, 'reviewed_segment_ids': [prepared['segments'][0]['segment_id']]})
+        original = copy.deepcopy(self.reader.load(self.sid)['speech'])
+        self.reader.config['qwen']['language'] = None
+        self.assertFalse(self.reader.transcript(self.sid, source='qwen', transcribe=False)['coverage']['complete'])
+        self.reader.config['qwen']['language'] = 'Chinese'
+        with patch('video_reader.qwen.decode', side_effect=AssertionError('legacy track must remain readable')):
+            reused = self.reader.transcript(self.sid, source='qwen', verify=False)
+        self.assertEqual(reused['review']['snapshot_id'], prepared['snapshot_id'])
+        self.assertEqual(reused['review']['revision'], 1)
+        self.assertEqual(self.reader.load(self.sid)['speech'], original)
+
+    def test_generation_warnings_from_later_chunks_reach_host(self):
+        self.load_qwen()
+        data = self.reader.load(self.sid)
+        data['speech'][-1]['qwen_chunk']['generation'] = {
+            'requires_review': True, 'generated_tokens': 4096, 'limit_reached': True,
+            'postprocessing_changed_text': True, 'outputs': [{'raw_text': '甲'*4096}]}
+        self.reader.save(data)
+        result = self.reader.transcript(self.sid, source='qwen', verify=False)
+        self.assertEqual(result['recognition_assessment']['generation_warnings'][0]['range'], [120, 130])
+        self.assertIn('suspect_decoding', result['segments'][-1]['quality_flags'])
+
+    def test_nonempty_raw_generation_parsed_empty_is_not_reviewed_silence(self):
+        self.data['metadata']['duration_seconds'] = 60
+        chunk = fixture_chunk(silent=True)
+        chunk['generation'] = {'requires_review': True, 'limit_reached': True,
+            'outputs': [{'raw_text': '未定位候选', 'raw_output': '未定位候选'}]}
+        self.data['speech'].append({'source': qwen.SOURCE, 'start': 0, 'end': 60, 'status': 'no_speech',
+            'profile': qwen.profile(self.reader.config, ''), 'qwen_chunk': chunk, 'segments': []})
+        self.reader.save(self.data)
+        result = self.reader.transcript(self.sid, source='qwen', verify=False)
+        self.assertFalse(result['review']['complete'])
+        self.assertEqual(result['unplaced_candidates'][0]['raw_text'], '未定位候选')
 
     def test_checkpoint_resumes_only_missing_intervals(self):
         def interrupted(*args):

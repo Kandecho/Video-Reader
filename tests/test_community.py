@@ -10,7 +10,7 @@ from urllib.parse import parse_qs, urlparse
 
 from video_reader import cli, mcp_server
 from video_reader.common import ReaderError, write_json
-from video_reader.community import comments, danmaku, decode_danmaku, fields
+from video_reader.community import comments, danmaku, decode_danmaku, diagnostic, fields
 from video_reader.platform import Platform, PlatformError
 from video_reader.reader import Reader
 
@@ -65,8 +65,10 @@ class CommunityTests(unittest.TestCase):
             data = {'aid': 99, 'pages': [{'page': 1, 'cid': 1}, {'page': 2, 'cid': 2}]}
         elif path in ('/x/v2/reply', '/x/v2/reply/reply'):
             page = int(params['pn'][0])
-            data = {'page': {'num': page, 'size': 2, 'count': self.total},
+            data = {'page': {'num': page, 'size': 2, 'count': self.total, 'acount': self.total+2},
                     'replies': self.rows if page == 1 else [row(3)], 'upper': {'top': row(4)}}
+            if self.total == 0:
+                data['upper'] = {}
             if 'root' in params:
                 data['root'] = row(int(params['root'][0]))
         elif path.endswith('/dm/web/view'):
@@ -113,6 +115,90 @@ class CommunityTests(unittest.TestCase):
         self.assertFalse(result['is_full_population'])
         with patch.object(self, 'transport', side_effect=AssertionError('offline network')):
             self.assertEqual(comments(self.platform(offline=True), SOURCE, page_size=2), result)
+
+    def test_ambiguous_all_comment_count_does_not_invent_empty_tail_pages(self):
+        p = self.platform()
+        payload = {'page': {'num': 31, 'size': 20, 'count': 2013, 'acount': 2013},
+                   'replies': [], 'upper': {'top': row(4, 370)}}
+        with patch.object(p, 'json', side_effect=[{'aid': 99}, payload]):
+            result = comments(p, SOURCE, page=31, sort='likes')
+        self.assertEqual(result['reported_total_scope'], 'unresolved_may_include_replies')
+        self.assertEqual(result['status'], 'partial')
+        self.assertIsNone(result['next_page'])
+        self.assertEqual(result['retry_page'], 31)
+        self.assertEqual(result['end_reason'], 'empty_page_unconfirmed')
+        self.assertFalse(result['pagination_end_confirmed'])
+        self.assertFalse(result['collection_complete'])
+        self.assertEqual(result['pinned'][0]['reply_count'], 370)
+
+    def test_short_ambiguous_page_continues_and_explicit_end_is_distinct(self):
+        p = self.platform()
+        payload = {'page': {'num': 2, 'size': 2, 'count': 5, 'acount': 5}, 'replies': [row(3)]}
+        for end, next_page in [(None, 3), (False, 3), (True, None)]:
+            with self.subTest(end=end), patch.object(p, 'json', side_effect=[{'aid': 99},
+                    {**payload, 'cursor': {'is_end': end}}]):
+                result = comments(p, SOURCE, page=2, page_size=2)
+            self.assertEqual(result['next_page'], next_page)
+            self.assertEqual(result['pagination_end_confirmed'], end is True)
+            self.assertFalse(result['collection_complete'])
+
+    def test_explicit_more_pages_overrides_zero_or_exhausted_count(self):
+        p = self.platform()
+        for count, all_count, rows in [(2, 3, [row(1), row(2)]), (0, 0, [])]:
+            with self.subTest(count=count), patch.object(p, 'json', side_effect=[{'aid': 99},
+                    {'page': {'num': 1, 'size': 2, 'count': count, 'acount': all_count},
+                     'replies': rows, 'cursor': {'is_end': False}}]):
+                result = comments(p, SOURCE, page_size=2)
+            self.assertEqual(result['next_page'], 2)
+            self.assertEqual(result['status'], 'partial')
+            self.assertEqual(result['end_reason'], 'count_end_signal_conflict')
+            self.assertFalse(result['collection_complete'])
+            self.assertFalse(result['pagination_end_confirmed'])
+
+    def test_empty_page_beyond_scoped_count_still_retains_uncertainty_and_retry(self):
+        p = self.platform()
+        with patch.object(p, 'json', side_effect=[{'aid': 99},
+                {'page': {'num': 3, 'size': 2, 'count': 3}, 'replies': []}]):
+            result = comments(p, SOURCE, page=3, page_size=2, root='1')
+        self.assertEqual(result['status'], 'partial')
+        self.assertEqual(result['retry_page'], 3)
+        self.assertEqual(result['end_reason'], 'empty_page_unconfirmed')
+        self.assertIsNone(result['next_page'])
+        self.assertFalse(result['page_complete'])
+
+    def test_danmaku_parse_failure_retains_stage_type_and_action(self):
+        self.dm_blob = b'\x80'
+        result = danmaku(self.platform(), SOURCE)
+        self.assertEqual(result['status'], 'failed')
+        self.assertEqual(result['error']['code'], 'platform_invalid_protobuf_varint')
+        self.assertEqual(result['error']['stage'], 'decoding_danmaku')
+        self.assertEqual(result['error']['type'], 'ReaderError')
+        self.assertEqual(result['error']['next_action'], 'inspect_platform_response')
+
+    def test_account_failure_is_actionable_before_native_request(self):
+        with patch.object(self.reader, '_material_platform', side_effect=ReaderError('account status unavailable')):
+            result = self.reader.danmaku(SOURCE)
+        self.assertEqual(result['error']['stage'], 'checking_account')
+        self.assertEqual(result['error']['next_action'], 'inspect_component_account_status')
+        self.assertFalse(result['collection_complete'])
+
+    def test_danmaku_failure_actions_honor_login_and_shared_pause_codes(self):
+        for code, expected in [
+            ('platform_code:-101', 'check_component_login'),
+            ('platform_http_401', 'check_component_login'),
+            ('platform_code:-352', 'inspect_platform_status_do_not_auto_retry'),
+            ('platform_code:-412', 'inspect_platform_status_do_not_auto_retry'),
+            ('platform_code:-799', 'inspect_platform_status_do_not_auto_retry'),
+            ('platform_http_403', 'inspect_platform_status_do_not_auto_retry'),
+            ('platform_http_412', 'inspect_platform_status_do_not_auto_retry'),
+            ('platform_http_429', 'inspect_platform_status_do_not_auto_retry'),
+            ('platform_unavailable:TimeoutError', 'check_network_then_retry_explicitly'),
+            ('offline_cache_miss', 'retry_online_if_authorized'),
+        ]:
+            with self.subTest(code=code):
+                result = diagnostic(PlatformError(code), 'danmaku_segment')
+                self.assertEqual(result['code'], code)
+                self.assertEqual(result['next_action'], expected)
 
     def test_platform_restriction_stops_and_keeps_prior_page(self):
         comments(self.platform(), SOURCE, page_size=2)

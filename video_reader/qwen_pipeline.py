@@ -185,17 +185,53 @@ def load_model(root, model_path=None, aligner_path=None):
         forced_aligner_kwargs=options, max_inference_batch_size=1, max_new_tokens=4096)
 
 
+def decode_with_diagnostics(model, audio, language=None, context=''):
+    """Capture pre-parser ASR output, on this model only; never alter generation.
+
+    Qwen's Transformers backend sends the generated token slice to batch_decode.
+    Its forced aligner has a separate processor. Restore the hook even on error.
+    """
+    captured = []
+    processor = getattr(model, 'processor', None)
+    original = getattr(processor, 'batch_decode', None)
+    def observe(token_ids, *args, **kwargs):
+        values = original(token_ids, *args, **kwargs)
+        for tokens, raw in zip(token_ids, values):
+            count = len(tokens)
+            captured.append({'raw_output': raw, 'generated_tokens': count,
+                'limit_reached': count >= model.max_new_tokens})
+        return values
+    if original:
+        processor.batch_decode = observe
+    try:
+        output = model.transcribe(audio=audio, language=language, context=context, return_time_stamps=True)[0]
+    finally:
+        if original:
+            processor.batch_decode = original
+    for item in captured:
+        raw_text = item['raw_output'].split('<asr_text>', 1)[-1].strip()
+        item.update(raw_text=raw_text, raw_characters=len(raw_text), parsed_characters=len(output.text),
+                    postprocessing_changed_text=raw_text != output.text.strip())
+    return output, {'available': bool(captured), 'max_new_tokens': getattr(model, 'max_new_tokens', None),
+        'generated_tokens': sum(item['generated_tokens'] for item in captured),
+        'limit_reached': any(item['limit_reached'] for item in captured),
+        'postprocessing_changed_text': any(item['postprocessing_changed_text'] for item in captured),
+        'requires_review': any(item['limit_reached'] or item['postprocessing_changed_text'] for item in captured),
+        'outputs': captured}
+
+
 def transcribe(model, waveform, sample_rate, chunk_seconds=60, overlap_seconds=2,
-               offset_seconds=0, progress=None):
+               offset_seconds=0, progress=None, language=None):
     if not math.isfinite(offset_seconds) or offset_seconds < 0:
         raise ValueError('Offset must be finite and non-negative')
     chunks = []
     started = time.perf_counter()
     for plan in chunk_plan(len(waveform), sample_rate, chunk_seconds, overlap_seconds):
-        output = model.transcribe(audio=(waveform[plan['input_start']:plan['input_end']], sample_rate),
-                                  language='Chinese', context='', return_time_stamps=True)[0]
+        output, generation = decode_with_diagnostics(model,
+            (waveform[plan['input_start']:plan['input_end']], sample_rate), language=language)
         items = list(output.time_stamps or [])
         chunk = owned_chunk(output.text, items, plan, sample_rate, offset_seconds)
+        chunk.update(language=getattr(output, 'language', None), generation=generation)
         chunks.append(chunk)
         if progress:
             progress(chunks)
@@ -204,7 +240,7 @@ def transcribe(model, waveform, sample_rate, chunk_seconds=60, overlap_seconds=2
             'words': [word for chunk in chunks for word in chunk['words']],
             'seams': seam_diagnostics(chunks), 'decode_seconds': time.perf_counter() - started,
             'profile': {'engine': 'Qwen3-ASR-0.6B', 'aligner': 'Qwen3-ForcedAligner-0.6B',
-                        'language': 'Chinese', 'context': '', 'chunk_seconds': chunk_seconds,
+                        'language': language, 'context': '', 'chunk_seconds': chunk_seconds,
                         'overlap_seconds': overlap_seconds, 'offset_seconds': offset_seconds,
                         'timestamp_kind': 'model_estimate_not_independent_timing_ground_truth',
                         'ownership': 'unique time-near shared adjacent pair; half-open midpoint fallback'}}

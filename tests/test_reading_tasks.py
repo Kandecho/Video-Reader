@@ -55,12 +55,19 @@ class IndependentTasks(unittest.TestCase):
         with self.queue.store.connect() as db:
             self.queue.record_intent(db,item['id'],{'kind':'comment','original':'想法有意思','comment':'想法有意思','request':None})
         artifact=self.root/'notes.md';artifact.write_text('已完成指定的项目想法整理',encoding='utf-8')
-        result=self.queue.record_result(item['id'],{'summary':'项目想法','artifacts':[str(artifact)],'full_video_verified':False},complete=True)
+        result=self.queue.record_result(item['id'],{'summary':'项目想法','artifacts':[str(artifact)],
+            'task_scope':'提取项目想法','coverage':'字幕与必要画面','full_video_verified':False},complete=True)
         self.assertEqual(result['state'],'done')
         self.assertEqual(result['note']['comment'],'想法有意思')
         self.assertFalse(result['latest_result']['full_video_verified'])
         self.assertEqual(len(result['latest_result']['artifacts'][0]['sha256']),64)
         self.assertIn('result_saved',[e['kind'] for e in self.queue.history(item_id=item['id'])['events']])
+        reopened=execute(Reader(self.config),'queue-show',item['id'])
+        self.assertEqual(reopened['latest_result'],result['latest_result'])
+        self.assertEqual(reopened['latest_result']['artifacts'][0]['path'],str(artifact.resolve()))
+        self.assertEqual(reopened['completion_basis'],'explicit_task_result')
+        self.assertEqual(reopened['reader_completion'],'not_inferred')
+        self.assertEqual(reopened['task'],'想法有意思')
 
     def test_inbox_sender_is_pinned_separately_from_outbound_recipient(self):
         self.reader.config['agent']['delivery']['recipient_uid']=111

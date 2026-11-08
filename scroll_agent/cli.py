@@ -34,6 +34,10 @@ def configure(config_path, payload):
 
 
 def dispatch(reader, args):
+    if args.action.startswith('background-'):
+        from .background import dispatch as background_dispatch
+        if args.deliver:raise ReaderError('Background control does not send messages')
+        return background_dispatch(reader,args.action,read_json(args.payload) if args.payload else None)
     if args.action in ('report','report-send'):
         from .reports import build,send
         options=read_json(args.payload) if args.payload else {}
@@ -115,6 +119,7 @@ def dispatch(reader, args):
 from reading_tasks.api import ACTIONS as TASK_ACTIONS
 from reading_tasks.cli import task_options
 QUEUE_ACTIONS=(*TASK_ACTIONS,'inbox-status','inbox-sync','inbox-history','inbox-enqueue')
+from .background import ACTIONS as BACKGROUND_ACTIONS
 
 
 def queue_arguments(parser):
@@ -151,7 +156,7 @@ def main():
     parser.add_argument('--config')
     parser.add_argument('action', choices=('status', 'config', 'candidates', 'preview', 'prepare', 'finish',
                         'run', 'daily', 'deliver', 'test-message', 'memory', 'forget', 'tick', 'watch', 'resume', 'recover', 'report', 'report-send',
-                        'batch-start', 'batch-next', 'batch-status', 'batch-retry', *QUEUE_ACTIONS))
+                        'batch-start', 'batch-next', 'batch-status', 'batch-retry', *QUEUE_ACTIONS,*BACKGROUND_ACTIONS))
     parser.add_argument('value', nargs='?', default='')
     parser.add_argument('--query', default='')
     parser.add_argument('--payload')

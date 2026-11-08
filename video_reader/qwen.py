@@ -12,14 +12,26 @@ from .common import ROOT, ReaderError, digest, read_json, run, stamp, write_json
 from .qwen_pipeline import seam_diagnostics, stitch_chunks
 
 SOURCE = 'local_qwen3_asr'
-REVISION = 1
+REVISION = 2
+
+
+def language(config):
+    value = config['qwen'].get('language')
+    if value is None or value == 'auto':
+        return None
+    if not isinstance(value, str) or not value.strip() or len(value) > 40:
+        raise ReaderError('qwen.language must be null/auto or a supported Qwen language name')
+    return value.strip().capitalize()
 
 
 def profile(config, context):
     options = config['qwen']
-    return digest({'engine': SOURCE, 'revision': REVISION, 'model': options['model_path'],
+    selected = language(config)
+    # Explicit Chinese retains the original forced-language track and reviews.
+    # Automatic detection is a different decoding policy and gets a new ID.
+    return digest({'engine': SOURCE, 'revision': 1 if selected == 'Chinese' else REVISION, 'model': options['model_path'],
                    'aligner': options['aligner_path'], 'runtime': options['runtime_dir'],
-                   'context': context, 'language': 'Chinese', 'chunk_seconds': 60, 'padding_seconds': 2})
+                   'context': context, 'language': selected, 'chunk_seconds': 60, 'padding_seconds': 2})
 
 
 def available(config):
@@ -44,6 +56,8 @@ def chunk_segments(chunk):
         group = words[first:index + 1]
         start, end = group[0]['start'], group[-1]['end']
         flags = ['zero_duration_alignment'] if any(item['start'] == item['end'] for item in group) else []
+        if chunk.get('generation', {}).get('requires_review'):
+            flags.append('suspect_decoding')
         if end <= start:
             start, end = chunk['owner']
             flags.append('unresolved_segment_timing')
@@ -127,9 +141,11 @@ def decode(data, lo, hi, directory, config, context, emit):
         raise
     record = {'start': lo, 'end': hi, 'source': SOURCE, 'profile': profile(config, context),
               'status': 'ready' if chunk['text'] else 'no_speech', 'qwen_chunk': chunk,
-              'language': 'zh', 'language_probability': None, 'model': Path(options['model_path']).name,
+              'language': chunk.get('language'), 'language_probability': None, 'model': Path(options['model_path']).name,
               'context': context, 'segments': assemble([{'start': lo, 'qwen_chunk': chunk}])[0],
               'decoding': {'engine': 'qwen', 'revision': REVISION, 'padding_seconds': 2,
+                           'language_policy': language(config),
+                           'generation': {key: value for key, value in chunk.get('generation', {}).items() if key != 'outputs'},
                            'word_timestamps': True, 'timestamp_class_step_seconds': .08,
                            'timing_accuracy_verified': False, 'mean_word_probability_available': False},
               'elapsed_seconds': round(time.monotonic() - started, 3), 'job_path': str(target),

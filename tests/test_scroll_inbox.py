@@ -118,6 +118,18 @@ class InboxTests(InboxFixture):
         self.assertEqual(self.inbox.history()['messages'][0]['period'], 'historical')
         self.assertEqual(len(self.inbox.history()['messages'][0]['queue_items']), 2)
 
+    def test_sync_replay_after_manual_task_edit_or_completion_does_not_recreate_intake(self):
+        self.rows=[self.message(1,task='原始附言')]
+        self.inbox.sync()
+        item=self.queue.list()['items'][0]
+        self.queue.update(item['id'],task='会话中澄清的要求',state='done')
+        replay=self.inbox.sync()
+        self.assertEqual(replay['sync']['tasks_created'],0)
+        items=self.queue.list('all')['items']
+        self.assertEqual(len(items),1)
+        self.assertEqual(items[0]['task'],'会话中澄清的要求')
+        self.assertEqual(items[0]['state'],'done')
+
     def test_partial_backfill_resumes_across_instances_and_new_head_is_not_starved(self):
         self.rows = [self.message(n, sent=900, task=str(n)) for n in range(1, 8)]
         first = self.inbox.sync(max_pages=1, page_size=2)

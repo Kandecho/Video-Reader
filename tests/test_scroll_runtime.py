@@ -257,6 +257,7 @@ class HostDiagnosticTests(AgentFixture):
         process = Mock(returncode=0)
         process.communicate.side_effect = lambda *args, **kwargs: write_json(directory / 'host' / 'decision.json', {'decisions': []})
         with patch('scroll_agent.host.resolve_executable', return_value=sys.executable), \
+                patch('video_reader.processes.identity', return_value=None), \
                 patch('scroll_agent.host.model_options', return_value=[]), \
                 patch('scroll_agent.host.subprocess.Popen', return_value=process):
             self.assertEqual(host.decide({'previews': []}, directory, self.agent.options['host']), {'decisions': []})

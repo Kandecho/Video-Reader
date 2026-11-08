@@ -92,6 +92,43 @@ class QwenFoundationTests(unittest.TestCase):
         self.assertEqual(result['text'], '好。')
         self.assertEqual(model.kwargs['context'], '')
         self.assertTrue(model.kwargs['return_time_stamps'])
+        self.assertIsNone(model.kwargs['language'])
+        forced = transcribe(model, [0] * 10, 10, language='Chinese')
+        self.assertEqual(model.kwargs['language'], 'Chinese')
+        self.assertEqual(forced['profile']['language'], 'Chinese')
+
+    def test_raw_generation_and_token_limit_survive_parser_collapse(self):
+        from video_reader.qwen_pipeline import decode_with_diagnostics
+        raw = '爱，'*30
+        class Processor:
+            def batch_decode(self, tokens, **kwargs):
+                return [raw]
+        class Model:
+            processor = Processor()
+            max_new_tokens = 60
+            def transcribe(self, **kwargs):
+                self.processor.batch_decode([list(range(60))])
+                return [SimpleNamespace(language='Chinese', text='爱，', time_stamps=[])]
+        model = Model()
+        original = model.processor.batch_decode
+        output, generation = decode_with_diagnostics(model, ([0]*10, 10), language='Chinese')
+        self.assertEqual(output.text, '爱，')
+        self.assertEqual(generation['outputs'][0]['raw_output'], raw)
+        self.assertEqual(generation['generated_tokens'], 60)
+        self.assertTrue(generation['limit_reached'])
+        self.assertTrue(generation['postprocessing_changed_text'])
+        self.assertEqual(model.processor.batch_decode, original)
+
+    def test_capture_restores_processor_after_failed_alignment(self):
+        from video_reader.qwen_pipeline import decode_with_diagnostics
+        processor = SimpleNamespace(batch_decode=lambda *args: ['原文'])
+        original = processor.batch_decode
+        def failed(**kwargs):
+            raise ValueError('alignment failed')
+        model = SimpleNamespace(processor=processor, max_new_tokens=4096, transcribe=failed)
+        with self.assertRaisesRegex(ValueError, 'alignment failed'):
+            decode_with_diagnostics(model, ([0]*10, 10))
+        self.assertIs(processor.batch_decode, original)
 
     def test_same_text_can_still_have_conflicting_seam_times(self):
         plans = chunk_plan(40, 10, 2, 1)

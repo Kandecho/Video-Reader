@@ -2,7 +2,8 @@
 from video_reader.common import ReaderError, read_json
 from .queue import Queue
 
-ACTIONS=('queue-list','queue-show','queue-add','queue-update','queue-first','queue-history','queue-result',
+ACTIONS=('queue-list','queue-show','queue-add','queue-update','queue-first','queue-history','queue-result','queue-search',
+         'run-start','run-status','run-resume',
          'triage-prepare','triage-material','triage-content','triage-submit','triage-show','triage-history',
          'batch-start','batch-next','batch-status','batch-retry')
 
@@ -11,9 +12,20 @@ def execute(reader,action,value='',**options):
     if action not in ACTIONS: raise ReaderError('Unknown task action')
     defaults={'state':None,'query':'','limit':20,'cursor':None,'task':None,'title':'','new_task':False,
         'priority':None,'reason':'','revision':None,'payload':None,'refresh':False,'index':None,
-        'offline':False,'complete':False,'assessment':None,'result':None,'sources':None,'source':'auto'}
+        'offline':False,'complete':False,'assessment':None,'result':None,'sources':None,'source':'auto',
+        'request':None,'context_files':None,'wait_seconds':1}
     if set(options)-set(defaults): raise ReaderError('Unknown task parameters: '+','.join(sorted(set(options)-set(defaults))))
     p={**defaults,**options}
+    if action.startswith('run-'):
+        from .consume import Consumer
+        consumer=Consumer(reader)
+        if action=='run-start':
+            request=read_json(p['payload']) if p['payload'] else {'request':p['request'] or p['task'],
+                'source':p['source'],'context_files':p['context_files'],'wait_seconds':p['wait_seconds'],
+                'refresh':p['refresh'],'offline':p['offline']}
+            return consumer.start(value,**request)
+        if action=='run-resume': return consumer.resume(value,p['wait_seconds'])
+        return consumer.status(value)
     if action.startswith('batch-'):
         from .batch import Batch
         batch=Batch(reader,offline=p['offline'])
@@ -25,6 +37,7 @@ def execute(reader,action,value='',**options):
         return batch.status(value)
     queue=Queue.from_settings(reader.config,reader.config_path)
     if action=='queue-list': return queue.list(p['state'] or 'pending',query=p['query'],limit=p['limit'],cursor=p['cursor'])
+    if action=='queue-search': return queue.search(p['query'] or value,limit=p['limit'],cursor=p['cursor'])
     if action=='queue-show': return queue.show(value)
     if action=='queue-add': return queue.enqueue(value,p['task'] or '',p['title'],new_task=p['new_task'])
     if action=='queue-history': return queue.history(item_id=value or None,query=p['query'],limit=p['limit'],cursor=p['cursor'])

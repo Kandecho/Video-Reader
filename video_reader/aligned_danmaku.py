@@ -37,6 +37,7 @@ def acquire(reader, data, lo, hi):
     if data['source']['platform'] != 'bilibili':
         return freeze(reader, {**result, 'status': 'unsupported', 'reason': 'Bilibili only'})
     wanted_scope = (data.get('authentication') or {}).get('account_marker')
+    context = {'stage': 'checking_cached_account'}
     try:
         # Cached reads need no online login check. Acquire only if a required native response is absent.
         with reader._material_platform(True) as cached:
@@ -44,21 +45,23 @@ def acquire(reader, data, lo, hi):
                 return freeze(reader, {**result, 'status': 'blocked', 'reason': 'session_account_mismatch'})
             platform = cached
             try:
-                return _fetch_and_freeze(reader, data, platform, lo, hi, result)
+                return _fetch_and_freeze(reader, data, platform, lo, hi, result, context)
             except community.PlatformError as error:
                 if error.code != 'offline_cache_miss':
                     raise
+        context = {'stage': 'checking_online_account'}
         with reader._material_platform(False) as platform:
             if platform.scope != wanted_scope:
                 return freeze(reader, {**result, 'status': 'blocked', 'reason': 'session_account_mismatch'})
-            return _fetch_and_freeze(reader, data, platform, lo, hi, result)
-    except (ReaderError, OSError, ValueError) as error:
+            return _fetch_and_freeze(reader, data, platform, lo, hi, result, context)
+    except (ReaderError, OSError, TypeError, ValueError) as error:
         # Optional acquisition must never discard otherwise usable speech/frames.
         return freeze(reader, {**result, 'status': 'partial' if result['items'] else 'blocked',
-                'error': {'code': getattr(error, 'code', 'danmaku_unavailable')}})
+                'error': community.diagnostic(error, **context)})
 
 
-def _fetch_and_freeze(reader, data, platform, lo, hi, result):
+def _fetch_and_freeze(reader, data, platform, lo, hi, result, context):
+    context.update(stage='source_metadata')
     selected, info = community.metadata(platform, result['source'])
     part = next((p for p in info.get('pages', []) if p.get('page') == selected['page']), None)
     if not part or not part.get('cid'):
@@ -69,6 +72,7 @@ def _fetch_and_freeze(reader, data, platform, lo, hi, result):
                               'expected_cid': str(expected_cid) if expected_cid is not None else None,
                               'current_cid': str(part['cid'])})
     result.update(bvid=selected['bvid'], part=selected['page'], cid=str(part['cid']))
+    context.update(stage='danmaku_metadata')
     raw = community.binary(platform, '/x/v2/dm/web/view', {'type': 1, 'oid': part['cid'], 'pid': info['aid']})
     meta = {n: v for n, w, v in community.fields(raw)}
     if meta.get(1, 0):
@@ -85,6 +89,7 @@ def _fetch_and_freeze(reader, data, platform, lo, hi, result):
     for index in indices:
         options = {'segment_index': index, 'limit': 200}
         while True:
+            context.update(stage='danmaku_segment', segment_index=index)
             page = community.danmaku(platform, result['source'], **options)
             if page['status'] == 'ready' and page.get('cid') != str(expected_cid):
                 result.update(status='partial' if result['items'] else 'blocked', reason='session_part_cid_mismatch')
@@ -126,8 +131,9 @@ def align(material, speech_segments, frames):
         time = item['time']
         item['timestamp_seconds'] = time
         item['source_time'] = stamp(time)
-        item['speech_segment_ids'] = [segment['segment_id'] for segment in speech_segments
-                                      if segment['start'] <= time < segment['end']]
+        if speech_segments is not None:
+            item['speech_segment_ids'] = [segment['segment_id'] for segment in speech_segments
+                                          if segment['start'] <= time < segment['end']]
         nearest = min(frames, key=lambda f: abs(f['timestamp_seconds'] - time), default=None)
         item['nearest_sampled_frame'] = ({'frame_id': nearest['id'],
             'timestamp_seconds': nearest['timestamp_seconds'], 'delta_seconds': round(nearest['timestamp_seconds'] - time, 6),
