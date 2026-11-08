@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import hashlib
-from http.cookiejar import CookieJar
 import json
 import math
 from pathlib import Path
@@ -11,9 +10,8 @@ from urllib.error import HTTPError
 from urllib.parse import parse_qsl, urlencode, urlparse
 from urllib.request import Request, HTTPRedirectHandler, HTTPCookieProcessor, build_opener
 
-from filelock import FileLock
-
-from .bilibili_auth import BilibiliAuth, USER_AGENT, _jar, _cookie_value
+from .bilibili_auth import BilibiliAuth, USER_AGENT, RequestContext, cookie_jar, cookie_value
+from .acquisition_budget import Budget
 from .common import ReaderError, read_json, write_json
 
 API = 'https://api.bilibili.com'
@@ -51,22 +49,22 @@ def credentials(config):
     auth = BilibiliAuth(config)
     if not auth.options['enabled']:
         raise PlatformError('managed_login_disabled')
-    with auth._lock():
-        record = auth._load()
+    record = auth.credential_snapshot()
     if not record:
         raise PlatformError('login_required')
     return record
 
 
 class Platform:
-    def __init__(self, config, *, offline=False, transport=None, write_endpoints=()):
+    def __init__(self, config, *, offline=False, transport=None, write_endpoints=(), request_context=None):
         self.config, self.offline = config, offline
         self.write_endpoints = frozenset(write_endpoints)
-        record = credentials(config)
-        self.scope = record['account_marker']
-        self.jar = _jar(record['cookies'])
+        if request_context is None:
+            record = credentials(config)
+            request_context = RequestContext(record['account_marker'], cookie_jar(record['cookies']))
+        self.scope, self.jar = request_context.scope, request_context.jar
         self.options = config['preview']['network']
-        for key in ('daily_requests', 'max_response_bytes'):
+        for key in ('max_response_bytes',):
             value = self.options[key]
             if isinstance(value, bool) or not isinstance(value, int) or value < 1:
                 raise PlatformError(f'{key}_must_be_a_positive_integer')
@@ -75,13 +73,9 @@ class Platform:
                            ('recommendation_ttl_seconds', config['preview']['recommendation_ttl_seconds'])]:
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
                 raise PlatformError(f'{key}_must_be_finite_and_positive')
-        gap = self.options['min_gap_seconds']
-        if isinstance(gap, bool) or not isinstance(gap, (int, float)) or not math.isfinite(gap) or gap < 0:
-            raise PlatformError('min_gap_seconds_must_be_finite_and_nonnegative')
         self.root = Path(config['preview']['directory']) / self.scope
-        self.root.mkdir(parents=True, exist_ok=True)
-        self.state_path = self.root / 'network.json'
-        self.lock = FileLock(str(self.root / 'network.lock'), timeout=30)
+        self.budget = Budget({'directory': self.root, 'options': self.options}, error_type=PlatformError)
+        self.state_path, self.lock = self.budget.path, self.budget.lock
         self.opener = build_opener(NoRedirect(), HTTPCookieProcessor(self.jar))
         self.transport = transport or self._transport
         self.trace = []
@@ -146,19 +140,7 @@ class Platform:
                     return cached
             if self.offline:
                 raise PlatformError('offline_cache_miss')
-            state = read_json(self.state_path) if self.state_path.exists() else {}
-            if state.get('paused'):
-                raise PlatformError('platform_paused:' + state['paused'])
-            today = time.strftime('%Y-%m-%d', time.gmtime())
-            if state.get('day') != today:
-                state.update(day=today, count=0)
-            if state.get('count', 0) >= self.options['daily_requests']:
-                raise PlatformError('platform_daily_budget_exhausted')
-            delay = self.options['min_gap_seconds'] - (time.time() - state.get('last_request', 0))
-            if delay > 0:
-                time.sleep(delay)
-            state.update(count=state.get('count', 0) + 1, last_request=time.time())
-            write_json(self.state_path, state)
+            self.budget.reserve(downloader=False)
             entry = {'cache': 'miss', 'bytes': 0, 'method': 'POST' if form is not None else 'GET'}
             self.trace.append(entry)
             try:
@@ -176,7 +158,7 @@ class Platform:
                 if isinstance(envelope, dict) and envelope.get('code', 0) != 0:
                     code = envelope.get('code')
                     if code in RESTRICTED:
-                        state['paused'] = str(code)
+                        self.budget.pause(str(code))
                     raise PlatformError('platform_code:' + str(code))
                 if validate:
                     validate(result)
@@ -185,13 +167,10 @@ class Platform:
                 entry['status'] = 'ok'
                 return result
             except HTTPError as error:
-                if error.code in (401, 403, 412, 429):
-                    state['paused'] = 'http_' + str(error.code)
+                self.budget.reject(error.code)
                 raise PlatformError('platform_http_' + str(error.code)) from None
             except (OSError, ValueError) as error:
                 raise PlatformError('platform_unavailable:' + type(error).__name__) from None
-            finally:
-                write_json(self.state_path, state)
 
     def json(self, path, params=None, *, ttl=0, validate=None):
         url = API + path + ('?' + urlencode(params) if params else '')
@@ -216,8 +195,8 @@ class Platform:
 
     @property
     def sender(self):
-        return _cookie_value(self.jar, 'DedeUserID')
+        return cookie_value(self.jar, 'DedeUserID')
 
     @property
     def csrf(self):
-        return _cookie_value(self.jar, 'bili_jct')
+        return cookie_value(self.jar, 'bili_jct')

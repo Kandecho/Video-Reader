@@ -1,6 +1,5 @@
 """Public cache lookup. Callers never need to understand private manifest fields."""
 from pathlib import Path
-import hashlib
 from urllib.parse import urlparse
 
 from .common import read_json
@@ -9,18 +8,11 @@ from .common import read_json
 def account_scope(config,source):
     host=(urlparse(source).hostname or '').lower()
     if host=='b23.tv' or host=='bilibili.com' or host.endswith('.bilibili.com'):
-        auth=config.get('bilibili_auth') or {}
-        credential=Path(auth.get('directory',''))/'credential.json'
-        if auth.get('enabled') and credential.is_file():
-            try:
-                return read_json(credential).get('account_marker')
-            except (OSError,ValueError):
-                return None
-        return None
+        from .bilibili_auth import BilibiliAuth
+        return BilibiliAuth(config).account_scope()
     if host=='youtube.com' or host.endswith('.youtube.com') or host=='youtu.be':
-        cookie=config['platforms']['youtube'].get('cookies_file')
-        if cookie and Path(cookie).is_file():
-            return 'youtube-'+hashlib.sha256(Path(cookie).read_bytes()).hexdigest()[:24]
+        from .youtube_auth import account_scope as youtube_scope
+        return youtube_scope(config['platforms']['youtube'])
     return None
 
 

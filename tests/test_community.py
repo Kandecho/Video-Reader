@@ -10,7 +10,7 @@ from urllib.parse import parse_qs, urlparse
 
 from video_reader import cli, mcp_server
 from video_reader.common import ReaderError, write_json
-from video_reader.community import comments, danmaku, decode_danmaku, diagnostic, fields
+from video_reader.community import comments, comments_sample, danmaku, decode_danmaku, diagnostic, fields
 from video_reader.platform import Platform, PlatformError
 from video_reader.reader import Reader
 
@@ -98,6 +98,19 @@ class CommunityTests(unittest.TestCase):
         self.assertEqual(thread['collection_scope'], 'thread_replies')
         self.assertEqual(thread['thread_root']['id'], '1')
         self.assertIn('root', self.calls[-1][1])
+
+    def test_preview_comment_sample_retains_its_distinct_projection_and_request(self):
+        sample = comments_sample(self.platform(), SOURCE)
+        self.assertEqual(sample['source'], 'hot_comments_sample')
+        self.assertFalse(sample['is_full_population'])
+        self.assertEqual(sample['items'][0], {'text': self.rows[0]['content']['message'], 'likes': None})
+        self.assertEqual(self.calls[-1][1]['sort'], ['2'])
+        self.assertEqual(self.calls[-1][1]['ps'], ['10'])
+        self.assertNotIn('nohot', self.calls[-1][1])
+        full = comments(self.platform(), SOURCE, sort='replies', page_size=2)
+        self.assertEqual(full['items'][0]['text'], sample['items'][0]['text'])
+        self.assertEqual(self.calls[-1][1]['nohot'], ['1'])
+        self.assertIn('page_complete', full)
 
     def test_short_and_duplicate_pages_do_not_claim_complete_or_stop_traversal(self):
         self.rows = [row(1), row(1)]

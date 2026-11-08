@@ -8,6 +8,14 @@ import tempfile
 from .common import ReaderError
 
 
+def account_scope(profile):
+    """Read the existing manual-cookie identity without checking login online."""
+    cookie = profile.get('cookies_file')
+    if cookie and Path(cookie).is_file():
+        return 'youtube-' + hashlib.sha256(Path(cookie).read_bytes()).hexdigest()[:24]
+    return None
+
+
 @contextmanager
 def reader_profile(profile):
     original = profile.get('cookies_file')
@@ -25,14 +33,15 @@ def reader_profile(profile):
         raise ReaderError('YouTube cookie file must use Netscape cookie format') from None
     if not any(c.domain.lstrip('.') in ('youtube.com', 'google.com') for c in jar):
         raise ReaderError('Cookie file contains no YouTube/Google cookies')
-    scope = hashlib.sha256(source.read_bytes()).hexdigest()[:24]
+    marker = account_scope(profile)
+    scope = marker.removeprefix('youtube-')
     # yt-dlp saves a cookie jar on exit. Give it a private disposable copy so
     # acquisition cannot overwrite the user-maintained credential file.
     with tempfile.TemporaryDirectory(prefix='video-reader-youtube-') as temporary:
         copied = Path(temporary) / 'cookies.txt'
         shutil.copyfile(source, copied)
         yield {**profile, 'cookies_file': str(copied)}, {**profile, 'cookies_file': None, 'cookie_scope': scope}, {
-            'status': 'manual_cookie_supplied', 'authenticated': None, 'account_marker': 'youtube-' + scope,
+            'status': 'manual_cookie_supplied', 'authenticated': None, 'account_marker': marker,
             'maintenance': 'manual replacement after expiry; no automatic refresh or browser extraction',
             'validity': 'A cookie file alone does not prove the current server login state'}
 

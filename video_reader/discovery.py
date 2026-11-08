@@ -3,14 +3,14 @@ from __future__ import annotations
 
 import html
 import hashlib
-import http.cookiejar
 import math
 import re
 import time
 from urllib.parse import urlencode, urlparse
 
-from .bilibili_auth import BiliSession, BilibiliAuth, NAV, _cookie, _cookies, _cookie_value
+from .bilibili_auth import BilibiliAuth, NAV, cookie_value, set_device_cookie
 from .common import ReaderError, UNTRUSTED, read_json
+from .platform import Platform
 
 ORDERS = {'relevance': 'totalrank', 'views': 'click', 'newest': 'pubdate'}
 WBI_INDICES = (46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35,
@@ -18,14 +18,14 @@ WBI_INDICES = (46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35,
 
 
 def _search_params(session, params):
-    if not _cookie_value(session.jar, 'buvid3'):
+    if not cookie_value(session.jar, 'buvid3'):
         fingerprint = session.request('https://api.bilibili.com/x/frontend/finger/spi')
         device = fingerprint.get('data') or {}
         if fingerprint.get('code') != 0 or not device.get('b_3'):
             raise ReaderError('Bilibili search device initialization failed')
         for key, name in (('b_3', 'buvid3'), ('b_4', 'buvid4')):
             if device.get(key):
-                session.jar.set_cookie(_cookie(name, device[key]))
+                set_device_cookie(session.jar, name, device[key])
     nav = session.request(NAV)
     try:
         images = nav['data']['wbi_img']
@@ -115,11 +115,9 @@ def discover(reader, query=None, *, page=1, page_size=10, order='relevance',
                'order': ORDERS[order]} if query is not None else {'pn': page, 'ps': page_size})
     endpoint = 'wbi/search/type' if query is not None else 'popular'
     profile = reader.config['platforms']['bilibili']
-    with BilibiliAuth(reader.config).reader_profile(profile) as (io_profile, scope, authentication):
-        jar = http.cookiejar.MozillaCookieJar()
-        if io_profile.get('cookies_file'):
-            jar.load(io_profile['cookies_file'], ignore_discard=True, ignore_expires=False)
-        session = BiliSession(_cookies(jar))
+    auth = BilibiliAuth(reader.config)
+    with auth.reader_profile(profile) as (io_profile, scope, authentication):
+        session = Platform(reader.config, request_context=auth.request_context(io_profile, authentication))
         if query is not None:
             params = _search_params(session, params)
         response = session.request(

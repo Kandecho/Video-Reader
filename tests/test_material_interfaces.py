@@ -198,7 +198,9 @@ class StoryboardTests(MaterialFixture):
                 return {'subtitle': {'subtitles': []}}
             return snapshot
         platform.json = Mock(side_effect=data)
-        platform.request = Mock(return_value=body)
+        platform.request = Mock(side_effect=lambda url, **options: (
+            {'code': 0, 'data': {'subtitle': {'subtitles': []}}}
+            if urlparse(url).path == '/x/player/wbi/v2' else body))
         return platform
 
     def test_dark_and_blue_frames_keep_exact_index_time_pairing(self):

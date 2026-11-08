@@ -18,7 +18,8 @@ class DiscoveryTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         config = self.root / 'config.json'
-        write_json(config, {'cache_dir': 'cache', 'bilibili_auth': {'enabled': False}})
+        write_json(config, {'cache_dir': 'cache', 'bilibili_auth': {'enabled': False},
+                            'preview': {'network': {'min_gap_seconds': 0}}})
         self.reader = Reader(config)
         signing = patch('video_reader.discovery._search_params', side_effect=lambda session, params: params)
         self.signing = signing.start()
@@ -32,7 +33,7 @@ class DiscoveryTests(unittest.TestCase):
         return {'code': 0, 'data': {'result': items, 'numPages': 3, 'numResults': 21, **extra}}
 
     def test_search_normalizes_metadata_and_encodes_query(self):
-        with patch('video_reader.discovery.BiliSession.request', return_value=self.response([self.item()])) as request:
+        with patch('video_reader.discovery.Platform.request', return_value=self.response([self.item()])) as request:
             result = self.reader.search('a & 中文', page_size=5, order='newest')
         params = parse_qs(urlparse(request.call_args.args[0]).query)
         self.assertEqual(params['keyword'], ['a & 中文'])
@@ -50,7 +51,7 @@ class DiscoveryTests(unittest.TestCase):
                    {'source': {'platform': 'bilibili', 'bvid': 'BV1E1421t7m2', 'page': 2}})
         items = [self.item(), self.item(), self.item('BV1Xt4y1P7BH', duration='39:00'),
                  self.item('BV1TdSxByEVA', duration=None), {'bvid': 'invalid'}]
-        with patch('video_reader.discovery.BiliSession.request', return_value=self.response(items)):
+        with patch('video_reader.discovery.Platform.request', return_value=self.response(items)):
             result = self.reader.search('topic', max_duration=300)
             included = self.reader.search('topic', max_duration=300, exclude_cached=False)
         self.assertEqual(result['items'], [])
@@ -62,7 +63,7 @@ class DiscoveryTests(unittest.TestCase):
         item = self.item(duration=63, owner={'name': 'Creator'}, stat={'view': 99})
         item.pop('author')
         item.pop('play')
-        with patch('video_reader.discovery.BiliSession.request', return_value={'code': 0, 'data': {'list': [item], 'no_more': True}}) as request:
+        with patch('video_reader.discovery.Platform.request', return_value={'code': 0, 'data': {'list': [item], 'no_more': True}}) as request:
             result = self.reader.discover()
         self.assertIn('/popular?', request.call_args.args[0])
         self.assertIsNone(result['next_page'])
@@ -73,7 +74,7 @@ class DiscoveryTests(unittest.TestCase):
         options = [{'page': True}, {'page': 0}, {'page_size': 51}, {'order': 'unknown'},
                    {'min_duration': float('nan')}, {'max_duration': float('inf')},
                    {'min_duration': 10, 'max_duration': 2}, {'exclude_cached': 1}]
-        with patch('video_reader.discovery.BiliSession.request') as request:
+        with patch('video_reader.discovery.Platform.request') as request:
             for option in options:
                 with self.subTest(option=option), self.assertRaises(ReaderError):
                     self.reader.search('topic', **option)
@@ -85,7 +86,7 @@ class DiscoveryTests(unittest.TestCase):
     def test_platform_errors_are_not_empty_success(self):
         for response in ({'code': -412}, {'code': 0, 'data': {'result': 'broken'}},
                          {'code': 0, 'data': {'result': [], 'numPages': None}}):
-            with patch('video_reader.discovery.BiliSession.request', return_value=response):
+            with patch('video_reader.discovery.Platform.request', return_value=response):
                 with self.assertRaises(ReaderError):
                     self.reader.search('topic')
 
@@ -104,7 +105,7 @@ class DiscoveryTests(unittest.TestCase):
             self.assertEqual(events, ['enter'])
             raise ReaderError('offline')
 
-        with patch('video_reader.discovery.BilibiliAuth.reader_profile', profile), patch('video_reader.discovery.BiliSession.request', request):
+        with patch('video_reader.discovery.BilibiliAuth.reader_profile', profile), patch('video_reader.discovery.Platform.request', request):
             with self.assertRaisesRegex(ReaderError, 'offline'):
                 self.reader.discover()
         self.assertEqual(events, ['enter', 'cleanup'])

@@ -11,7 +11,8 @@ from PIL import Image, ImageDraw, ImageFont
 from .platform import PlatformError
 from .common import ReaderError, UNTRUSTED, read_json, write_json, stamp
 from .discovery import _candidate, _search_params
-from .sources import bilibili_caption_kind, resolve
+from .sources import resolve
+from .bilibili_material import captions as bilibili_captions
 
 
 def candidates(platform, query='', limit=10, *, fresh=False):
@@ -204,20 +205,13 @@ def preview(platform, source, *, density='light', max_frames=None, make_sheet=Fa
               'caption': None, 'frames': [], 'gaps': [], 'material_level': 'preview',
               'reading_status': 'previewed_not_read', 'notice': UNTRUSTED}
     try:
-        player = platform.json('/x/player/wbi/v2', {'bvid': bvid, 'cid': cid}, ttl=ttl)
-        tracks = (player.get('subtitle') or {}).get('subtitles') or []
-        if not tracks:
+        caption = bilibili_captions(lambda url: platform.request(url, ttl=ttl), bvid, cid)
+        if caption['status'] != 'ready':
             result['gaps'].append('no_platform_caption')
         else:
-            chosen = min(tracks, key=lambda track: (not track.get('lan', '').startswith(('zh', 'ai-zh')),
-                                                    bilibili_caption_kind(track) == 'automatic'))
-            url = chosen['subtitle_url']
-            data = platform.request('https:' + url if url.startswith('//') else url, ttl=ttl)
-            segments = [{'start': item['from'], 'end': item['to'], 'text': item['content']}
-                        for item in data.get('body', [])]
-            result['caption'] = {'segments': segments, 'language': chosen.get('lan'),
-                                 'kind': bilibili_caption_kind(chosen), 'proofread': False}
-            if not segments:
+            result['caption'] = {'segments': caption['segments'], 'language': caption['track']['language'],
+                                 'kind': caption['track']['kind'], 'proofread': False}
+            if not caption['segments']:
                 result['gaps'].append('empty_caption_not_proof_of_silence')
     except PlatformError as error:
         result['gaps'].append('caption:' + error.code)
@@ -236,9 +230,5 @@ def preview(platform, source, *, density='light', max_frames=None, make_sheet=Fa
 
 
 def comments(platform, bvid):
-    resolved = resolve(bvid, shortlink_resolver=platform.resolve_shortlink)
-    info = platform.json('/x/web-interface/view', {'bvid': resolved['bvid']}, ttl=86400)
-    data = platform.json('/x/v2/reply', {'type': 1, 'oid': info['aid'], 'sort': 2, 'ps': 10, 'pn': 1}, ttl=600)
-    return {'source': 'hot_comments_sample', 'is_full_population': False,
-            'items': [{'text': (item.get('content') or {}).get('message'), 'likes': item.get('like')}
-                      for item in (data.get('replies') or [])[:10]], 'notice': UNTRUSTED}
+    from .community import comments_sample
+    return comments_sample(platform, bvid)

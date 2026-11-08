@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+from dataclasses import dataclass
 from email.utils import parsedate_to_datetime
 import hashlib
 import http.cookiejar
@@ -106,6 +107,26 @@ def _cookie_value(jar, name):
     return next((c.value for c in jar if c.name == name and c.domain.lstrip(".").endswith("bilibili.com")), "")
 
 
+@dataclass(frozen=True)
+class RequestContext:
+    """A detached request jar and stable scope, never the persisted auth record."""
+    scope: str
+    jar: http.cookiejar.CookieJar
+
+
+def cookie_jar(cookies=()):
+    """Build an independent transport jar from a credential snapshot."""
+    return _jar(cookies)
+
+
+def cookie_value(jar, name):
+    return _cookie_value(jar, name)
+
+
+def set_device_cookie(jar, name, value):
+    jar.set_cookie(_cookie(name, value))
+
+
 def _export_cookies(path, jar):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -191,6 +212,32 @@ class BilibiliAuth:
         self.directory = Path(self.options["directory"])
         self.path = self.directory / "credential.json"
         self.cookies_file = self.directory / "cookies.txt"
+
+    def account_scope(self):
+        """Read the existing local marker without login, renewal or store mutation."""
+        if not self.options['enabled'] or not self.path.is_file():
+            return None
+        try:
+            record = read_json(self.path)
+            return record.get('account_marker') if isinstance(record, dict) else None
+        except (OSError, ValueError):
+            return None
+
+    def credential_snapshot(self):
+        """Return only detached transport credentials; renewal metadata stays private."""
+        with self._lock():
+            record = self._load()
+            if record is None:
+                return None
+            return {'account_marker': record['account_marker'], 'cookies': _cookies(_jar(record['cookies']))}
+
+    def request_context(self, profile, authentication=None):
+        """Adapt an already selected reader profile; never changes its login policy."""
+        jar = http.cookiejar.MozillaCookieJar()
+        if profile.get('cookies_file'):
+            jar.load(profile['cookies_file'], ignore_discard=True, ignore_expires=False)
+        scope = (authentication or {}).get('account_marker') or 'bilibili-anonymous'
+        return RequestContext(scope, _jar(_cookies(jar)))
 
     @contextmanager
     def _lock(self):

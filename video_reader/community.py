@@ -62,13 +62,38 @@ def failure(base, error, stage='fetching_comments'):
     return {**base, 'status': 'blocked' if blocked else 'failed', 'error': detail}
 
 
+def comment_excerpt(item, *, default=None):
+    return {'text': (item.get('content') or {}).get('message', default), 'likes': item.get('like')}
+
+
+def comment_page(platform, aid, *, page=1, page_size=20, sort=0, root=None, nohot=True):
+    """One platform reply request, shared by full paging and the lightweight sample."""
+    params = {'type': 1, 'oid': aid, 'pn': page, 'ps': page_size}
+    if root:
+        params['root'] = root
+    else:
+        params['sort'] = sort
+        if nohot:
+            params['nohot'] = 1
+    return platform.json('/x/v2/reply/reply' if root else '/x/v2/reply', params, ttl=600)
+
+
+def comments_sample(platform, source):
+    selected = video(source, platform)
+    info = platform.json('/x/web-interface/view', {'bvid': selected['bvid']}, ttl=86400)
+    data = comment_page(platform, info['aid'], page_size=10, sort=2, nohot=False)
+    return {'source': 'hot_comments_sample', 'is_full_population': False,
+            'items': [comment_excerpt(item) for item in (data.get('replies') or [])[:10]], 'notice': UNTRUSTED}
+
+
 def comment(item, *, children=True):
     if not isinstance(item, dict) or not item.get('rpid'):
         raise ReaderError('platform_invalid_comment')
     content, member = item.get('content') or {}, item.get('member') or {}
+    excerpt = comment_excerpt(item, default='')
     result = {'id': str(item['rpid']), 'root_id': str(item.get('root') or 0),
-              'parent_id': str(item.get('parent') or 0), 'text': content.get('message', ''),
-              'created_at': item.get('ctime'), 'likes': item.get('like'),
+              'parent_id': str(item.get('parent') or 0), 'text': excerpt['text'],
+              'created_at': item.get('ctime'), 'likes': excerpt['likes'],
               'author': {'id': str(member.get('mid') or item.get('mid') or ''), 'name': member.get('uname')},
               'reply_count': item.get('rcount', item.get('count', 0)),
               'pictures': content.get('pictures') or []}
@@ -89,12 +114,8 @@ def comments(platform, source, page=1, page_size=20, sort='newest', root=None):
     try:
         selected, info = metadata(platform, source)
         base.update(bvid=selected['bvid'], aid=str(info['aid']), comments_scope='video_all_parts')
-        params = {'type': 1, 'oid': info['aid'], 'pn': page, 'ps': page_size}
-        if root:
-            params['root'] = root
-        else:
-            params.update(sort={'newest': 0, 'likes': 1, 'replies': 2}[sort], nohot=1)
-        data = platform.json('/x/v2/reply/reply' if root else '/x/v2/reply', params, ttl=600)
+        data = comment_page(platform, info['aid'], page=page, page_size=page_size,
+                            sort={'newest': 0, 'likes': 1, 'replies': 2}[sort], root=root)
         paging = data.get('page') or {}
         total = paging.get('count')
         all_total = paging.get('acount')
@@ -196,6 +217,19 @@ def binary(platform, path, params):
     return platform.request(API + path + '?' + urlencode(params), ttl=600, binary=True)
 
 
+def danmaku_metadata(platform, params):
+    """Translate the native segment descriptor without leaking protobuf fields to readers."""
+    meta = {n: v for n, w, v in fields(binary(platform, '/x/v2/dm/web/view', params))}
+    if meta.get(1, 0):
+        return {'platform_state': meta[1]}
+    config = {n: v for n, w, v in fields(meta.get(4, b''))}
+    segment_ms, total = config.get(1), config.get(2)
+    if type(segment_ms) is not int or segment_ms <= 0 or type(total) is not int or total < 0:
+        raise ReaderError('platform_invalid_danmaku_segments')
+    return {'total_segments': total, 'segment_seconds': segment_ms / 1000,
+            'reported_pool_count': meta.get(8), 'collection_scope': 'current_segmented_pool'}
+
+
 def decode_danmaku(blob):
     items, state = [], 0
     for number, wire, value in fields(blob):
@@ -255,16 +289,11 @@ def danmaku(platform, source, segment_index=1, offset=0, limit=100, snapshot_id=
             params = {'type': 1, 'oid': part['cid'], 'pid': info['aid']}
             base.update(bvid=selected['bvid'], aid=str(info['aid']), cid=str(part['cid']), part=selected['page'])
             stage = 'danmaku_metadata'
-            meta = dict((n, v) for n, w, v in fields(binary(platform, '/x/v2/dm/web/view', params)))
-            if meta.get(1, 0):
-                return {**base, 'status': 'closed', 'platform_state': meta[1]}
-            config = dict((n, v) for n, w, v in fields(meta.get(4, b'')))
-            segment_ms, total = config.get(1), config.get(2)
-            if (not isinstance(segment_ms, int) or segment_ms <= 0 or
-                    not isinstance(total, int) or total < 0):
-                raise ReaderError('platform_invalid_danmaku_segments')
-            base.update(total_segments=total, segment_seconds=segment_ms / 1000,
-                        reported_pool_count=meta.get(8), collection_scope='current_segmented_pool')
+            meta = danmaku_metadata(platform, params)
+            if meta.get('platform_state'):
+                return {**base, 'status': 'closed', 'platform_state': meta['platform_state']}
+            base.update(meta)
+            total = meta['total_segments']
             if total == 0 and segment_index == 1:
                 return {**base, 'status': 'ready', 'segment_complete': True, 'collection_complete': True, 'next': None}
             stage = 'validating_continuation'

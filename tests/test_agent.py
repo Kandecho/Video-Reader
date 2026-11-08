@@ -231,14 +231,16 @@ class PlatformTests(AgentFixture):
     def test_preview_preserves_part_and_empty_caption_not_silence(self):
         platform = self.client(Mock())
         platform.json = Mock(side_effect=[{'title': 'video', 'pages': [{'cid': 1, 'duration': 10}, {'cid': 2, 'duration': 20}]},
-                                         {'subtitle': {'subtitles': []}}, {}])
+                                         {}])
+        platform.request=Mock(return_value={'code':0,'data':{'subtitle':{'subtitles':[]}}})
         with patch('video_reader.preview.native_frames', return_value=[]):
             result = preview(platform, URL.replace('p=1', 'p=2'))
         self.assertEqual(result['part'], 2)
         self.assertEqual(result['cid'], 2)
         self.assertIn('no_platform_caption', result['gaps'])
         self.assertNotIn('no_speech', result['gaps'])
-        self.assertEqual(platform.json.call_args_list[1].args[1]['cid'], 2)
+        player_query=parse_qs(urlparse(platform.request.call_args.args[0]).query)
+        self.assertEqual(player_query['cid'],['2'])
 
 
 class ScheduleTests(AgentFixture):

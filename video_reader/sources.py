@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 
 from .common import ReaderError, digest, run, write_json, read_json
 from .vendor.transcribe import normalize_segments, parse_vtt
+from .bilibili_material import caption_kind as bilibili_caption_kind, captions as bilibili_captions
 
 BV = re.compile(r"BV[a-zA-Z0-9]{10}")
 
@@ -123,11 +124,6 @@ def choose_caption(info, language="auto"):
         a[1].removesuffix("-orig") != target, not a[1].startswith("en"), a[1]))
     return {"kind": kind, "key": key, "language": key.removesuffix("-orig"),
             "provenance": "source-language match" if matches(key) else "language unverified"}
-
-
-def bilibili_caption_kind(track):
-    """AI originals can have ai_type=0; ai-* language tags still identify AI tracks."""
-    return "automatic" if str(track.get("lan", "")).startswith("ai-") or track.get("ai_type") else "manual"
 
 
 def ytdlp_base(profile, directory):
@@ -253,24 +249,17 @@ def acquire(source, directory, profile):
     report('fetching_captions')
     if not subtitle and bili:
         try:
-            player = platform_json("https://api.bilibili.com/x/player/wbi/v2?" + urlencode({"bvid": source["bvid"], "cid": bili["cid"]}), profile.get("cookies_file"))
-            player_data = player.get("data") or {}
-            tracks = player_data.get("subtitle", {}).get("subtitles", [])
-            if player.get("code") == -101 or (player_data.get("need_login_subtitle") and not tracks):
+            caption = bilibili_captions(lambda url: platform_json(url, profile.get('cookies_file')),
+                                        source['bvid'], bili['cid'], profile.get('subtitle_language', 'auto'), strict=True)
+            if caption['status'] == 'login_required' or caption.get('requires_login'):
                 subtitle_status = "login_required"
                 warnings.append("BILIBILI_LOGIN_REQUIRED: subtitles require login; call bilibili_login(action=start), then reopen after scanning")
-            elif player.get("code") != 0:
-                warnings.append(f"Bilibili subtitle API returned code {player.get('code')}")
-            lang = profile.get("subtitle_language", "auto")
-            if lang != "auto":
-                tracks = [t for t in tracks if t.get("lan") == lang]
-            if tracks:
-                chosen = min(tracks, key=lambda t: (not t.get("lan", "").startswith(("zh", "ai-zh")), bilibili_caption_kind(t) == "automatic"))
-                url = chosen["subtitle_url"]
-                caption_data = platform_json("https:" + url if url.startswith("//") else url)
+            elif caption.get('code') not in (None, 0):
+                warnings.append(f"Bilibili subtitle API returned code {caption['code']}")
+            if caption['status'] == 'ready':
                 subtitle = str(directory / "bilibili-captions.json")
-                write_json(subtitle, {"segments": [{"start": s["from"], "end": s["to"], "text": s["content"]} for s in caption_data["body"]]})
-                track = {"kind": bilibili_caption_kind(chosen), "language": chosen.get("lan"), "source": "bilibili", "cid": bili["cid"]}
+                write_json(subtitle, {'segments': caption['segments']})
+                track = caption['track']
                 subtitle_status = "ready"
         except (ReaderError, KeyError, ValueError) as exc:
             warnings.append(f"Bilibili subtitles unavailable: {type(exc).__name__}")

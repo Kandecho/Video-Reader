@@ -73,15 +73,10 @@ def _fetch_and_freeze(reader, data, platform, lo, hi, result, context):
                               'current_cid': str(part['cid'])})
     result.update(bvid=selected['bvid'], part=selected['page'], cid=str(part['cid']))
     context.update(stage='danmaku_metadata')
-    raw = community.binary(platform, '/x/v2/dm/web/view', {'type': 1, 'oid': part['cid'], 'pid': info['aid']})
-    meta = {n: v for n, w, v in community.fields(raw)}
-    if meta.get(1, 0):
-        return freeze(reader, {**result, 'status': 'closed', 'platform_state': meta[1]})
-    config = {n: v for n, w, v in community.fields(meta.get(4, b''))}
-    segment_ms, total = config.get(1), config.get(2)
-    if type(segment_ms) is not int or segment_ms <= 0 or type(total) is not int or total < 0:
-        raise ReaderError('platform_invalid_danmaku_segments')
-    seconds = segment_ms / 1000
+    meta = community.danmaku_metadata(platform, {'type': 1, 'oid': part['cid'], 'pid': info['aid']})
+    if meta.get('platform_state'):
+        return freeze(reader, {**result, 'status': 'closed', 'platform_state': meta['platform_state']})
+    seconds, total = meta['segment_seconds'], meta['total_segments']
     indices = list(range(math.floor(lo / seconds) + 1, min(math.ceil(hi / seconds), total) + 1))
     result['coverage'].update(segment_seconds=seconds, requested_segments=indices,
                               missing_segments=indices.copy())
