@@ -4,6 +4,7 @@ import io
 import json
 from pathlib import Path
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
@@ -109,9 +110,10 @@ class AcquisitionRepairTests(unittest.TestCase):
 
     def test_shared_pause_or_exhausted_budget_prevents_second_attempt(self):
         with tempfile.TemporaryDirectory() as folder:
-            for state in ({'paused':'http_429'},{'count':120}):
+            for state in ({'paused':'http_429'},
+                          {'day':time.strftime('%Y-%m-%d',time.gmtime()),'count':120}):
                 write_json(Path(folder)/'network.json',state)
-                profile={'_network_budget':{'directory':folder,'options':{'daily_requests':120}}}
+                profile={'_network_budget':{'directory':folder,'options':{'daily_requests':120,'min_gap_seconds':0}}}
                 with patch('video_reader.sources.run',side_effect=ReaderError(self.error)) as call:
                     with self.assertRaises(sources.AcquisitionError) as caught:sources.metadata_info(['command'],profile)
                 self.assertEqual(call.call_count,1)

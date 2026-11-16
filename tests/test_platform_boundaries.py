@@ -59,6 +59,7 @@ class PlatformBoundaryTests(unittest.TestCase):
             budget.reserve()
 
     def test_shared_pause_and_exhaustion_prevent_all_discovery_requests(self):
+        self.reader.config['preview']['network']['daily_requests'] = 3
         budget = self.budget()
         cases = [{'paused': 'http_429'},
                  {'day': time.strftime('%Y-%m-%d', time.gmtime()),

@@ -1,11 +1,11 @@
 """Build local host adapters without bundling the shared Video Reader installation."""
 import argparse
-from video_reader.reading_policy import READING_POLICY
+from video_reader.reading_policy import READING_POLICY, TASK_WORKFLOW_CONTRACT
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = '0.5.6'
+VERSION = '0.5.9'
 MARKETPLACE = 'video-reader-local'
 CORE_NOTICE = ("Use Video Reader MCP tools when connected. Otherwise use the prototype's `run.ps1` CLI. "
                "The prototype root is the parent directory of this `skill` directory.")
@@ -57,6 +57,8 @@ def build(root=ROOT):
         write(plugin / '.mcp.json', {'mcpServers': {'video-reader': server, 'scroll-agent': scroll_server}})
         if READING_POLICY not in skill:
             skill += '\n\n' + READING_POLICY + '\n'
+        if TASK_WORKFLOW_CONTRACT not in skill:
+            skill += '\n\n## Task and delivery contract\n\n' + TASK_WORKFLOW_CONTRACT + '\n'
         write(plugin / 'skills/video-read/SKILL.md', skill)
         write(plugin / 'skills/scroll-agent/SKILL.md', scroll_skill)
         write(plugin / 'README.md', f'# Video Reader {host} adapter {VERSION}\n\n'

@@ -42,6 +42,17 @@ class ContentTests(unittest.TestCase):
         self.assertFalse(miss['text_match_found'])
         self.assertIn('storyboard',miss['continuation_hint'])
 
+    def test_frozen_excerpt_preserves_full_crossing_sentence_without_asr(self):
+        self.captions()
+        index=self.index()
+        with patch('video_reader.speech.decode',side_effect=AssertionError('excerpt must not start ASR')):
+            excerpt=self.reader.content_excerpt(index['index_id'],120,121)
+        self.assertEqual(excerpt['ranges'],[[115,126]])
+        self.assertEqual(len(excerpt['segments']),1)
+        self.assertEqual(excerpt['segments'][0]['text'],'跨时间块完整正文，不得截断')
+        self.assertEqual((excerpt['segments'][0]['start'],excerpt['segments'][0]['end']),(118,123))
+        self.assertEqual(excerpt['segments'][0]['segment_id'],index['blocks'][0]['segments'][-1]['segment_id'])
+
     def test_review_change_invalidates_old_directory_and_reuses_corrected_text(self):
         self.captions()
         before=self.index()

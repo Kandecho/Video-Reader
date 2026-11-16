@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-16",
+  "status": "source_sync_ready",
+  "versions": {
+    "core": "0.10.0rc6",
+    "local_host_adapter": "0.5.9",
+    "handshake_sdk_default": "1.30.0"
+  },
+  "mcp": {
+    "reader_tools": 21,
+    "scroll_tools": 8,
+    "isolated_stdio_calls_passed": true,
+    "catalog_static_artifact_anchor": true,
+    "scroll_status_calls_model": false,
+    "installed_codex_and_claude_match_generated_files": true,
+    "formal_connections_reloaded": false
+  },
+  "full_suite": {
+    "command": ".venv/Scripts/python.exe -m unittest discover -s tests -v",
+    "execution": "normal local permissions",
+    "tests": 614,
+    "seconds": 143.629,
+    "status": "passed"
+  },
+  "earlier_attempts": [
+    {"tests": 610, "status": "one_failure", "issue": "WinError 5 at network.json atomic replace"},
+    {"tests": 613, "status": "one_error", "issue": "same Windows replacement error at batch.json"}
+  ],
+  "fixes": [
+    "source candidate includes required HTML and CJS resources; clean candidate Catalog.build regression",
+    "test fixture paths normalized for Windows casing",
+    "MCP integration client isolated with process-level timeout and owned live-process cleanup",
+    "shared atomic JSON replace briefly retries Windows errors 5/32; local duplicate wrapper removed",
+    "public documentation separated from preserved local histories"
+  ],
+  "cleanup": {
+    "generated_files_archived": 12,
+    "legacy_local_checker_retired": "tools/validate_local.py",
+    "archive_hashes_preserved": 13,
+    "tests_deleted": 0,
+    "production_modules_deleted": 0,
+    "compatibility_and_dynamic_worker_entrypoints_preserved": true
+  },
+  "privacy_scan_scope": "changed and new Git candidate text files, not complete repository history",
+  "privacy_scan_findings": 0,
+  "local_evidence_links_annotated": 34,
+  "current_changed_markdown_public_link_gaps": 0,
+  "git_diff_check": "passed",
+  "source_pushed": false,
+  "release_created": false
+}

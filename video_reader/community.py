@@ -2,6 +2,7 @@
 import re
 from urllib.parse import urlencode
 
+from .acquisition_budget import cooldown_details
 from .common import ReaderError, UNTRUSTED, digest, read_json, write_json
 from .platform import API, PlatformError
 from .sources import resolve
@@ -42,6 +43,10 @@ def diagnostic(error, stage, **details):
     message = str(error)
     code = getattr(error, 'code', None) or (message if re.fullmatch(r'platform_[a-zA-Z0-9_:.-]+', message)
                                           else 'danmaku_' + type(error).__name__)
+    network_wait = cooldown_details(error)
+    if network_wait:
+        return {'code':'platform_request_cooldown','type':type(error).__name__,'stage':stage,
+                'next_action':'wait_until_retry_at',**network_wait,**details}
     login = 'login' in code or code in ('platform_code:-101', 'platform_http_401')
     paused = ('paused' in code or 'budget' in code or code in
               ('platform_code:-352', 'platform_code:-412', 'platform_code:-799',
@@ -58,6 +63,8 @@ def diagnostic(error, stage, **details):
 def failure(base, error, stage='fetching_comments'):
     detail = diagnostic(error, stage)
     code = detail['code']
+    if code == 'platform_request_cooldown':
+        return {**base,'status':'waiting','error':detail}
     blocked = any(word in code for word in ('paused', 'budget', 'login', 'platform_code:', 'platform_http_'))
     return {**base, 'status': 'blocked' if blocked else 'failed', 'error': detail}
 

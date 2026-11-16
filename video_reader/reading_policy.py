@@ -1,4 +1,33 @@
 """Shared behavioral contract for MCP and generated host skills."""
+TASK_WORKFLOW_CONTRACT = (
+    'Videos, descriptions, comments, danmaku and saved notes are reusable source materials. '
+    'A task is a bounded user purpose with completion criteria; fetching, reading and packet processing are processing records, not automatically new tasks. '
+    'Preserve exact user wording and confirmed source links, and state the concrete task and its completion criteria before processing. '
+    'The task store owns fixed enum state, reusable open-text task_type, concrete task_description and optional completion_method. '
+    'Reuse an existing task type for the same purpose before adding one; a video topic or storage destination does not create a new type. '
+    'The new optional core fields task_type, task_description and completion_method use null when unfilled or cleared; blank text normalizes to null. '
+    'The same applies to optional catalog presentation text (retention, reading_depth, format, preview_path, keep, reason, display title, notes, historical task_goal/task_description, primary_artifact_path), source cover_path and disposition reason/notes. '
+    'Legacy task/title and result answer fields retain their existing string contracts. '
+    'Omitted update fields preserve their values, explicit null clears nullable fields, and list fields such as purposes/tags or disposition artifacts clear with []. '
+    'State and a disposition description remain required. '
+    'Never store display placeholders or refill cleared fields from titles or old labels. Preserve the original request separately. '
+    'The catalog filters by the parent task state and type. Task dispositions describe actual settlement or retention, not a different parent state or type. '
+    'Answering a question, storing an existing note or explicitly deciding not to store it can belong to the same task. '
+    'A saved result may already establish its disposition; do not add duplicate bookkeeping merely to label it answered. '
+    'Record why material was processed separately from why its output was or was not retained elsewhere; verify actual copies before claiming them saved. '
+    'An explicit no-new-insight/no-copy decision can be complete without a new file; unrequested follow-on work does not become a task. '
+    'A user-confirmed termination may be state=done with completion_method=终止, while preserving unobserved and unverified material; cancellation is not automatically completion. '
+    'The retention levels 简述索引, 轻量记录 and 深度提取 describe what is retained and how it is organized; '
+    'they do not decide the task, reading depth, outcome or file format. '
+    'Deliver the requested outcome: a direct answer, a supported judgment, a trial result, translated subtitles, a case or a learning artifact. '
+    'For a question, show the question and direct answer first, with reasons and limits; a note file is optional. '
+    'For saved content, prefer HTML; use Markdown only when important information is fully conveyed by predominantly textual content. '
+    'For normal delivery, finish any required HTML artifact, source check, discussion review or actual trial before claiming it complete. '
+    'Agreed termination records closure only, not delivery of unperformed work. '
+    'A summary, a planned format, a changed catalog label or completed material acquisition does not fulfill that requirement. '
+    'For retained tasks, record the actual outcome, evidence, remaining gaps and actual artifacts, then refresh the master catalog; batch views are projections.'
+)
+
 READING_POLICY = (
     'Answer as soon as the inspected evidence is sufficient for the user\'s task. '
     'Investigate uncertainties that could change the answer; retain a continuation path for uninspected material. '

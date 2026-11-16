@@ -22,7 +22,7 @@ SCHEMES = {
 
 
 def fingerprint(item):
-    return digest([item['canonical'], item['task'],
+    return digest([item['canonical'], item['task'], item.get('task_description'), item.get('task_type'),
                    [{key: m.get(key) for key in ('id', 'text', 'parse_status')} for m in item.get('messages', [])]])
 
 
@@ -253,9 +253,16 @@ class Triage:
                           'evidence': evidence, 'actor': 'host', 'full_reading_completed': False}
             record.update(status=status, assessment=assessment)
             with self.memory.connect() as db:
-                self.queue.record_intent(db,item_id,assessment['intent'])
+                intent_changed = self.queue.record_intent(db,item_id,assessment['intent'])
+                record['item_fingerprint'] = fingerprint({**item, **self.queue._item(db,item_id)})
                 self._save(db, item_id, record, 'assessment_saved')
-        return self.show(item_id)
+        result = self.show(item_id)
+        if intent_changed:
+            from .catalog import refresh
+            refreshed = refresh(self.queue)
+            if refreshed is not None:
+                result['catalog_refresh'] = refreshed
+        return result
 
     def history(self, item_id, *, before=None, limit=50):
         self.queue.show(item_id,include_material=False)

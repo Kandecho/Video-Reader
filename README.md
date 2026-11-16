@@ -49,6 +49,7 @@ Video Reader 提供字幕、语音和画面材料，通过 MCP 接入 Codex、Cl
 | 设置模型、登录或调整文件位置 | [安装与配置](docs/installation.md) |
 | 查命令、工具参数、续读和导出 | [CLI 与 MCP 参考](docs/reader-reference.md) |
 | 管理待读视频、附言和结果 | [队列与历史](docs/tasks.md) |
+| 查看任务与成果，按状态、类型筛选并回查要求与处置 | [本地任务目录](docs/master-catalog.md)（当前源码能力） |
 | 使用个人推荐、私信收件和授权投递 | [Scroll](docs/scroll-reference.md) |
 | 报告问题或参与开发 | [贡献与复现](CONTRIBUTING.md) |
 | 了解开发顺序与阶段验收 | [开发路线](planning/roadmap-20261021-source.md) |

@@ -2,6 +2,8 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -13,6 +15,35 @@ spec.loader.exec_module(candidate)
 
 
 class SourceDistributionTests(unittest.TestCase):
+    def test_clean_candidate_builds_catalog_and_ships_link_checks(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / 'candidate'
+            candidate.build(output)
+            manifest = json.loads((output / 'candidate-manifest.json').read_text(encoding='utf-8'))
+            for name in ('reading_tasks/catalog_view.html', 'tests/catalog_links.cjs',
+                         'docs/workflow-contract.html'):
+                self.assertIn(name, manifest['files'])
+            # Import only the candidate core, so the installed source tree cannot
+            # hide a missing runtime template in the archive.
+            exercise = '''
+import sys
+from pathlib import Path
+root = Path(sys.argv[1]).resolve()
+sys.path.insert(0, str(root))
+from reading_tasks.catalog import Catalog
+from reading_tasks.queue import Queue
+from reading_tasks.store import Store
+assert Path(sys.modules['reading_tasks.catalog'].__file__).is_relative_to(root)
+catalog = Catalog(Queue(Store(Path(sys.argv[2]), 'distribution-test')))
+catalog.build()
+assert '<html' in catalog.index_path.read_text(encoding='utf-8')
+'''
+            result = subprocess.run([sys.executable, '-I', '-c', exercise,
+                                     str(output), str(Path(temp) / 'task-state')],
+                                    cwd=output, capture_output=True, text=True,
+                                    encoding='utf-8', timeout=20)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_release_uses_current_readme_license_and_preserves_upstream_notice(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / 'candidate'

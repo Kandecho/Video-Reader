@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "stats": {
+    "videos": 38,
+    "tasks": 42,
+    "results": 68,
+    "artifacts": 81,
+    "task_states": {
+      "done": 40,
+      "paused": 1,
+      "cancelled": 1
+    },
+    "missing_artifacts": 0,
+    "changed_artifacts": 5,
+    "excluded_without_results": 0
+  },
+  "latest_artifacts_match": true,
+  "task_and_result_counts_unchanged": true,
+  "package_data_declared": true,
+  "local_adapters_synced": true,
+  "catalog_status": "ready"
+}

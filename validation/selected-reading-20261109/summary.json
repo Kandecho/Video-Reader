@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-09",
+  "scope": "Explicit selected-block consumption and local host attempt metrics",
+  "unit_tests": {
+    "passed": 78,
+    "elapsed_seconds": 13.907,
+    "modules": [
+      "test_selected_reading",
+      "test_task_consume",
+      "test_content",
+      "test_background",
+      "test_reading_tasks",
+      "test_plugins"
+    ]
+  },
+  "real_host_cases": [
+    {
+      "case": "focused",
+      "status": "completed",
+      "task_satisfied": true,
+      "host_elapsed_seconds": 46.15600000007544,
+      "reported_usage": {
+        "input_tokens": 17958,
+        "cached_input_tokens": 0,
+        "output_tokens": 1240
+      },
+      "usage_complete": true,
+      "model_request_count": null,
+      "model_context_image_occurrences": null
+    },
+    {
+      "case": "insufficient",
+      "status": "needs_attention",
+      "task_satisfied": false,
+      "host_elapsed_seconds": 61.703000000095926,
+      "reported_usage": {
+        "input_tokens": 17936,
+        "cached_input_tokens": 0,
+        "output_tokens": 1706
+      },
+      "usage_complete": true,
+      "model_request_count": null,
+      "model_context_image_occurrences": null
+    }
+  ],
+  "real_video_performance_verified": false,
+  "adapter_version": "0.5.7",
+  "published": false,
+  "configuration_changed": false,
+  "production_tasks_changed": false,
+  "messages_sent": 0
+}

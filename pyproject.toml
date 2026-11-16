@@ -27,3 +27,4 @@ include = ["video_reader*", "scroll_agent*", "reading_tasks*"]
 
 [tool.setuptools.package-data]
 video_reader = ["defaults.json"]
+reading_tasks = ["catalog_view.html"]

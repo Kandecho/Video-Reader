@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-09",
+  "feature": "bounded_visual_observation",
+  "test_count": 59,
+  "tests_passed": true,
+  "real_source": "https://www.bilibili.com/video/BV1Rwsd61Epo?p=1",
+  "review_revision": 1,
+  "cases": [
+    {
+      "case": "signature",
+      "source_times": [
+        397.0
+      ],
+      "observation_id": "vo_ef65bbce9fb04699b7889bcc35272788",
+      "host_seconds": 39.48499999998603,
+      "wall_seconds": 42.25,
+      "image_attachments": 1,
+      "prior_observations": 0,
+      "accepted_records": 4,
+      "task_satisfied": true,
+      "reported_usage": {
+        "input_tokens": 19106,
+        "cached_input_tokens": 0,
+        "output_tokens": 1512
+      }
+    },
+    {
+      "case": "flow",
+      "source_times": [
+        464.0
+      ],
+      "observation_id": "vo_1aa45f6662374e7abc3d40242c2dd86c",
+      "host_seconds": 47.48499999998603,
+      "wall_seconds": 48.40599999995902,
+      "image_attachments": 1,
+      "prior_observations": 1,
+      "accepted_records": 6,
+      "task_satisfied": true,
+      "reported_usage": {
+        "input_tokens": 19849,
+        "cached_input_tokens": 0,
+        "output_tokens": 1927
+      }
+    },
+    {
+      "case": "constraint",
+      "source_times": [
+        477.0
+      ],
+      "observation_id": "vo_4f888560587e42198fb479646d0035a8",
+      "host_seconds": 47.14000000001397,
+      "wall_seconds": 48.31299999996554,
+      "image_attachments": 1,
+      "prior_observations": 2,
+      "accepted_records": 6,
+      "task_satisfied": true,
+      "reported_usage": {
+        "input_tokens": 20629,
+        "cached_input_tokens": 0,
+        "output_tokens": 1975
+      }
+    }
+  ],
+  "reported_usage": {
+    "input_tokens": 59584,
+    "cached_input_tokens": 0,
+    "output_tokens": 5414
+  },
+  "main_result_image_attachments": 0,
+  "explicit_crop_revisit_sha_matches": true,
+  "queue_unchanged": true,
+  "independent_visual_qa_passed": true,
+  "desktop_mcp_reloaded": true,
+  "model_context_image_occurrences": null,
+  "stable_speedup_established": false,
+  "accuracy_improvement_established": false
+}

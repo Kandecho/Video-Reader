@@ -30,13 +30,22 @@ class TaskConsumeTests(unittest.TestCase):
         def content(target,action='index',**kwargs):
             return {'valid':True} if action=='validate' else copy.deepcopy(self.index)
         self.reader.content=Mock(side_effect=content)
+        self.reader.content_excerpt=Mock(side_effect=lambda index_id,start,end:{
+            'segments':[s for b in self.index['blocks'] for s in b['segments']
+                if s['end']>start-5 and s['start']<end+5],'ranges':[[max(0,start-5),end+5]]})
 
     def response(self,prompt,images,schema,directory,options,**kwargs):
         packet=json.loads(prompt.split('\n',1)[1])['material']
         return {'packet_id':packet['packet_id'],'observed_segment_ids':[s['segment_id'] for s in packet.get('segments',[])],
             'observed_frame_ids':[f['id'] for f in packet.get('frames',[])],
             'summary':'实际观察后的摘要','notes':'# 实际阅读笔记\n\n保留源内容与时间。',
-            'uncertainties':['没有连续视觉观察'],'evidence_requests':[]}
+            'uncertainties':['没有连续视觉观察'],'evidence_requests':[],
+            'evidence_records':[{'text':'保留源内容与时间。',
+                'segment_ids':[s['segment_id'] for s in packet.get('segments',[])],
+                'frame_ids':[f['id'] for f in packet.get('frames',[])]}]
+                if packet.get('segments') or packet.get('frames') else [],
+            'uncertainty_decisions':[{'issue_id':u['id'],'status':'retain','text':u['text'],
+                'reason':'连续画面仍未观察','evidence_ids':[]} for u in packet.get('uncertainty_ledger',[])]}
 
     def test_public_run_facts_detect_changed_tasks_without_exposing_checkpoints(self):
         self.assertIsNone(self.consumer.latest_run(self.item['id']))
@@ -69,6 +78,41 @@ class TaskConsumeTests(unittest.TestCase):
         self.assertEqual(found['items'][0]['item_id'],self.item['id'])
         self.assertEqual(self.consumer.queue.list('all',query='superagent')['items'][0]['id'],self.item['id'])
         self.assertEqual(self.consumer.queue.search('保留源内容')['items'][0]['matched_fields'],['artifact_text'])
+
+    def test_question_outcome_is_registered_without_forcing_a_note_file(self):
+        self.consumer.queue.update(self.item['id'],task='这个示例为何按职责拆分？')
+        run=self.consumer.start(self.item['id'])['run_id']
+        prompts=[]
+        def answer(prompt,*args,**kwargs):
+            prompts.append(prompt)
+            result=self.response(prompt,*args,**kwargs)
+            result.update(task_satisfied=True,answer={'question':'为何按职责拆分？',
+                'text':'让业务编排与支付实现分别改变。','status':'answered',
+                'limitations':'未核外部项目。','basis':'本次给定的示例原文。'})
+            return result
+        with patch('reading_tasks.consume.invoke',side_effect=answer):
+            result=self.consumer.execute(run)
+        self.assertEqual(result['status'],'completed')
+        self.assertIsNone(result['artifact'])
+        self.assertEqual(result['task']['latest_result']['artifacts'],[])
+        self.assertIn('业务编排',result['task']['latest_result']['answer']['text'])
+        self.assertFalse((self.consumer.directory(run)/'reading-notes.md').exists())
+        self.assertIn('notes',self.consumer.load(run)['final']['response'])
+        self.assertIn('retention levels',prompts[0])
+        self.assertIn('不能用读完视频或写Markdown替代',prompts[0])
+
+    def test_partial_answer_keeps_task_pending_even_if_host_claimed_satisfaction(self):
+        run=self.consumer.start(self.item['id'])['run_id']
+        def partial(prompt,*args,**kwargs):
+            result=self.response(prompt,*args,**kwargs)
+            result.update(task_satisfied=True,answer={'question':'问题是否解决？',
+                'text':'尚需实际试用。','status':'partial','limitations':'未运行工具。','basis':'已有介绍。'})
+            return result
+        with patch('reading_tasks.consume.invoke',side_effect=partial):
+            result=self.consumer.execute(run)
+        self.assertEqual(result['status'],'needs_attention')
+        self.assertEqual(result['task']['state'],'pending')
+        self.assertFalse(result['task']['latest_result']['task_complete'])
 
     def test_resume_keeps_reading_checkpoint_and_ignores_old_attempt_output(self):
         run=self.consumer.start(self.item['id'])['run_id']

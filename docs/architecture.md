@@ -1,6 +1,10 @@
 # Video Reader 当前架构
 
-身份：2026-11-08 当前架构，含冻结审计基线后的修复；11 月 4 日发布资产不变。核心 0.10.0rc6，本地 Codex/Claude 适配器 0.5.6（已发布仍为 0.5.5），DSH/MCPB 适配器各 0.1.0。Reader、通用任务与 Scroll 三个模块域，两套 MCP；不需要额外服务。
+身份：2026-11-09 当前架构，含冻结审计修复、按块消费及局部视觉短会话；11 月 4 日发布资产不变。核心 0.10.0rc6，本地生成 Codex/Claude 适配器 0.5.8（已发布仍为 0.5.5），DSH/MCPB 适配器各 0.1.0。Reader、通用任务与 Scroll 三个模块域，两套 MCP；不需要额外服务。
+
+按块消费由 reading_tasks.consume 复用 Reader 内容目录及绑定校验；reading_tasks.metrics 保存独立宿主调用观测。Reader 不选择任务语义范围，Scroll 不复制消费逻辑；完整默认与显式局部任务的用法见[任务参考](tasks.md#定向问题按块消费2026-11-09)。
+
+局部视觉短会话归 reading_tasks.visual 编排，复用 Reader.source_frames 的既有媒体像素和共享 host_runtime；每次全新宿主调用只附当前帧。主调用默认只接收带来源和修订的文字记录，旧观察只作为文字引用；显式 visual-frame 才回传冻结原像素。观察记录与尝试保存在任务库的 visual 子目录，不领取或完成队列，也不更新语义校对。
 
 ## 分层与调用
 
@@ -53,7 +57,7 @@ Reader 核心不导入 Scroll。材料语义与偏好策略不混入获取核心
 
 通用任务调用 Reader，得到 p_ 预览或 v_ 完整媒体会话。CLI/MCP 长处理使用 j_ job；分页与资产身份冻结，交付不等于观察。宿主按用户目标读取、核查和生成产物；任务记录结果路径、哈希、完成依据及覆盖范围。校对修订继续属于 Reader。
 
-私信原消息和游标归 Inbox；queue_origins 保存任务所需来源引用与原附言，queue_events 记录任务事件；queue_triage / triage_events 保存初步判断；task_annotations 保存意图；task_results 追加产物版本。task_runs 保存通用消费的领取/尝试/检查点/结果关联；个人 memories、runs 与 deliveries 仍归 Scroll。
+私信原消息和游标归 Inbox；queue_origins 保存任务所需来源引用与原附言，queue_events 记录任务事件；queue_triage / triage_events 保存初步判断；task_annotations 保存意图；task_results 追加产物版本。task_followups 保存原任务后的动作与留存决定，各自持有状态、自由描述和实际文件引用，修改前后保存在queue_events；不覆盖原任务完成和成果。task_runs 保存通用消费的领取/尝试/检查点/结果关联；个人 memories、runs 与 deliveries 仍归 Scroll。
 
 当前 SQLite 可以共用物理文件，表所有者及接口独立。这样保留收件与入队的原子性，无需提前引入跨库补偿或消息服务。材料文件仍在 data/cache、data/preview；任务运行元信息在 data/tasks；本批六项产物位于 data/reading-results/20261104。
 

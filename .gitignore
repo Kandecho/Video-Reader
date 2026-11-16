@@ -15,8 +15,8 @@ research/asr-engine-20261021/audio/
 
 # Public source repository: machine-local state and generated artifacts stay local.
 .private/
+/.archify/
 /runtimes/
-/runtime/
 *.pyc
 *.log
 *.jsonl
@@ -44,6 +44,13 @@ validation/**
 !validation/*/README.md
 !validation/*/summary.json
 validation/scroll-0.8.0/summary.json
+# Personal task runs and external-tool trials remain local.
+/validation/grokbot-followup-20261113/
+/validation/kibrary-capture-20261114/
+/validation/motionharness-migration-20261113/
+/validation/motionharness-startup-20261113/
+/validation/motionharness-trial-20261113/
+/validation/task-reconciliation-20261113/
 /examples/*.jpg
 /examples/*.png
 /examples/*.vtt

@@ -1,9 +1,11 @@
 """One task command contract used by CLI and both MCP adapters."""
 from video_reader.common import ReaderError, read_json
-from .queue import Queue
+from .queue import Queue, CORE_FIELDS, UNSET
 
 ACTIONS=('queue-list','queue-show','queue-add','queue-update','queue-first','queue-history','queue-result','queue-search',
-         'run-start','run-status','run-resume',
+         'catalog-build','catalog-status','catalog-update',
+         'followup-save','followup-list',
+         'run-start','run-status','run-resume','visual-start','visual-show','visual-frame',
          'triage-prepare','triage-material','triage-content','triage-submit','triage-show','triage-history',
          'batch-start','batch-next','batch-status','batch-retry')
 
@@ -13,16 +15,27 @@ def execute(reader,action,value='',**options):
     defaults={'state':None,'query':'','limit':20,'cursor':None,'task':None,'title':'','new_task':False,
         'priority':None,'reason':'','revision':None,'payload':None,'refresh':False,'index':None,
         'offline':False,'complete':False,'assessment':None,'result':None,'sources':None,'source':'auto',
-        'request':None,'context_files':None,'wait_seconds':1}
+        'request':None,'context_files':None,'wait_seconds':1,'index_id':None,'block_ids':None,
+        'frames':None,'prior_observation_ids':None,
+        'task_type':UNSET,'task_description':UNSET,'completion_method':UNSET}
     if set(options)-set(defaults): raise ReaderError('Unknown task parameters: '+','.join(sorted(set(options)-set(defaults))))
     p={**defaults,**options}
+    if action.startswith('visual-'):
+        from .visual import Visual
+        visual=Visual(reader)
+        if action=='visual-show': return visual.show(value)
+        if action=='visual-frame': return visual.revisit(value,0 if p['index'] is None else p['index'])
+        request=read_json(p['payload']) if p['payload'] else {
+            'index_id':p['index_id'],'request':p['request'] or p['task'],'frames':p['frames'],
+            'prior_observation_ids':p['prior_observation_ids'],'wait_seconds':p['wait_seconds']}
+        return visual.start(value,**request)
     if action.startswith('run-'):
         from .consume import Consumer
         consumer=Consumer(reader)
         if action=='run-start':
-            request=read_json(p['payload']) if p['payload'] else {'request':p['request'] or p['task'],
+            request=read_json(p['payload']) if p['payload'] else {'request':p['request'] if p['request'] is not None else p['task'],
                 'source':p['source'],'context_files':p['context_files'],'wait_seconds':p['wait_seconds'],
-                'refresh':p['refresh'],'offline':p['offline']}
+                'refresh':p['refresh'],'offline':p['offline'],'index_id':p['index_id'],'block_ids':p['block_ids']}
             return consumer.start(value,**request)
         if action=='run-resume': return consumer.resume(value,p['wait_seconds'])
         return consumer.status(value)
@@ -36,16 +49,39 @@ def execute(reader,action,value='',**options):
         if action=='batch-retry': return batch.retry(value,p['index'])
         return batch.status(value)
     queue=Queue.from_settings(reader.config,reader.config_path)
+    if action.startswith('followup-'):
+        from .followups import Followups
+        followups=Followups(queue)
+        if action=='followup-list': return followups.list(value or None)
+        payload=read_json(p['payload']) if p['payload'] else p['result']
+        return followups.save(value,payload)
+    if action.startswith('catalog-'):
+        from .catalog import Catalog
+        catalog=Catalog(queue)
+        if action=='catalog-status': return catalog.status()
+        metadata=read_json(p['payload']) if p['payload'] else (p['result'] or {})
+        if action=='catalog-update': return catalog.update_metadata(value,metadata)
+        return catalog.build(metadata)
     if action=='queue-list': return queue.list(p['state'] or 'pending',query=p['query'],limit=p['limit'],cursor=p['cursor'])
     if action=='queue-search': return queue.search(p['query'] or value,limit=p['limit'],cursor=p['cursor'])
     if action=='queue-show': return queue.show(value)
-    if action=='queue-add': return queue.enqueue(value,p['task'] or '',p['title'],new_task=p['new_task'])
+    if action=='queue-add':
+        fields=read_json(p['payload']) if p['payload'] else p['result'] if p['result'] is not None else {
+            'task':p['task'] or '', 'title':p['title'], 'new_task':p['new_task'],
+            **({'state':p['state']} if 'state' in options else {}),
+            **{key:p[key] for key in CORE_FIELDS if p[key] is not UNSET}}
+        if not isinstance(fields,dict) or set(fields)-{'task','title','state','new_task',*CORE_FIELDS}:
+            raise ReaderError('Invalid queue create fields')
+        return queue.enqueue(value,**fields)
     if action=='queue-history': return queue.history(item_id=value or None,query=p['query'],limit=p['limit'],cursor=p['cursor'])
     if action=='queue-first': return queue.update(value,first=True,reason=p['reason'],expected_revision=p['revision'])
     if action=='queue-update':
-        changes=read_json(p['payload']) if p['payload'] else {'state':p['state'],'priority':p['priority'],
-            'task':p['task'],'reason':p['reason'],'expected_revision':p['revision']}
-        if not isinstance(changes,dict) or set(changes)-{'state','priority','task','reason','expected_revision'}:
+        changes=read_json(p['payload']) if p['payload'] else p['result'] if p['result'] is not None else {
+            **({'state':p['state']} if 'state' in options else {}),
+            **{key:p[key] for key in ('priority','task') if p[key] is not None},
+            'reason':p['reason'],'expected_revision':p['revision'],
+            **{key:p[key] for key in CORE_FIELDS if p[key] is not UNSET}}
+        if not isinstance(changes,dict) or set(changes)-{'state','priority','task','reason','expected_revision',*CORE_FIELDS}:
             raise ReaderError('Invalid queue update fields')
         return queue.update(value,**changes)
     if action=='queue-result':
@@ -66,6 +102,7 @@ def execute(reader,action,value='',**options):
 
 def from_namespace(reader,args):
     keys=('state','query','limit','cursor','task','title','new_task','priority','reason','revision','payload',
-          'refresh','index','offline','complete')
+          'refresh','index','offline','complete',*CORE_FIELDS)
     if getattr(args,'deliver',False): raise ReaderError('Task operations do not send messages')
-    return execute(reader,args.action,args.value,**{k:getattr(args,k) for k in keys if hasattr(args,k)})
+    return execute(reader,args.action,args.value,**{k:getattr(args,k) for k in keys if hasattr(args,k)
+                                                   and not (k == 'state' and getattr(args,k) is None)})

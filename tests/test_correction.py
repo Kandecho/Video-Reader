@@ -199,6 +199,41 @@ class CorrectionTests(unittest.TestCase):
         self.assertIn('repeated_candidate_segments',output['quality']['flags'])
         self.assertFalse(output['quality']['exactness_guaranteed'])
 
+    def test_relisten_quality_exposes_segment_warnings_without_changing_candidates(self):
+        path = self.reader.directory(self.sid) / 'relistens' / 'result.json'
+        segments = [
+            {'start': 1, 'end': 3, 'text': 'unreliable candidate',
+             'recognition': {'flags': ['suspect_decoding']}},
+            {'start': 5, 'end': 8, 'text': 'one uncertain word',
+             'recognition': {'flags': ['low_word_confidence']}},
+        ]
+        original = copy.deepcopy(segments)
+        manifest = (self.reader.directory(self.sid) / 'manifest.json').read_bytes()
+        result = {'status': 'completed', 'storage_path': str(path), 'speech': {'segments': segments}}
+        with patch('video_reader.relisten.execute', return_value=result):
+            output = self.reader.relisten(self.sid, 0, 10)
+        self.assertIn('suspect_decoding', output['quality']['flags'])
+        self.assertIn('low_word_confidence', output['quality']['flags'])
+        self.assertEqual(output['quality']['suspect_segments'], 1)
+        self.assertEqual(output['quality']['suspect_ranges'], [[1, 3]])
+        self.assertEqual(output['quality']['status'], 'unverified_candidate')
+        self.assertFalse(output['quality']['exactness_guaranteed'])
+        self.assertEqual(output['speech']['segments'], original)
+        self.assertEqual(read_json(path)['quality'], output['quality'])
+        self.assertEqual((self.reader.directory(self.sid) / 'manifest.json').read_bytes(), manifest)
+
+    def test_relisten_without_recognition_warnings_remains_unverified(self):
+        path = self.reader.directory(self.sid) / 'relistens' / 'result.json'
+        result = {'status': 'completed', 'storage_path': str(path),
+                  'speech': {'segments': [{'start': 1, 'end': 3, 'text': 'unflagged candidate'}]}}
+        with patch('video_reader.relisten.execute', return_value=result):
+            output = self.reader.relisten(self.sid, 0, 10)
+        self.assertEqual(output['quality']['flags'], [])
+        self.assertEqual(output['quality']['suspect_segments'], 0)
+        self.assertEqual(output['quality']['suspect_ranges'], [])
+        self.assertEqual(output['quality']['status'], 'unverified_candidate')
+        self.assertFalse(output['quality']['exactness_guaranteed'])
+
     def test_full_word_evidence_retained_not_just_uncertain_words(self):
         word = lambda text, start, end, prob: SimpleNamespace(word=text, start=start, end=end, probability=prob)
         segment = SimpleNamespace(words=[word('项目', 0, 1, .95), word('历史', 1, 2, .5)],

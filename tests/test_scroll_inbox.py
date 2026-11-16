@@ -8,7 +8,8 @@ from scroll_agent.inbox import Inbox, parse_content
 from scroll_agent.queue import Queue, source_identity
 from scroll_agent.memory import Memory
 from scroll_agent import mcp_server
-from video_reader.common import ReaderError, write_json
+from reading_tasks.catalog import Catalog
+from video_reader.common import ReaderError, read_json, write_json
 from video_reader.cli import parser
 from scroll_agent.cli import dispatch
 
@@ -269,6 +270,97 @@ class InboxTests(InboxFixture):
             return original(db)
         with patch.object(self.inbox, '_feed', side_effect=inspect):
             self.assertFalse(self.inbox.status()['sync_running'])
+
+
+class InboxCatalogTests(InboxFixture):
+    def setUp(self):
+        super().setUp()
+        self.catalog = Catalog(self.queue)
+        self.catalog.build()
+
+    def snapshot(self):
+        return read_json(self.catalog.snapshot_path)
+
+    def test_sync_refreshes_new_tasks_with_committed_origins_and_skips_duplicates(self):
+        self.rows = [self.message(1, task='保留这个交互想法')]
+        result = self.inbox.sync()
+        self.assertEqual(result['catalog_refresh']['status'], 'ready')
+        self.assertEqual(result['sync']['tasks_created'], 1)
+        task = self.snapshot()['tasks'][0]
+        self.assertEqual(task['request'], '保留这个交互想法')
+        self.assertEqual((task['state'], task['results']), ('pending', []))
+        self.assertEqual(task['messages'][0]['id'], self.inbox.history()['messages'][0]['id'])
+        self.assertEqual(self.snapshot()['videos'], [])
+        self.assertFalse(result['video_reading_started'])
+        self.assertEqual(result['messages_sent'], 0)
+        with patch('reading_tasks.catalog.refresh', side_effect=AssertionError('duplicate must not refresh')):
+            duplicate = self.inbox.sync()
+            self.rows.append(self.message(2, task='保留这个交互想法'))
+            reused = self.inbox.sync()
+        self.assertEqual(duplicate['sync']['tasks_created'], 0)
+        self.assertNotIn('catalog_refresh', duplicate)
+        self.assertEqual(reused['sync']['tasks_created'], 0)
+        self.assertEqual(reused['sync']['tasks_reused'], 1)
+        self.assertNotIn('catalog_refresh', reused)
+
+    def test_sync_publishes_each_committed_page_before_a_later_page_fails(self):
+        self.rows = [self.message(1, task='较早任务'), self.message(2, task='最新任务')]
+        calls = 0
+        def fail_second(url, **kwargs):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                raise ReaderError('network unavailable')
+            return self.fetch(url, **kwargs)
+        self.platform.request.side_effect = fail_second
+        with self.assertRaisesRegex(ReaderError, 'network unavailable'):
+            self.inbox.sync(max_pages=2, page_size=1)
+        self.assertEqual(self.snapshot()['tasks'][0]['request'], '最新任务')
+        self.assertEqual(self.snapshot()['stats']['without_results'], 1)
+        self.assertEqual(self.inbox.status()['feed']['status'], 'failed')
+
+    def test_sync_refresh_failure_keeps_the_new_task_and_reports_refresh_failure(self):
+        self.rows = [self.message(1, task='稍后整理')]
+        with patch.object(Catalog, '_write_html', side_effect=RuntimeError('renderer unavailable')):
+            result = self.inbox.sync()
+        self.assertEqual(result['catalog_refresh']['status'], 'failed')
+        self.assertEqual(result['sync']['tasks_created'], 1)
+        self.assertEqual(result['feed']['status'], 'ready')
+        self.assertEqual(self.queue.list()['items'][0]['task'], '稍后整理')
+        self.assertEqual(self.catalog.status()['status'], 'needs_refresh')
+        self.catalog.build()
+        self.assertEqual(self.snapshot()['tasks'][0]['request'], '稍后整理')
+
+    def test_explicit_enqueue_refreshes_after_origin_commit_and_skips_duplicate(self):
+        self.rows = [self.message(1, sent=900, task='留待处理')]
+        synced = self.inbox.sync()
+        self.assertNotIn('catalog_refresh', synced)
+        message_id = self.inbox.history()['messages'][0]['id']
+        result = self.inbox.enqueue(message_id, task='保存这个具体案例及上下文')
+        self.assertTrue(result['created'])
+        self.assertFalse(result['video_reading_started'])
+        self.assertEqual(result['catalog_refresh']['status'], 'ready')
+        task = self.snapshot()['tasks'][0]
+        self.assertEqual(task['id'], result['item_id'])
+        self.assertEqual(task['request'], '保存这个具体案例及上下文')
+        self.assertEqual(task['messages'][0]['id'], message_id)
+        with patch('reading_tasks.catalog.refresh', side_effect=AssertionError('duplicate must not refresh')):
+            duplicate = self.inbox.enqueue(message_id, task='保存这个具体案例及上下文')
+        self.assertTrue(duplicate['duplicate'])
+        self.assertNotIn('catalog_refresh', duplicate)
+
+    def test_explicit_enqueue_refresh_failure_keeps_the_new_task(self):
+        self.rows = [self.message(1, sent=900)]
+        self.inbox.sync()
+        message_id = self.inbox.history()['messages'][0]['id']
+        with patch.object(Catalog, '_write_html', side_effect=RuntimeError('renderer unavailable')):
+            result = self.inbox.enqueue(message_id, task='之后再做笔记')
+        self.assertTrue(result['created'])
+        self.assertEqual(result['catalog_refresh']['status'], 'failed')
+        self.assertEqual(self.queue.show(result['item_id'])['task'], '之后再做笔记')
+        self.assertEqual(self.catalog.status()['status'], 'needs_refresh')
+        self.catalog.build()
+        self.assertEqual(self.snapshot()['tasks'][0]['id'], result['item_id'])
 
 
 class QueueTests(InboxFixture):

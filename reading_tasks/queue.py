@@ -10,6 +10,8 @@ from video_reader.common import ReaderError, digest, read_json
 from .store import Store
 
 STATES = ('pending', 'paused', 'done', 'cancelled', 'archived')
+UNSET = object()
+CORE_FIELDS = ('task_type', 'task_description', 'completion_method')
 
 
 def bounded_int(value, name, minimum, maximum):
@@ -22,6 +24,46 @@ def text_value(value, name, maximum=4000):
     if not isinstance(value, str) or len(value) > maximum:
         raise ReaderError(f'{name} must be text of at most {maximum} characters')
     return value.strip()
+
+
+def nullable_text(value, name, maximum=4000):
+    if value is None:
+        return None
+    return text_value(value, name, maximum) or None
+
+
+def task_identity(item):
+    return digest(['task-v2', item['canonical'], item['task'],
+                   item.get('task_description'), item.get('task_type')])
+
+
+def artifact_values(paths, name='Result'):
+    import hashlib
+    if not isinstance(paths, list) or len(paths) > 20:
+        raise ReaderError(name + ' artifacts must be a list of up to 20 paths')
+    artifacts = []
+    for value in paths:
+        path = Path(text_value(value, 'artifact path', 4000)).resolve()
+        if not path.is_file():
+            raise ReaderError(name + ' artifact not found: ' + str(path))
+        artifacts.append({'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+    return artifacts
+
+
+def answer_value(value, complete):
+    """A direct answer is a result in its own right; a note file is optional."""
+    fields = {'question', 'text', 'status', 'limitations', 'basis'}
+    if not isinstance(value, dict) or set(value) - fields:
+        raise ReaderError('Answer needs question, text and optional status/limitations/basis')
+    question = text_value(value.get('question', ''), 'answer question')
+    text = text_value(value.get('text', ''), 'answer text', 20000)
+    status = value.get('status', 'answered' if complete else 'partial')
+    if not question or not text or status not in ('answered', 'partial'):
+        raise ReaderError('Answer needs a nonempty question/text and answered or partial status')
+    if complete and status != 'answered':
+        raise ReaderError('A partial answer cannot complete the task')
+    return {**value, 'question': question, 'text': text, 'status': status,
+            **{key: text_value(value[key], 'answer ' + key) for key in ('limitations', 'basis') if key in value}}
 
 
 def source_identity(value, *, allow_local=False):
@@ -76,7 +118,8 @@ class Queue:
                     row_id INTEGER PRIMARY KEY, id TEXT UNIQUE NOT NULL, scope TEXT NOT NULL,
                     canonical TEXT NOT NULL, original_source TEXT NOT NULL, task TEXT NOT NULL,
                     title TEXT NOT NULL, state TEXT NOT NULL, priority INTEGER NOT NULL,
-                    order_at REAL NOT NULL, created REAL NOT NULL, updated REAL NOT NULL, revision INTEGER NOT NULL);
+                    order_at REAL NOT NULL, created REAL NOT NULL, updated REAL NOT NULL, revision INTEGER NOT NULL,
+                    task_type TEXT,task_description TEXT,completion_method TEXT);
                 CREATE INDEX IF NOT EXISTS queue_order ON queue_items(scope,state,priority,order_at,row_id);
                 CREATE INDEX IF NOT EXISTS queue_source ON queue_items(scope,canonical);
                 CREATE TABLE IF NOT EXISTS queue_links (
@@ -94,8 +137,25 @@ class Queue:
                     scope TEXT NOT NULL,item_id TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,item_id));
                 CREATE TABLE IF NOT EXISTS task_results (
                     id INTEGER PRIMARY KEY,scope TEXT NOT NULL,item_id TEXT NOT NULL,created REAL NOT NULL,record TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS task_followups (
+                    id TEXT PRIMARY KEY,scope TEXT NOT NULL,item_id TEXT NOT NULL,
+                    created REAL NOT NULL,updated REAL NOT NULL,revision INTEGER NOT NULL,record TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS task_followups_lookup ON task_followups(scope,item_id,created,id);
                 CREATE TABLE IF NOT EXISTS task_migrations(id TEXT PRIMARY KEY);
             ''')
+            db.execute('BEGIN IMMEDIATE')
+            columns = {row['name'] for row in db.execute('PRAGMA table_info(queue_items)')}
+            for field in CORE_FIELDS:
+                if field not in columns:
+                    db.execute('ALTER TABLE queue_items ADD COLUMN ' + field + ' TEXT')
+                    if field == 'task_description':
+                        for row in db.execute('SELECT q.id,q.task,a.payload AS annotation FROM queue_items q '
+                                              'LEFT JOIN task_annotations a ON a.scope=q.scope AND a.item_id=q.id').fetchall():
+                            annotation = json.loads(row['annotation']) if row['annotation'] else {}
+                            is_comment = (isinstance(annotation, dict) and annotation.get('kind') == 'comment'
+                                          and annotation.get('original') == row['task'])
+                            db.execute('UPDATE queue_items SET task_description=? WHERE id=?',
+                                       (None if is_comment else nullable_text(row['task'], 'task'), row['id']))
             db.execute('INSERT OR IGNORE INTO queue_meta VALUES(?,0)', (self.scope,))
             from .legacy import import_origins
             import_origins(db,self.scope)
@@ -113,6 +173,21 @@ class Queue:
     def _bump(self, db):
         db.execute('UPDATE queue_meta SET revision=revision+1 WHERE scope=?', (self.scope,))
 
+    def task_types(self, db=None):
+        """Exact reusable wording from this library, including previous explicit types."""
+        if db is None:
+            with self.store.connect() as connection:
+                return self.task_types(connection)
+        values = [row['task_type'] for row in db.execute(
+            'SELECT task_type FROM queue_items WHERE scope=? ORDER BY row_id', (self.scope,))]
+        for row in db.execute('SELECT details FROM queue_events WHERE scope=? ORDER BY id', (self.scope,)):
+            event = json.loads(row['details'])
+            values.append(event.get('task_type'))
+            for key in ('before', 'after'):
+                if isinstance(event.get(key), dict):
+                    values.append(event[key].get('task_type'))
+        return list(dict.fromkeys(value for value in values if isinstance(value, str) and value.strip()))
+
     def encode_cursor(self,*args,**kwargs):
         return self._cursor(*args,**kwargs)
 
@@ -128,9 +203,20 @@ class Queue:
             raise ReaderError('Queue item not found in the current account')
         return dict(row)
 
-    def _enqueue(self, db, source, task='', title='', *, message_id=None, order_at=None, new_task=False, actor='conversation'):
+    def _enqueue(self, db, source, task='', title='', *, message_id=None, order_at=None, new_task=False, actor='conversation',
+                 task_type=UNSET, task_description=UNSET, completion_method=UNSET, state='pending'):
         canonical = source_identity(source,allow_local=True)
         task, title = text_value(task, 'task'), text_value(title, 'title', 1000)
+        if state not in STATES:
+            raise ReaderError('state must be pending, paused, done, cancelled or archived')
+        type_supplied = task_type is not UNSET
+        task_type = nullable_text(task_type, 'task_type', 200) if type_supplied else None
+        task_description = (nullable_text(task_description, 'task_description')
+                            if task_description is not UNSET else task or None)
+        completion_method = (nullable_text(completion_method, 'completion_method', 200)
+                             if completion_method is not UNSET else None)
+        if completion_method is not None and state != 'done':
+            raise ReaderError('completion_method is only valid for a done task')
         existing = None
         if message_id:
             existing = db.execute('SELECT q.* FROM queue_items q JOIN queue_links l ON l.item_id=q.id AND l.scope=q.scope '
@@ -142,19 +228,24 @@ class Queue:
                 existing = db.execute('SELECT q.* FROM queue_items q JOIN queue_links l ON l.item_id=q.id AND l.scope=q.scope '
                     'WHERE q.scope=? AND l.message_id=? AND q.canonical=? ORDER BY q.row_id LIMIT 1',
                     (self.scope,message_id,canonical)).fetchone()
-        if existing is None and not new_task:
-            existing = db.execute("SELECT * FROM queue_items WHERE scope=? AND canonical=? AND task=? "
-                                  "AND state IN ('pending','paused') ORDER BY row_id LIMIT 1",
-                                  (self.scope, canonical, task)).fetchone()
+        if existing is None and not new_task and state in ('pending', 'paused'):
+            where = "scope=? AND canonical=? AND task=? AND task_description IS ? AND state IN ('pending','paused')"
+            params = [self.scope, canonical, task, task_description]
+            if type_supplied:
+                where += ' AND task_type IS ?'
+                params.append(task_type)
+            existing = db.execute('SELECT * FROM queue_items WHERE ' + where + ' ORDER BY row_id LIMIT 1', params).fetchone()
         now = time.time()
         created = existing is None
         if created:
             item_id = 'q_' + uuid.uuid4().hex
-            db.execute('INSERT INTO queue_items(id,scope,canonical,original_source,task,title,state,priority,order_at,created,updated,revision) '
-                       "VALUES(?,?,?,?,?,?,'pending',0,?,?,?,1)",
-                       (item_id, self.scope, canonical, source, task, title, order_at if order_at is not None else now, now, now))
+            db.execute('INSERT INTO queue_items(id,scope,canonical,original_source,task,title,state,priority,order_at,created,updated,revision,task_type,task_description,completion_method) '
+                       "VALUES(?,?,?,?,?,?,?,0,?,?,?,1,?,?,?)",
+                       (item_id, self.scope, canonical, source, task, title, state,
+                        order_at if order_at is not None else now, now, now, task_type, task_description, completion_method))
             self._event(db, 'enqueued', item_id=item_id, message_id=message_id, actor=actor,
-                        source=source, canonical=canonical, task=task, title=title)
+                        source=source, canonical=canonical, task=task, title=title, state=state,
+                        task_type=task_type, task_description=task_description, completion_method=completion_method)
             self._bump(db)
         else:
             item_id = existing['id']
@@ -168,13 +259,21 @@ class Queue:
             self._event(db, 'duplicate_submission', item_id=item_id, actor=actor)
         return {'item_id': item_id, 'created': created, 'duplicate': not created}
 
-    def enqueue(self, source, task='', title='', *, new_task=False):
+    def enqueue(self, source, task='', title='', *, new_task=False, task_type=UNSET, task_description=UNSET,
+                completion_method=UNSET, state='pending'):
         if type(new_task) is not bool:
             raise ReaderError('new_task must be true or false')
         with self.memory.connect() as db:
             db.execute('BEGIN IMMEDIATE')
-            result = self._enqueue(db, source, task, title, new_task=new_task)
-        return {**result, 'item': self.show(result['item_id']), 'video_reading_started': False}
+            result = self._enqueue(db, source, task, title, new_task=new_task, task_type=task_type,
+                                   task_description=task_description, completion_method=completion_method, state=state)
+        output = {**result, 'item': self.show(result['item_id']), 'video_reading_started': False}
+        if result['created']:
+            from .catalog import refresh
+            refreshed = refresh(self)
+            if refreshed is not None:
+                output['catalog_refresh'] = refreshed
+        return output
 
     def show(self, item_id, *, include_material=True):
         with self.memory.connect() as db:
@@ -182,12 +281,21 @@ class Queue:
             rows = db.execute('SELECT payload FROM queue_origins WHERE scope=? AND item_id=? ORDER BY seq', (self.scope,item_id)).fetchall()
             annotation=db.execute('SELECT payload FROM task_annotations WHERE scope=? AND item_id=?',(self.scope,item_id)).fetchone()
             latest=db.execute('SELECT record FROM task_results WHERE scope=? AND item_id=? ORDER BY id DESC LIMIT 1',(self.scope,item_id)).fetchone()
+            from .followups import Followups
+            followups = Followups(self)._records(db, item_id)
         note=json.loads(annotation[0]) if annotation else {'kind':'unclassified','original':item['task'],'comment':None,'request':None}
         if note.get('original')!=item['task']:
             note={'kind':'unclassified','original':item['task'],'comment':None,'request':None}
+        latest_result = json.loads(latest[0]) if latest else None
+        completion_basis = None
+        if item['state'] == 'done':
+            completion_basis = ('explicit_termination' if item['completion_method'] == '终止' else
+                                'explicit_task_result' if latest_result and latest_result.get('task_complete') is True else
+                                'manual')
         return {**(self._decorate([item])[0] if include_material else item), 'messages': [json.loads(row[0]) for row in rows], 'note':note,
-                'latest_result':json.loads(latest[0]) if latest else None,
-                'completion_basis': ('explicit_task_result' if latest else 'manual') if item['state'] == 'done' else None,
+                'latest_result':latest_result,
+                'followups':followups,
+                'completion_basis':completion_basis,
                 'reader_completion': 'not_inferred'}
 
     def enqueue_in_transaction(self,db,*args,**kwargs):
@@ -217,33 +325,47 @@ class Queue:
         return [r[0] for r in db.execute('SELECT item_id FROM queue_links WHERE scope=? AND message_id=?',(self.scope,message_id))]
 
     def record_intent(self,db,item_id,intent):
-        self._item(db,item_id)
+        item = self._item(db,item_id)
         db.execute('INSERT INTO task_annotations(scope,item_id,payload) VALUES(?,?,?) '
                    'ON CONFLICT(scope,item_id) DO UPDATE SET payload=excluded.payload',
                    (self.scope,item_id,json.dumps(intent,ensure_ascii=False)))
+        if (intent.get('kind') == 'comment' and intent.get('original') == item['task']
+                and item['task_description'] is not None and item['task_description'] == item['task']):
+            db.execute('UPDATE queue_items SET task_description=NULL,updated=?,revision=revision+1 WHERE scope=? AND id=?',
+                       (time.time(), self.scope, item_id))
+            self._event(db, 'updated', item_id=item_id, actor='intent',
+                        before={'task_description': item['task_description']}, after={'task_description': None},
+                        reason='Commentary is background, not a concrete task description')
+            self._bump(db)
+            return True
+        return False
 
     def record_result(self,item_id,payload,*,complete=False,expected_revision=None,run_id=None):
-        import hashlib
         if not isinstance(payload,dict) or type(complete) is not bool:
             raise ReaderError('Result must be an object; complete must be boolean')
         summary=text_value(payload.get('summary',''),'result summary',1000)
-        paths=payload.get('artifacts')
-        if not summary or not isinstance(paths,list) or not 1<=len(paths)<=20:
-            raise ReaderError('Result needs summary and 1..20 artifact paths')
+        answer = answer_value(payload['answer'], complete) if 'answer' in payload else None
+        paths=payload.get('artifacts', [])
+        if not summary or not isinstance(paths,list) or len(paths)>20 or (not paths and not answer):
+            raise ReaderError('Result needs summary and artifact paths or a direct answer')
         if type(payload.get('full_video_verified',False)) is not bool:
             raise ReaderError('full_video_verified must be boolean')
-        artifacts=[]
-        for value in paths:
-            path=Path(text_value(value,'artifact path',4000)).resolve()
-            if not path.is_file(): raise ReaderError('Result artifact not found: '+str(path))
-            artifacts.append({'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
+        if 'catalog' in payload:
+            from .catalog import metadata
+            metadata(payload['catalog'])
+        artifacts=artifact_values(paths)
         record={**payload,'summary':summary,'artifacts':artifacts,'task_complete':complete,
                 'full_video_verified':payload.get('full_video_verified',False)}
+        if answer is not None:
+            record['answer'] = answer
         if run_id:
             record['run_id'] = run_id
         with self.store.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             item=self._item(db,item_id)
+            record['task_request'] = item['task']
+            record['task_description'] = item['task_description']
+            record['task_identity'] = task_identity(item)
             if run_id:
                 run = db.execute('SELECT * FROM task_runs WHERE scope=? AND id=? AND item_id=?',
                                  (self.scope,run_id,item_id)).fetchone()
@@ -253,7 +375,7 @@ class Queue:
                     raise ReaderError('Superseded task run cannot commit a result')
                 if run['result_id']:
                     return self.show(item_id)
-                if item['state'] != 'pending' or digest([item['canonical'],item['task']]) != run['task_identity']:
+                if item['state'] != 'pending' or task_identity(item) != run['task_identity']:
                     raise ReaderError('Task changed or is no longer pending; old run cannot complete it')
                 run_payload=json.loads(run['payload'])
                 if run_payload.get('background_token'):
@@ -279,10 +401,16 @@ class Queue:
             if run_id:
                 db.execute('UPDATE task_runs SET status=?,result_id=?,updated=? WHERE scope=? AND id=?',
                            ('completed' if complete else 'needs_attention',result_id,time.time(),self.scope,run_id))
-        return self.show(item_id)
+        result = self.show(item_id)
+        from .catalog import refresh
+        refreshed = refresh(self)
+        if refreshed is not None:
+            result['catalog_refresh'] = refreshed
+        return result
 
-    def update(self, item_id, *, state=None, priority=None, task=None, reason='', expected_revision=None, first=False):
-        if state is not None and state not in STATES:
+    def update(self, item_id, *, state=UNSET, priority=None, task=None, reason='', expected_revision=None, first=False,
+               task_type=UNSET, task_description=UNSET, completion_method=UNSET):
+        if state is not UNSET and state not in STATES:
             raise ReaderError('state must be pending, paused, done, cancelled or archived')
         if priority is not None:
             bounded_int(priority, 'priority', -1000000000, 1000000000)
@@ -291,8 +419,13 @@ class Queue:
         reason = text_value(reason, 'reason')
         if task is not None:
             task = text_value(task, 'task')
-        if not first and state is None and priority is None and task is None:
-            raise ReaderError('Choose a state, priority or task change')
+        fields = {key: nullable_text(value, key, 4000 if key == 'task_description' else 200)
+                  for key, value in (('task_type', task_type), ('task_description', task_description),
+                                     ('completion_method', completion_method)) if value is not UNSET}
+        if task is not None and task_description is UNSET:
+            fields['task_description'] = task or None
+        if not first and state is UNSET and priority is None and task is None and not fields:
+            raise ReaderError('Choose a state, priority, task or canonical field change')
         with self.memory.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             old = self._item(db, item_id)
@@ -303,8 +436,14 @@ class Queue:
                     raise ReaderError('Only pending items can move to the front; resume paused items explicitly')
                 priority = db.execute("SELECT COALESCE(MAX(priority),0)+1 FROM queue_items WHERE scope=? AND state='pending'",
                                       (self.scope,)).fetchone()[0]
+            target_state = old['state'] if state is UNSET else state
+            if fields.get('completion_method') is not None and target_state != 'done':
+                raise ReaderError('completion_method is only valid for a done task')
+            if target_state != 'done' and old['completion_method'] is not None:
+                fields['completion_method'] = None
             changes = {key: value for key, value in (('state', state), ('priority', priority), ('task', task))
-                       if value is not None and value != old[key]}
+                       if value is not UNSET and value is not None and value != old[key]}
+            changes.update({key: value for key, value in fields.items() if value != old[key]})
             if changes:
                 db.execute('UPDATE queue_items SET ' + ','.join(key+'=?' for key in changes) + ',updated=?,revision=revision+1 '
                            'WHERE scope=? AND id=?', (*changes.values(), time.time(), self.scope, item_id))
@@ -312,7 +451,12 @@ class Queue:
                             before={key: old[key] for key in changes}, after=changes, reason=reason,
                             completion_basis='manual' if state == 'done' else None)
                 self._bump(db)
-        return self.show(item_id)
+        result = self.show(item_id)
+        from .catalog import refresh
+        refreshed = refresh(self)
+        if refreshed is not None:
+            result['catalog_refresh'] = refreshed
+        return result
 
     def _cursor(self, kind, filters, data):
         value = {'context': digest([self.scope, kind, filters]), **data}
@@ -350,7 +494,7 @@ class Queue:
             if query:
                 from video_reader.content import normalized
                 db.create_function('task_search',1,lambda value:normalized(value or ''))
-                where.append("instr(task_search(title||' '||canonical||' '||task),task_search(?))>0")
+                where.append("instr(task_search(title||' '||canonical||' '||task||' '||COALESCE(task_type,'')||' '||COALESCE(task_description,'')||' '||COALESCE(completion_method,'')),task_search(?))>0")
                 params.append(query)
             if page:
                 last = page.get('last')
@@ -361,13 +505,14 @@ class Queue:
             rows = db.execute('SELECT * FROM queue_items WHERE ' + ' AND '.join(where) +
                               ' ORDER BY priority DESC,order_at,row_id LIMIT ?', (*params, limit+1)).fetchall()
             counts = {row[0]: row[1] for row in db.execute('SELECT state,count(*) FROM queue_items WHERE scope=? GROUP BY state', (self.scope,))}
+            types = self.task_types(db)
         items = [dict(row) for row in rows[:limit]]
         next_cursor = None
         if len(rows) > limit:
             last = items[-1]
             next_cursor = self._cursor('queue', filters, {'revision': revision, 'last': [last['priority'], last['order_at'], last['row_id']]})
         return {'items': self._decorate(items), 'counts': counts, 'revision': revision, 'next_cursor': next_cursor,
-                'video_reading_started': False}
+                'video_reading_started': False, 'task_types': types}
 
     def search(self,query,*,limit=20,cursor=None):
         """Search registered task/result material, not arbitrary files or private Inbox."""
@@ -391,12 +536,16 @@ class Queue:
             by_item.setdefault(row['item_id'],[]).append(json.loads(row['record']))
         hits=[]
         for item in items:
-            fields=[key for key in ('title','task','canonical') if needle in normalized(item[key])]
+            fields=[key for key in ('title','task','canonical',*CORE_FIELDS) if needle in normalized(item[key] or '')]
             matches=[]
             results=by_item.get(item['id'],[])
             for index,result in enumerate(results):
                 if needle in normalized(str(result.get('summary',''))+' '+str(result.get('task_scope',''))):
                     fields.append('result_summary')
+                answer=result.get('answer')
+                if isinstance(answer,dict) and needle in normalized(' '.join(str(answer.get(key,'')) for key in
+                        ('question','text','limitations'))):
+                    fields.append('answer_text')
                 for artifact in result.get('artifacts',[]):
                     path=Path(artifact['path'])
                     if not path.is_file():
@@ -417,6 +566,7 @@ class Queue:
                         artifact['current_validity']=validity
             if fields:
                 hits.append({'item_id':item['id'],'title':item['title'],'task':item['task'],
+                    **{key: item[key] for key in CORE_FIELDS},
                     'canonical':item['canonical'],'state':item['state'],'matched_fields':sorted(set(fields)),
                     'latest_result':results[0] if results else None,'artifact_matches':matches,
                     'next_steps':{'show_task':item['id'],'content_target':item['canonical'],
@@ -428,7 +578,7 @@ class Queue:
         following=offset+len(selected)
         return {'query':query,'items':selected,'total_matches':len(hits),
             'next_cursor':self._cursor('material_search',[query],{'revision':[revision,result_revision],'offset':following}) if following<len(hits) else None,
-            'search_scope':'task fields, saved result summaries, hash-valid registered Markdown/text artifacts up to 2 MB',
+            'search_scope':'task fields, saved result summaries and direct answers, hash-valid registered Markdown/text artifacts up to 2 MB',
             'artifact_checks':'live; changed/missing files are not treated as their saved original',
             'video_reading_started':False}
 
@@ -440,7 +590,7 @@ class Queue:
         sessions={source:[r['session_id'] for r in rows] for source,rows in materials.items()}
         with self.memory.connect() as db:
             for item in items:
-                related = db.execute('SELECT id,state,task FROM queue_items WHERE scope=? AND canonical=? AND id<>? '
+                related = db.execute('SELECT id,state,task,task_type,task_description,completion_method FROM queue_items WHERE scope=? AND canonical=? AND id<>? '
                                      'ORDER BY row_id DESC LIMIT 5', (self.scope, item['canonical'], item.get('id', ''))).fetchall()
                 item['related_tasks'] = [dict(row) for row in related]
                 item['existing_material'] = {'session_ids': sessions.get(item['canonical'], []), 'reading_completed': 'not_inferred'}
@@ -460,13 +610,13 @@ class Queue:
                              '(SELECT message_id FROM queue_links WHERE scope=? AND item_id=?)))')
                 params.extend((item_id, self.scope, item_id))
             if query:
-                where.append("instr(lower(e.details||' '||COALESCE(q.canonical,'')||' '||COALESCE(q.task,'')||' '||COALESCE(m.text,'')),lower(?))>0")
+                where.append("instr(lower(e.details||' '||COALESCE(q.canonical,'')||' '||COALESCE(q.task,'')||' '||COALESCE(q.task_type,'')||' '||COALESCE(q.task_description,'')||' '||COALESCE(q.completion_method,'')||' '||COALESCE(m.text,'')),lower(?))>0")
                 params.append(query)
             if page:
                 bounded_int(page.get('before'), 'history cursor', 1, 9223372036854775807)
                 where.append('e.id<?')
                 params.append(page['before'])
-            rows = db.execute('SELECT e.*,q.canonical,q.state AS current_state,m.text AS message_text '
+            rows = db.execute('SELECT e.*,q.canonical,q.state AS current_state,q.task_type,q.task_description,q.completion_method,m.text AS message_text '
                               'FROM queue_events e LEFT JOIN queue_items q ON q.id=e.item_id AND q.scope=e.scope '
                               'LEFT JOIN (SELECT scope,message_id,max(text) AS text FROM queue_origins GROUP BY scope,message_id) m ON m.message_id=e.message_id AND m.scope=e.scope WHERE ' + ' AND '.join(where) +
                               ' ORDER BY e.id DESC LIMIT ?', (*params, limit+1)).fetchall()

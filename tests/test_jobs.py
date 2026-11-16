@@ -1,5 +1,7 @@
 """Real subprocess jobs and independent CLI/MCP clients; no network/model downloads."""
 import asyncio
+from datetime import timedelta
+import faulthandler
 import json
 import os
 from pathlib import Path
@@ -17,6 +19,37 @@ from video_reader.reader import Reader
 from video_reader.jobs import Jobs, Running
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def mcp_attach_probe(config, job_id, session):
+    """Run in a child: event-loop creation can itself block in a restricted host."""
+    async def exercise():
+        from mcp import ClientSession, StdioServerParameters
+        from mcp.client.stdio import stdio_client
+        params = StdioServerParameters(command=sys.executable, args=['-I', str(ROOT/'launch_mcp.py')],
+                                      env={**os.environ, 'VIDEO_READER_CONFIG': config})
+        async with asyncio.timeout(20):
+            async with stdio_client(params) as (r, w):
+                async with ClientSession(r, w, read_timeout_seconds=timedelta(seconds=10)) as client:
+                    await client.initialize()
+                    began = time.monotonic()
+                    response = await client.call_tool('video_job', {'job_id': job_id})
+                    assert time.monotonic()-began < 2
+                    state = json.loads(response.content[0].text)
+                    assert state['stage'] == 'waiting_for_session_lock', state
+                    assert state['worker_alive'], state
+                    assert state['waiting_for']['session_id'] == session, state
+                    duplicate = await client.call_tool('video_read', {'session_id': session, 'end': '2',
+                        'strategy': 'uniform', 'source': 'captions', 'temporal': False, 'verify': False,
+                        'wait_seconds': 0})
+                    joined = json.loads(duplicate.content[0].text)
+                    assert joined['job_id'] == job_id, joined
+                    assert joined['reused_running_job'], joined
+    faulthandler.dump_traceback_later(25)
+    try:
+        asyncio.run(exercise())
+    finally:
+        faulthandler.cancel_dump_traceback_later()
 
 
 class JobTests(unittest.TestCase):
@@ -59,6 +92,41 @@ class JobTests(unittest.TestCase):
             time.sleep(.05)
         self.fail(f'job did not reach {stage}: {result}')
 
+    def mcp_client(self, job_id):
+        # Bound the whole interpreter, including asyncio's Windows socketpair.
+        # A timeout inside the coroutine cannot cover event-loop construction.
+        script = ('import runpy,sys;sys.path.insert(0,sys.argv[1]);'
+                  'scope=runpy.run_path(sys.argv[1]+"/tests/test_jobs.py");'
+                  'scope["mcp_attach_probe"](*sys.argv[2:])')
+        options = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {'start_new_session': True}
+        process = subprocess.Popen([sys.executable, '-I', '-c', script, str(ROOT), str(self.config),
+                                    job_id, self.session], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   text=True, encoding='utf-8', **options)
+        try:
+            stdout, stderr = process.communicate(timeout=30)
+        except subprocess.TimeoutExpired:
+            # A descendant may hold the pipes after the client exits. Never use
+            # its old PID for tree cleanup once Popen has observed that exit.
+            if process.poll() is None:
+                try:
+                    if os.name == 'nt':
+                        subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
+                                       capture_output=True, timeout=10, creationflags=subprocess.CREATE_NO_WINDOW)
+                    else:
+                        import signal
+                        os.killpg(process.pid, signal.SIGKILL)
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+            try:
+                stdout, stderr = process.communicate(timeout=10)
+            except subprocess.TimeoutExpired as exc:
+                self.fail(f'MCP client output pipes did not close after its bounded cleanup; '
+                          f'client returncode={process.poll()}.\n{exc.stdout or ""}\n{exc.stderr or ""}')
+            self.fail(f'MCP client subprocess timed out after 30s; '
+                      f'event-loop startup may be blocked by host permissions.\n{stdout}\n{stderr}')
+        self.assertEqual(process.returncode, 0, f'{stdout}\n{stderr}')
+
     def test_cli_and_mcp_attach_same_running_job_and_read_material(self):
         with FileLock(str(self.reader.directory(self.session)/'.lock')):
             code,first=self.cli('read',self.session,'--end','2','--strategy','uniform',
@@ -66,27 +134,7 @@ class JobTests(unittest.TestCase):
             self.assertEqual(code,0)
             job_id=first['job_id']
             self.wait_stage(job_id,'waiting_for_session_lock')
-            async def exercise():
-                from mcp import ClientSession,StdioServerParameters
-                from mcp.client.stdio import stdio_client
-                params=StdioServerParameters(command=sys.executable,args=['-I',str(ROOT/'launch_mcp.py')],
-                       env={**os.environ,'VIDEO_READER_CONFIG':str(self.config)})
-                async with stdio_client(params) as (r,w):
-                    async with ClientSession(r,w) as client:
-                        await client.initialize()
-                        began=time.monotonic()
-                        response=await client.call_tool('video_job',{'job_id':job_id})
-                        self.assertLess(time.monotonic()-began,2)
-                        state=json.loads(response.content[0].text)
-                        self.assertEqual(state['stage'],'waiting_for_session_lock')
-                        self.assertTrue(state['worker_alive'])
-                        self.assertEqual(state['waiting_for']['session_id'],self.session)
-                        duplicate=await client.call_tool('video_read',{'session_id':self.session,'end':'2',
-                            'strategy':'uniform','source':'captions','temporal':False,'verify':False,'wait_seconds':0})
-                        joined=json.loads(duplicate.content[0].text)
-                        self.assertEqual(joined['job_id'],job_id)
-                        self.assertTrue(joined['reused_running_job'])
-            asyncio.run(exercise())
+            self.mcp_client(job_id)
             before=self.store.status(job_id)
             time.sleep(2.15)
             after=self.store.status(job_id)

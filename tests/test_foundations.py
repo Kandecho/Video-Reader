@@ -1,7 +1,9 @@
 from pathlib import Path
 import copy
+import os
 import sys
 import tempfile
+import threading
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -411,6 +413,82 @@ class VisualFoundationTests(unittest.TestCase):
             result = vision.verify_segments({}, [segment], self.root, {})[0]
         self.assertEqual(result['text'], segment['text'])
         self.assertEqual(result['screen_verification']['status'], 'difference_detected')
+
+
+class JsonPersistenceTests(unittest.TestCase):
+    @unittest.skipUnless(sys.platform == 'win32', 'Windows reader handles can deny atomic file replacement')
+    def test_transient_reader_handle_retries_same_atomic_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'state.json'
+            write_json(path, {'old': True})
+            held = path.open('rb')
+            release = None
+            replace = os.replace
+            def commit(source, target):
+                nonlocal release
+                try:
+                    return replace(source, target)
+                except PermissionError:
+                    self.assertEqual(read_json(path), {'old': True})
+                    if release is None:
+                        release = threading.Timer(.02, held.close)
+                        release.start()
+                    raise
+            try:
+                with patch('video_reader.common.os.replace', side_effect=commit) as commits:
+                    write_json(path, {'new': True})
+            finally:
+                held.close()
+                if release is not None:
+                    release.join(timeout=1)
+            self.assertGreater(commits.call_count, 1)
+            self.assertEqual(len({call.args[0] for call in commits.call_args_list}), 1)
+            self.assertEqual(read_json(path), {'new': True})
+            self.assertEqual(list(Path(temporary).glob('.write-*.json')), [])
+
+    def test_persistent_windows_denial_is_bounded_preserves_original_and_cleans_temp(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'state.json'
+            write_json(path, {'old': True})
+            original = path.read_bytes()
+            for code in (5, 32):
+                with self.subTest(winerror=code):
+                    error = PermissionError('persistent Windows write denial')
+                    error.winerror = code
+                    with patch('video_reader.common.os.replace', side_effect=error) as commits, \
+                            patch('video_reader.common.time.sleep') as sleep:
+                        with self.assertRaises(PermissionError) as raised:
+                            write_json(path, {'new': True})
+                    self.assertIs(raised.exception, error)
+                    self.assertEqual(commits.call_count, 6)
+                    self.assertEqual(len({call.args[0] for call in commits.call_args_list}), 1)
+                    self.assertAlmostEqual(sum(call.args[0] for call in sleep.call_args_list), .31)
+                    self.assertEqual(path.read_bytes(), original)
+                    self.assertEqual(list(Path(temporary).glob('.write-*.json')), [])
+
+    def test_other_replace_or_serialization_errors_are_not_retried(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'state.json'
+            write_json(path, {'old': True})
+            original = path.read_bytes()
+            for error in (PermissionError('ordinary access denial'), OSError(5, 'I/O error')):
+                with self.subTest(error=type(error).__name__):
+                    with patch('video_reader.common.os.replace', side_effect=error) as commits, \
+                            patch('video_reader.common.time.sleep') as sleep:
+                        with self.assertRaises(type(error)) as raised:
+                            write_json(path, {'new': True})
+                    self.assertIs(raised.exception, error)
+                    commits.assert_called_once()
+                    sleep.assert_not_called()
+                    self.assertEqual(path.read_bytes(), original)
+                    self.assertEqual(list(Path(temporary).glob('.write-*.json')), [])
+            with patch('video_reader.common.os.replace') as commits, patch('video_reader.common.time.sleep') as sleep:
+                with self.assertRaises(ValueError):
+                    write_json(path, {'invalid': float('nan')})
+            commits.assert_not_called()
+            sleep.assert_not_called()
+            self.assertEqual(path.read_bytes(), original)
+            self.assertEqual(list(Path(temporary).glob('.write-*.json')), [])
 
 
 if __name__ == '__main__':

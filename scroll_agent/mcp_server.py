@@ -157,7 +157,8 @@ def scroll_queue(action: str = 'list', item_id: str | None = None, source: str |
     elif action == 'add' and source:
         result = queue.enqueue(source, task or '', title, new_task=new_task)
     elif action == 'update' and item_id:
-        result = queue.update(item_id, state=state, priority=priority, task=task, reason=reason, expected_revision=expected_revision)
+        result = queue.update(item_id, **({'state': state} if state is not None else {}),
+                              priority=priority, task=task, reason=reason, expected_revision=expected_revision)
     elif action == 'first' and item_id:
         result = queue.update(item_id, first=True, reason=reason, expected_revision=expected_revision)
     elif action == 'history':

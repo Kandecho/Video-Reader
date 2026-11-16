@@ -23,7 +23,7 @@
     "recommendation_ttl_seconds": 600,
     "material_ttl_seconds": 86400,
     "network": {
-      "daily_requests": 120,
+      "daily_requests": null,
       "min_gap_seconds": 2,
       "timeout_seconds": 20,
       "max_response_bytes": 8000000

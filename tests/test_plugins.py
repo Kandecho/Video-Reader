@@ -13,7 +13,7 @@ SPEC.loader.exec_module(builder)
 class PluginTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.root = Path(self.temp.name) / 'Shared Core with spaces'
+        self.root = Path(self.temp.name).resolve() / 'Shared Core with spaces'
         for relative in ('.venv/Scripts/python.exe', 'launch_mcp.py', 'launch_scroll.py', 'run.ps1', 'config.json'):
             builder.write(self.root / relative, 'fixture')
         builder.write(self.root / 'skill/SKILL.md', '---\nname: video-read\ndescription: Read videos.\n---\n\n'
@@ -40,12 +40,13 @@ class PluginTests(unittest.TestCase):
             self.assertFalse(any(path.name in ('auth', 'models', 'data', '.venv') or path.is_symlink() for path in files))
 
     def test_skills_share_source_but_do_not_infer_core_from_plugin_cache(self):
-        skills = [(Path(host['plugin_root']) / 'skills/video-read/SKILL.md').read_text()
+        skills = [(Path(host['plugin_root']) / 'skills/video-read/SKILL.md').read_text(encoding='utf-8')
                   for host in self.summary['hosts'].values()]
         self.assertEqual(skills[0], skills[1])
         self.assertIn(self.root.as_posix(), skills[0])
         self.assertNotIn(builder.CORE_NOTICE, skills[0])
         self.assertIn('Keep original evidence.', skills[0])
+        self.assertIn(builder.TASK_WORKFLOW_CONTRACT, skills[0])
 
     def test_rebuild_is_idempotent_and_preserves_canonical_source(self):
         original = (self.root / 'skill/SKILL.md').read_bytes()

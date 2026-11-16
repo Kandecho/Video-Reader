@@ -11,9 +11,9 @@ from mcp.types import ImageContent, TextContent
 from .common import UNTRUSTED
 from .reader import Reader
 from .mcp_content import pack
-from .reading_policy import READING_POLICY
+from .reading_policy import READING_POLICY, TASK_WORKFLOW_CONTRACT
 
-mcp = FastMCP("Video Reader", instructions=(READING_POLICY + ' ' +
+mcp = FastMCP("Video Reader", instructions=(READING_POLICY + ' ' + TASK_WORKFLOW_CONTRACT + ' ' +
     "open/read/transcript and dynamic continuation may return a running job after a short wait; use video_job status/result with job_id, "
     "not a duplicate CLI open. CLI and MCP share job state. A completed job only delivers its first material page; "
     "follow delivery.next_cursor and actually inspect images. "
@@ -95,7 +95,7 @@ def video_job(action: str = 'status', job_id: str | None = None,
               operation: str | None = None, parameters: dict | None = None,
               wait_seconds: float = 0) -> list[TextContent | ImageContent]:
     """Shared local job state/result across CLI and MCP, without waiting for a media lock.
-    start accepts operation=open/read/transcript/continue_read and that Reader method's parameters.
+    start accepts operation=open/read/transcript/continue_read/observe_visual and that Reader method's parameters.
     status reports stage, progress/heartbeat age, session, ready-material counts and failures.
     result waits at most 30 seconds and returns the unchanged first material page when complete.
     list recovers the newest 20 jobs if the caller lost its ID. Poll existing jobs; do not restart
@@ -391,13 +391,55 @@ def video_danmaku(source: str, segment_index: int = 1, offset: int = 0, limit: i
 def video_tasks(action: str, item_id: str = '', parameters_json: str = '{}') -> list[TextContent | ImageContent]:
     """Generic local tasks without Scroll/login requirements for queue and history.
     Actions: queue-list/show/add/update/first/history/result/search, triage-prepare/material/content/submit/show/history,
-    batch-start/next/status/retry, run-start/status/resume. item_id is a task/batch/run ID, or source for queue-add.
+    batch-start/next/status/retry, run-start/status/resume, catalog-build/status/update, followup-save/list.
+    item_id is a task/batch/run ID, or source for queue-add. queue-add/update maintain task_type,
+    task_description and completion_method via parameters or a payload object; the legacy task request stays separate.
+    state is fixed enum pending/paused/done/cancelled/archived. Types are reusable open text, not a fixed category list.
+    queue-list.task_types returns same-library type history; reuse an existing expression for the same task purpose.
+    Optional text is null when unfilled/cleared; blank text normalizes to null. Omit an update field to preserve it,
+    send null to clear it, and use [] to clear a list. Never store UI placeholders or refill a cleared description.
+    completion_method is optional for done only; a user-confirmed termination may be done with method 终止,
+    while video observation and claim verification remain unestablished. Cancellation is not automatically done.
+    catalog-update uses a task ID: core fields route to the task store; remaining metadata is presentation annotation.
+    catalog-build creates or refreshes the local HTML task/result catalog, including tasks without results, without reading video.
+    The catalog primarily filters the parent task's state and type; batch views filter the same task records.
+    After initialization, queue-add, saving results and updating tasks refresh it automatically.
+    followup-save is the compatible task-disposition entry via result or payload:
+    {id?,description,state?,reason?,notes?,artifacts?,source_result_id?,expected_revision?}.
+    Keep the original task state and results. Each disposition has its own enum state and required free description.
+    It may describe answering this task, saving its output or an explicit retention decision, not necessarily a later task.
+    A saved result may already establish the disposition; do not append a duplicate record just to label it answered.
+    Optional reason/notes may be null; omission preserves them. A destination alone does not create a task or type.
+    Copy/store only when authorized; verify actual files before marking the follow-up done.
+    A done decision may have no artifact, e.g. no new insight so do not store in the knowledge base.
+    followup-list optionally takes the task ID; an empty ID returns all records and reusable description_history.
     queue-search uses query across task fields, saved summaries and hash-valid registered note files.
-    run-start explicitly consumes one pending task with request/source/context_files/wait_seconds; status never starts work.
+    run-start explicitly consumes one pending task, defaulting to its concrete task_description;
+    request/source/context_files/wait_seconds can be passed explicitly. status never starts work.
+    For a targeted task, pass index_id AND nonempty block_ids selected from video_content; source must match that index.
+    Default reads all blocks. Selection preserves original text, gaps and continuation; it is not proof of task sufficiency.
+    run-status includes reading_scope and local attempt metrics; missing usage and model request image counts stay unknown.
+    Consumer context contract 2 appends local evidence supplements, shares accepted evidence between packets,
+    and reconciles uncertainty history into task-level final notes; run-status reports context_contract_version.
     run-resume uses the same run ID/checkpoints after interruption. No continuous consumer or scheduler.
-    parameters_json uses the shared task API: state,query,limit,cursor,task,title,new_task,priority,reason,
-    revision,payload,refresh,index,offline,complete,assessment,result,sources,source.
+    visual-start uses an opened session as item_id, with index_id, request, frames=[{timestamp_seconds,width?,region?}],
+    prior_observation_ids? and wait_seconds. At most six frames, four same-revision prior observations.
+    It starts one fresh visual host call without ASR or queue changes. Poll its video_job; the result is text-only:
+    screen_text / visual_observation / inference, source/review binding, frame hashes, uncertainty and metrics.
+    Prior observations supply text references, never old image attachments. The main host did not inspect those pixels.
+    visual-show retrieves a saved observation and current-material validity; item_id is its observation_id.
+    visual-frame with observation_id and index explicitly returns that observation's exact frozen pixels/crop.
+    parameters_json uses the shared task API: state,task_type,task_description,completion_method,query,limit,cursor,task,title,new_task,priority,reason,
+    revision,payload,refresh,index,offline,complete,assessment,result,sources,source,index_id,block_ids,
+    request,context_files,wait_seconds,frames,prior_observation_ids.
     queue-result needs result={summary,artifacts:[absolute_file_paths],task_scope,coverage}; complete is explicit.
+    For question-answer tasks, answer={question,text,status:'answered'|'partial',limitations?,basis?}
+    is the actual result and artifacts may be empty. Do not force a note when a direct answer meets the request.
+    Show the question and direct answer first; preserve the original message and scope separately.
+    Optional result.catalog records retention/purposes/reading_depth/format/tags and an existing preview_path.
+    Old catalog task_goal/task_description remain historical compatibility annotations, not authoritative task fields.
+    Maintain the actual type/description through queue-add/update; disposition descriptions remain separate.
+    catalog.format is the target format; actual delivery formats derive from the latest registered output files/answer.
     Initial triage is a preview plus host judgment; never mark full reading from delivery.
     These operations never send, schedule, learn preferences or install source-mentioned tools.
     """

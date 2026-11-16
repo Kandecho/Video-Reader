@@ -62,6 +62,10 @@ class Reader:
         from .content import evidence_frames
         return evidence_frames(self, session, requests, binding=binding)
 
+    def content_excerpt(self,index_id,start,end):
+        from .content import excerpt
+        return excerpt(self,index_id,start,end)
+
     def content(self, target, action='index', query='', block_ids=None, source='auto', context=None,
                 block_seconds=120, offset=0, limit=20, index_id=None, offline=False, refresh=False, _delivery=True):
         from .content import execute
@@ -71,6 +75,10 @@ class Reader:
     def consume_task(self, run_id):
         from reading_tasks.consume import Consumer
         return Consumer(self).execute(run_id)
+
+    def observe_visual(self, session, index_id, request, frames, prior_observation_ids=None):
+        from reading_tasks.visual import Visual
+        return Visual(self).execute(session,index_id,request,frames,prior_observation_ids)
 
     def speech_index(self,session,source='auto',context=None):
         """Read-only identity/revision index for resumable consumers, without decoding or OCR."""
@@ -157,6 +165,10 @@ class Reader:
     def frame(self, session, frame_id, width=1920, region=None):
         from .frame_detail import inspect_frame
         return inspect_frame(self, session, frame_id, width, region)
+
+    def source_frames(self, session, requests):
+        from .frame_detail import source_frames
+        return source_frames(self, session, requests)
 
     def sound(self, session, start=0, end=None):
         from .audio import inspect_audio
@@ -703,7 +715,13 @@ class Reader:
             flags.append('much_shorter_than_baseline')
         if result['status'] != 'completed':
             flags.append('decode_incomplete')
+        from .recognition import assess
+        assessment, _ = assess([], candidates, lo, hi, diagnostics=result.get('speech'))
+        flags.extend(flag for flag in sorted({flag for segment in candidates
+                     for flag in segment.get('recognition', {}).get('flags', [])}) if flag not in flags)
         result['quality'] = {'status': 'unverified_candidate', 'flags': flags,
+                             'suspect_segments': assessment['suspect_segments'],
+                             'suspect_ranges': assessment['suspect_ranges'],
                              'exactness_guaranteed': False}
         result['comparison'] = {'baseline_source': baseline.get('source'), 'baseline_raw_text': baseline_text,
                                 'baseline_also_fallible': True}

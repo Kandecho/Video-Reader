@@ -200,7 +200,9 @@ class BackgroundTests(unittest.TestCase):
         material=json.loads(prompt.split('\n',1)[1])['material']
         return {'packet_id':material['packet_id'],'observed_segment_ids':[s['segment_id'] for s in material['segments']],
             'observed_frame_ids':[],'summary':'Fixture only','notes':'# Controlled fixture result',
-            'uncertainties':[],'evidence_requests':[],'task_satisfied':True}
+            'uncertainties':[],'evidence_requests':[],'task_satisfied':True,
+            'evidence_records':[{'text':'Observed fixture','segment_ids':[s['segment_id'] for s in material['segments']],
+                'frame_ids':[]}],'uncertainty_decisions':[]}
 
     def _ready_run(self):
         run=self.bg.tick(force=True)['run']['run_id']

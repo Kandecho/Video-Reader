@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -52,7 +53,18 @@ def write_json(path, value):
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
             json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)
-        os.replace(name, path)
+        # Windows readers may briefly deny replacement despite the writer's
+        # business lock. Keep the same closed temp file for a bounded retry;
+        # never re-run the caller's state mutation or weaken atomic replacement.
+        delays = (.01, .02, .04, .08, .16)
+        for attempt in range(len(delays) + 1):
+            try:
+                os.replace(name, path)
+                break
+            except PermissionError as error:
+                if getattr(error, 'winerror', None) not in (5, 32) or attempt == len(delays):
+                    raise
+                time.sleep(delays[attempt])
     finally:
         Path(name).unlink(missing_ok=True)
 

@@ -4,6 +4,8 @@
 
 ## 从哪里找到已有材料
 
+可先打开[本地总目录](master-catalog.md)：按来源及分P聚合已有任务和成果，搜索、留存方式、用途及批次均为同一底账的视图。目录不把缓存算已读，详细处理范围仍回到对应结果。
+
 先用 `video_tasks(action="queue-search", parameters_json='{"query":"superagent"}')` 查任务、结果摘要及已登记的 Markdown/文本产物正文。大小写、Unicode 兼容形式、空白和标点归一化，所以 Super-agent 与 superagent 可命中同一标题；不据此合并不同任务。
 
 返回 matched_fields、已有结果、产物路径及有效性。文件不存在或 SHA 已变化时明确标记，正文不会被当作已保存版本搜索；大于 2 MB 的文件不做正文检索。只搜索任务登记的文件，不遍历其他项目或 Inbox 私有表。省略正文只影响导航，完整产物仍可按路径读取。
@@ -23,6 +25,8 @@
 | validate | 校验指定 index_id 的冻结来源、账号、语音/校对版本和像素身份 |
 
 首次 index 后，后续选择传 index_id 和返回的 block_ids；校对或原始材料变化会拒绝旧选择。块长 block_seconds 可为 15–600，默认 120；offset/limit 负责块分页，delivery.next_cursor 负责当前响应的无损分页，两个位置不能互换。
+
+directory_total_blocks 始终表示整个目录的块数；total_blocks 表示当前过滤/检索结果的块数。定向任务可把宿主选定的 index_id/block_ids 交给 [run-start 按块消费](tasks.md#定向问题按块消费2026-11-09)，继续保留未选材料的目录入口。
 
 目录 text_preview 明确是导航，text_characters/text_preview_complete 标明范围；完整原段经 material 保留。跨块的长段会在相邻块保留同一 ID 和完整原文，不能把相邻出现误当新段。
 

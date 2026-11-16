@@ -40,6 +40,22 @@ def validate_assets(frames):
             raise ReaderError('Native content image changed or disappeared')
 
 
+def excerpt(reader,index_id,start,end):
+    """Read complete local sentences from an explicitly validated frozen index."""
+    execute(reader,'',action='validate',index_id=index_id)
+    saved = read_json(reader.cache/'content'/f'{index_id}.json')
+    duration = saved['duration_seconds']
+    if (isinstance(start,bool) or isinstance(end,bool) or not isinstance(start,(int,float))
+            or not isinstance(end,(int,float)) or not math.isfinite(start) or not math.isfinite(end)
+            or not 0 <= start < end <= duration):
+        raise ReaderError('Evidence excerpt needs a valid bounded source range')
+    lo,hi = max(0,start-5),min(duration,end+5)
+    segments = {s['segment_id']:s for block in saved['blocks'] for s in block['segments']
+                if s['end']>lo and s['start']<hi}
+    return {'segments':sorted(segments.values(),key=lambda s:(s['start'],s['end'])),
+            'ranges':[[lo,hi]]}
+
+
 def evidence_frames(reader, session, requests, *, binding=None):
     """Return local evidence for a material binding without exposing its layout."""
     data = reader.load(session)
@@ -231,6 +247,7 @@ def execute(reader, target, action='index', query='', block_ids=None, source='au
     if index_id is not None and index_id != result['index_id']:
         raise ReaderError('Content index changed (source/account/speech/review); rebuild the directory before selecting blocks')
     blocks = result['blocks']
+    result['directory_total_blocks'] = len(blocks)
     if block_ids is not None:
         wanted = set(block_ids)
         if wanted - {b['id'] for b in blocks}:

@@ -11,7 +11,7 @@ from urllib.parse import parse_qsl, urlencode, urlparse
 from urllib.request import Request, HTTPRedirectHandler, HTTPCookieProcessor, build_opener
 
 from .bilibili_auth import BilibiliAuth, USER_AGENT, RequestContext, cookie_jar, cookie_value
-from .acquisition_budget import Budget
+from .acquisition_budget import Budget, request_identity
 from .common import ReaderError, read_json, write_json
 
 API = 'https://api.bilibili.com'
@@ -140,7 +140,8 @@ class Platform:
                     return cached
             if self.offline:
                 raise PlatformError('offline_cache_miss')
-            self.budget.reserve(downloader=False)
+            identity = request_identity(cache_url, 'POST' if form is not None else 'GET', form, headers)
+            ticket = self.budget.reserve(downloader=False, request_key=identity)
             entry = {'cache': 'miss', 'bytes': 0, 'method': 'POST' if form is not None else 'GET'}
             self.trace.append(entry)
             try:
@@ -164,13 +165,27 @@ class Platform:
                     validate(result)
                 if form is None and ttl:
                     cache.write_bytes(result) if binary else write_json(cache, result)
+                self.budget.succeeded(ticket, hashlib.sha256(body).hexdigest())
                 entry['status'] = 'ok'
                 return result
             except HTTPError as error:
                 self.budget.reject(error.code)
-                raise PlatformError('platform_http_' + str(error.code)) from None
+                failure = PlatformError('platform_http_' + str(error.code))
+                wait = self.budget.failed(ticket, transient=error.code >= 500)
+                if wait:
+                    failure.details = {'network_guard': wait}
+                raise failure from None
+            except PlatformError as error:
+                wait = self.budget.failed(ticket, transient=False)
+                if wait:
+                    error.details = {'network_guard': wait}
+                raise
             except (OSError, ValueError) as error:
-                raise PlatformError('platform_unavailable:' + type(error).__name__) from None
+                failure = PlatformError('platform_unavailable:' + type(error).__name__)
+                wait = self.budget.failed(ticket, transient=isinstance(error, OSError))
+                if wait:
+                    failure.details = {'network_guard': wait}
+                raise failure from None
 
     def json(self, path, params=None, *, ttl=0, validate=None):
         url = API + path + ('?' + urlencode(params) if params else '')
@@ -190,8 +205,7 @@ class Platform:
         return {'paused': False, 'budget_reset': False}
 
     def status(self):
-        state = read_json(self.state_path) if self.state_path.exists() else {}
-        return {key: state.get(key) for key in ('day', 'count', 'paused', 'last_request')}
+        return self.budget.status()
 
     @property
     def sender(self):

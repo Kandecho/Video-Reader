@@ -18,7 +18,7 @@ from .common import ReaderError, digest, read_json, write_json
 
 CURRENT = ContextVar('video_reader_job', default=None)
 TERMINAL = {'completed', 'failed', 'interrupted'}
-OPERATIONS = {'open', 'read', 'transcript', 'continue_read', 'content', 'consume_task'}
+OPERATIONS = {'open', 'read', 'transcript', 'continue_read', 'content', 'consume_task', 'observe_visual'}
 
 
 def execution_identity(reader):
@@ -124,7 +124,7 @@ class Jobs:
 
     def start(self, operation, parameters, wait_seconds=1):
         if operation not in OPERATIONS or not isinstance(parameters, dict):
-            raise ReaderError('Jobs support open/read/transcript/continue_read/consume_task with a parameters object')
+            raise ReaderError('Jobs support open/read/transcript/continue_read/content/consume_task/observe_visual with a parameters object')
         parameters = dict(parameters)
         if 'session_id' in parameters:
             if 'session' in parameters:

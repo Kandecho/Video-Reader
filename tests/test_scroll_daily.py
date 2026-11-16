@@ -121,7 +121,11 @@ class ReaderIndependenceTests(AgentFixture):
         reader = Reader(self.config_path)
         with patch('video_reader.platform.credentials', return_value={'account_marker': 'one', 'cookies': []}):
             platform = Platform(reader.config, offline=True)
-        self.assertEqual(platform.status(), {'day': None, 'count': None, 'paused': None, 'last_request': None})
+        status = platform.status()
+        self.assertEqual({key: status[key] for key in ('day', 'count', 'paused', 'last_request')},
+                         {'day': None, 'count': None, 'paused': None, 'last_request': None})
+        self.assertIsNone(status['daily_limit'])
+        self.assertIn('protection', status)
         self.assertFalse((self.root / 'memory.sqlite3').exists())
         with self.assertRaisesRegex(ReaderError, 'write_not_authorized'):
             platform.request('https://api.vc.bilibili.com/web_im/v1/web_im/send_msg', form={})

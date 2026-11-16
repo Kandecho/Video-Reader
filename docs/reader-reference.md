@@ -2,7 +2,24 @@
 
 本页供直接调用命令或工具时查阅。第一次安装和连接助手，请从[首次使用](getting-started.md)开始；模型、登录和文件位置见[安装与配置](installation.md)。完整导航见[文档首页](README.md)。
 
-当前核心为 0.10.0rc6，生成的宿主接入文件版本为 0.5.5。
+当前核心为 0.10.0rc6，本地生成的宿主接入文件版本为 0.5.9（已发布为 0.5.5）。
+
+## 联网保护与临时退避（2026-11-12）
+
+默认 `preview.network.daily_requests=null`：保留每日请求统计，不按累计总数截断正常积压处理。仍可显式设置正整数作为可选日上限；旧统计不清零，实际平台暂停也不清除。同账号跨进程、原生API和下载器共享状态，正常请求间隔仍为至少2秒。
+
+保护根据请求及结果区分范围：
+
+- 短时间内反复得到相同完整响应，或出现周期为1–4个请求的重复模式时，只冷却涉及的请求。默认观察窗口120秒、至少8条重复观察，周期至少重复3轮。它表示短时重复模式，不证明语义上没有进展。
+- 超时、连接错误、5xx等瞬态故障连续3次时，暂时冷却账号；单片不存在等内容错误只累计相应请求的失败，不据此暂停整个账号。
+- 冷却从30秒开始，重复触发逐步延长，最多300秒；返回 `platform_request_cooldown`、`retry_at` 和原因，不占着账号锁长时间等待。到期后可重新探测，成功不能提前清除尚未到期的冷却。
+- HTTP 401/403/412/429及既有平台限制码仍持久暂停，须按原规则处理，不因冷却到期、日期变更或迟到回包自行解除。
+
+请求指纹保留来源、分页/游标、正文和HTTP Range，忽略已识别的WBI动态签名。响应比较只保存摘要；状态不新增明文URL、正文或凭据。不同视频、分页及分片不会仅因接口路径相同而被合并。下载器打开响应不算读取进展，须观察实际字节；流式读取完成后才参与完整响应重复检测。
+
+`Platform.status()` 的 `daily_limit` 表示可选日限额，`protection.active_cooldowns` 列出临时保护。Consumer保存waiting及恢复时间，后台沿用原run、许可和检查点，到期按既有队列调度接续；不新增任务名额或宿主重试次数。评论/弹幕也区分temporary waiting与平台blocked。可用缓存和纯本地处理继续复用。
+
+这些数值是可调整的工程参数，不是平台安全阈值。本次未改变独立登录/扫码协议、模型、日推或后台收件许可。CLI和新进程使用新实现；已连接MCP须重启加载。[实现与验证](../validation/network-protection-20261112/README.md)。
 
 ## 共享运行任务（0.10.0rc5）
 
@@ -25,6 +42,14 @@ heartbeat_at / worker_alive 表示存活，progress_at 表示实际阶段或条�
 materials 只报告缓存可用性，不代表已交付或已观察。完成结果附 job 字段，正文与图片分页契约保持原样。
 普通同步 Python Reader API 保持兼容；后台任务由新 job API 与宿主适配层提供。
 CLI 需要对组件 cache、auth 状态目录有适当写权限。更新后重启已连接的 MCP，加载新工具与参数；旧进程不自动热更新。
+
+## 局部视觉短会话
+
+`video_tasks(action="visual-start", item_id=SESSION_ID, parameters_json=...)` 让独立宿主观察已打开视频的局部源图，主会话只收到文字证据。参数为同会话的有效 index_id、具体 request、1–6 项 `frames=[{"timestamp_seconds":397,"width":1920,"region":[0,0,1,1]}]`；width/region 可省，wait_seconds 为 0..30。保留返回的 job_id，用 video_job 查询及取结果。每次使用既有配置新建宿主调用，不加 ASR、新模型、队列修改或发送。
+
+结果区分画面原文、直接观察和推断，保留来源/分 P、时间、帧哈希、裁剪、修订、观察者和疑点；主会话须归因于该观察者，不能声称亲自看过像素。追问可传最多 4 条有效且同目录/修订的 prior_observation_ids，只复用文字引用，不附旧图。`visual-show` 查询 observation_id 及材料有效性；显式 `visual-frame` 按记录的 image_refs.revisit 参数取当时冻结的原像素/裁剪，须实际查看，失效材料或改动像素会拒绝回看。
+
+此入口不能清除已进入主聊天的图片，也未测得模型请求内图片的重放次数。完整参数、局部缺证和指标边界见[任务操作](tasks.md#局部视觉短会话2026-11-09)。
 
 ## 0.10.0rc1 新增操作
 
@@ -90,6 +115,8 @@ AI 字幕和 ASR 在未校对时默认用本地 OCR 比对当前返回页；已�
 复听默认不注入视频标题：实测标题会压过短语音并反复混入结果。需要时由宿主显式提供少量已核实的 context/terms。0.10.0rc2 起，新 Whisper 转写也不再自动注入标题。中文标题导致英文讲解漏句的同音频对照已复现；显式 context 仍可使用，分段策略保持。旧缓存和校对保留：尚无无提示轨时默认复用旧轨；新的默认解码另存无提示轨。用 context 空串显式选新轨，或显式传原标题/分 P 标题重开旧轨。
 
 校对稿和修改历史在 `data/cache/<session>/reviews/<snapshot>.json`。默认正文不重复携带这些证据，原始 manifest 仍保留。0.5 以前的 ASR 记录因解码版本变化可能需重新识别；原始记录仍保留。
+
+2026-11-12 局部日语小试后，`relisten.quality.flags` 汇总子段已有识别警告，并返回 `suspect_segments`、`suspect_ranges` 供定位补证；单个低置信词不因此升级为整段严重可疑。无警告仍是 `unverified_candidate`，不是核实通过。新增摘要由新进程验证，现有 MCP 下次重载生效。54秒样本的更正、耗时和局限见[小试记录](../validation/japanese-proofreading-20261112/README.md)。
 
 ## 返读来源一致与按需 OCR
 
@@ -172,13 +199,13 @@ Python 包和已验证版本在 `requirements-runtime-windows.txt`：包含 MCP 
 
 ## MCP
 
-CLI 与两个 MCP 在进程入口显式将标准输入、输出和错误流设为 UTF-8，复用同一个配置函数。不要依赖 `PYTHONIOENCODING`：当前 `-I` 启动会忽略 `PYTHON*` 环境变量。修复覆盖转写日志中的中文和连接号，避免宿主按 UTF-8 读取 GBK 后关闭日志管道。已运行的旧 MCP 需重连才能加载；不改变 Windows 全局编码。见 [UTF-8 修复验收](../validation/utf8-20261027/report.txt)。
+CLI 与两个 MCP 在进程入口显式将标准输入、输出和错误流设为 UTF-8，复用同一个配置函数。不要依赖 `PYTHONIOENCODING`：当前 `-I` 启动会忽略 `PYTHON*` 环境变量。修复覆盖转写日志中的中文和连接号，避免宿主按 UTF-8 读取 GBK 后关闭日志管道。已运行的旧 MCP 需重连才能加载；不改变 Windows 全局编码。见 UTF-8 修复验收（本地证据：`validation/utf8-20261027/report.txt`）。
 
 `mcp-config.json` 含当前安装路径的启动配置，交给其他宿主接入即可。本地默认 21 工具（已发布资产仍 20）：`video_job`、`video_search`、`video_discover`、`video_uploader_videos`、`video_preview`、`video_preview_batch`、`video_open`、`video_read`、`video_transcript`、`video_review`、`video_relisten`、`bilibili_login`、`video_continue`、`video_frame`、`video_sound`、`video_export`、`video_youtube_status`、`video_comments`、`video_danmaku`、`video_tasks`、`video_content`。目录、词法候选、storyboard 与历史笔记回查见[内容参考](content-index.md)。通用任务见[任务参考](tasks.md)。评论、楼中楼和弹幕分页见[材料参考](material-reference.md)。更新工具列表后，需要重启已连接的 MCP 进程。
 
-## Codex / Claude Code 薄插件 0.5.5
+## Codex / Claude Code 薄插件 0.5.9
 
-共享核心版本为 0.10.0rc6，本地生成适配器版本为 0.5.6（已发布资产仍为 0.5.5）。插件仅含清单、双 MCP 启动配置、两个分工明确的 Skill 和短说明，每端 5 文件。源码、`.venv`、Qwen 环境、模型、凭据和缓存仍在安装目录，不复制进插件。共用磁盘数据，不是共用单个内存进程；Qwen 仍错峰使用。
+共享核心版本为 0.10.0rc6，本地生成适配器版本为 0.5.9（已发布资产仍为 0.5.5）。插件仅含清单、双 MCP 启动配置、两个分工明确的 Skill 和短说明，每端 5 文件。源码、`.venv`、Qwen 环境、模型、凭据和缓存仍在安装目录，不复制进插件。共用磁盘数据，不是共用单个内存进程；Qwen 仍错峰使用。
 
 包名保留 `video-reader@video-reader-local`，包含 `video-reader` / `scroll-agent` 两个独立 MCP。两个 Skill 分别为 `$video-reader:video-read` 与 `$video-reader:scroll-agent`；自然语言也可自动路由。生成成功不表示某个宿主已经安装或启用；以宿主查询结果为准。更新后重新连接 MCP 才加载新的工具表，日推脚本不依赖这个会话。
 
@@ -248,7 +275,7 @@ Gemini 仅保留为可选入口。需要使用时，用户显式将本组件 `co
 
 ## 阅读流程说明
 
-身份：当前 0.10.0rc6 工作区 / 本地薄插件 0.5.6 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
+身份：当前 0.10.0rc6 工作区 / 本地薄插件 0.5.9 的操作参考。2026-10-29 已确认及时回答、关键疑点深入的体验，见 [决定](decisions.md)。下文说明现有工具机制；源码 Skill/MCP 与生成薄适配器已同步及时回答的行为；全片逐段校对不再是每次回答的前置条件。默认新时序 OCR 关闭，文字阅读只复用已有核验；temporal=true、verify=true 或 evidence 视图按需核查。不要把工具的校对保存能力等同于 Reader 会独立产出语义校对稿。
 
 使用入口见 [README](../README.md)，现有操作步骤见 [阅读 Skill](../skill/SKILL.md)；历史计数和测试范围回到对应验收。
 

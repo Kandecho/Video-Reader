@@ -4,6 +4,7 @@ import time
 from filelock import FileLock, Timeout
 from reading_tasks.consume import Consumer
 from reading_tasks.control import Controls, ControlWait
+from video_reader.acquisition_budget import cooldown_details
 from video_reader.common import ReaderError, digest, error_details
 from video_reader.resources import sample
 
@@ -139,6 +140,13 @@ class Background:
         except ControlWait as error:
             return self._record({'status':'waiting','reason':error.reason,'channel':channel,'messages_sent':0},channel,ticked=ticked,synced=synced)
         except (ReaderError,OSError,ValueError) as error:
+            network_wait = cooldown_details(error)
+            if network_wait:
+                return self._record({'status':'waiting','reason':'platform_request_cooldown',
+                    'retry_at':network_wait['retry_at'],
+                    'retry_after_seconds':max(0,network_wait['retry_at']-self.clock()),
+                    'network_wait':network_wait,'error':error_details(error),
+                    'channel':channel,'messages_sent':0},channel,ticked=ticked,synced=synced)
             return self._record({'status':'failed','error':error_details(error),'channel':channel,'messages_sent':0},channel,ticked=ticked,synced=synced)
 
     @staticmethod
@@ -165,6 +173,12 @@ class Background:
                     except ReaderError:
                         self.control.mark(slot['token'],'abandoned')
                         return {'status':'waiting','reason':'task_changed_or_not_pending','run_id':run_id,'messages_sent':0}
+                    network_wait = cooldown_details(state.get('error')) if state['status']=='waiting' else None
+                    if network_wait and network_wait['retry_at']>self.clock():
+                        return {'status':'waiting','reason':'platform_request_cooldown',
+                            'retry_at':network_wait['retry_at'],
+                            'retry_after_seconds':network_wait['retry_at']-self.clock(),
+                            'network_wait':network_wait,'run':state,'messages_sent':0}
                     if state['status']=='failed':
                         if self._transient_host_failure(state) and slot['host_retries']<policy['max_host_retries']:
                             finished=(state.get('job') or {}).get('finished_at')

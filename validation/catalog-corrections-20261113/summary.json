@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "stats": {
+    "videos": 38,
+    "tasks": 42,
+    "results": 69,
+    "artifacts": 81,
+    "task_states": {
+      "done": 40,
+      "paused": 1,
+      "cancelled": 1
+    },
+    "missing_artifacts": 0,
+    "changed_artifacts": 5,
+    "excluded_without_results": 0
+  },
+  "all_68_previous_results_preserved": true,
+  "vcp_confirmed_question_and_answer_registered": true,
+  "task_states_unchanged": true,
+  "unnecessary_private_message_fields_omitted": true,
+  "remaining_target_mismatches": 10
+}

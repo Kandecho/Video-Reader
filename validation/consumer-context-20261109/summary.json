@@ -1,0 +1,65 @@
+{
+  "date": "2026-11-09",
+  "unit_tests": {
+    "passed": 93,
+    "elapsed_seconds": 16.507,
+    "new_context_tests": 14
+  },
+  "mcp_reloaded": true,
+  "context_contract_version": 2,
+  "live_video": {
+    "source": "https://www.bilibili.com/video/BV1Rwsd61Epo?p=1",
+    "review_revision": 1,
+    "status": "completed",
+    "metrics": {
+      "scope": "local_host_attempts_not_model_request_trace",
+      "attempt_count": 3,
+      "returned_attempts": 3,
+      "unmeasured_attempts": 0,
+      "failed_attempts": 0,
+      "unfinished_attempts": 0,
+      "accepted_response_count": 3,
+      "repeated_packet_attempts": 0,
+      "host_elapsed_seconds": 683.1560000000754,
+      "host_elapsed_complete": true,
+      "preparation_elapsed_seconds": 0.21899999992456287,
+      "run_elapsed_seconds": 683.9273025989532,
+      "first_accepted_packet_seconds": 268.76348090171814,
+      "first_usable_answer_seconds": null,
+      "prompt_bytes": 127902,
+      "image_attachments": 20,
+      "unique_image_sha256": 20,
+      "image_attachment_bytes": 1091168,
+      "reported_usage": {
+        "input_tokens": 121493,
+        "cached_input_tokens": 0,
+        "output_tokens": 33384
+      },
+      "usage_complete": true,
+      "model_request_count": null,
+      "model_context_image_occurrences": null
+    },
+    "signature_preserved": true,
+    "semantic_review": "passed",
+    "stage_limitations_in_final": false
+  },
+  "supplement_replay": {
+    "original_segment_count": 121,
+    "supplement_segment_count": 4,
+    "supplement_frame_count": 2,
+    "ranges": [
+      [
+        471.76,
+        483.68
+      ]
+    ],
+    "prior_evidence_count": 1,
+    "has_earlier_notes": false,
+    "model_called": false,
+    "original_text_characters": 2319,
+    "local_text_characters": 65
+  },
+  "original_queue_state": "pending",
+  "strict_performance_comparison": false,
+  "published": false
+}

@@ -2,7 +2,13 @@
 
 身份：Scroll 本机日试用的规则、依赖和维护入口；末节是注明日期的运行快照，实时状态从 status / 日记录查询。
 
-## 已启用的规则
+## 当前暂停（2026-11-11）
+
+用户要求暂停每日推荐，后续重心先放在 Reader 能力与 Inbox 队列。已将 `agent.daily.enabled=false`，并禁用本机 `ScrollAgent-HomepageFirst-RECIPIENT_UID` Windows 任务；核验状态为 `Disabled` / `Enabled=false`。本次没有触发日推、发送消息，也没有改变 Inbox 收件或队列任务。暂停证据保存在本地 `data/daily-pause-20261111/verified-state.json`。
+
+原定北京时间 20:00、选片规则与历史记录保留；恢复需要用户另行要求。以下为暂停前的日试用规则及依赖。
+
+## 保留的日试用规则
 
 - 每天北京时间 **20:00**，首次为 **2026-10-23 20:00**。
 - 来源是组件登录小号的首页推荐接口；按平台返回顺序，取首个有效普通视频，排除广告项和非视频项。不是主号推荐流，也不保证与手机或浏览器某次刷新逐条相同。
@@ -55,7 +61,7 @@
 - 运行日志：`data/agent/task/YYYY-MM-DD.log` 和 `last.json`；每轮完整记录仍在 `data/agent/rounds/<账号域>/<轮次>/`。
 - 暂停：将 `agent.daily.enabled=false`，并可禁用同名 Windows 任务。不会影响通用 Reader。
 
-本机仅 `agent.daily.enabled=true`。普通推荐投递 `agent.delivery.enabled` 和可选区间唤醒 `agent.wake.enabled` 仍为 false；日推授权不泛化成任意推荐自动发送。
+本机 `agent.daily.enabled=false`，同名 Windows 任务也已禁用（2026-11-11）。普通推荐投递 `agent.delivery.enabled` 和可选区间唤醒 `agent.wake.enabled` 仍为 false；日推授权不泛化成任意推荐自动发送。
 
 反馈直接在当前会话说，例如“昨天那条太长”“今天这个不错”。Agent 从日记录定位对应视频，把你的实际意见记为 feedback；不会把自己的评价或未回复当作你的兴趣。没有私信常驻监听。
 
@@ -69,7 +75,7 @@
 
 本次仅只读核对既有任务状态与 SQLite 日运行记录，未触发运行或发送。10 月 24–28 日均为 finished，投递状态为 accepted_not_receipt_verified、receipt_verified=false。10 月 28 日任务日志在 20:00:02 开始，last.json 记录 20:02:21 结束、退出码 0。
 
-这些记录支持业务运行完成、平台已接受发送；尚不支持用户实际收件或长期推荐收益。10 月 23 日人工补发的收件确认仍单独保留。脱敏状态证据见 [日记录快照](../validation/docs-20261028/daily-status.json)。
+这些记录支持业务运行完成、平台已接受发送；尚不支持用户实际收件或长期推荐收益。10 月 23 日人工补发的收件确认仍单独保留。脱敏状态证据见 日记录快照（本地证据：`validation/docs-20261028/daily-status.json`）。
 
 ## 历史运行证据（2026-10-23）
 

@@ -149,6 +149,44 @@ class AcquisitionError(ReaderError):
         self.code, self.details = code, details or {}
 
 
+def network_protection(error, profile, since=None):
+    """Restore typed protection after a downloader process returns bounded stderr."""
+    from .acquisition_budget import Budget, cooldown_details
+    direct = cooldown_details(error)
+    if direct:
+        return {'code': 'platform_request_cooldown', 'details': direct}
+    spec = profile.get('_network_budget')
+    if not spec:
+        return None
+    budget = Budget(spec)
+    blocked = budget.blocked()
+    if blocked:
+        return blocked
+    if 'platform_request_cooldown' in str(error):
+        previous = budget.blocked_attempt(since) if since is not None else None
+        if previous:
+            return previous
+        # A legacy worker only reports the code. Use currently active shared
+        # protection; an arbitrary external error cannot fabricate a deadline.
+        waits = budget.status()['protection']['active_cooldowns']
+        if waits:
+            return {'code': 'platform_request_cooldown', 'details': max(waits, key=lambda wait: wait['retry_at'])}
+    return None
+
+
+def network_run(command, profile, *, timeout):
+    import time
+    started = time.time()
+    try:
+        return run(command, timeout=timeout)
+    except ReaderError as error:
+        protection = network_protection(error, profile, started)
+        if protection and protection['code'] == 'platform_request_cooldown':
+            raise AcquisitionError(str(error), details={'stage': 'downloading_media',
+                'network_guard': protection['details']}) from error
+        raise
+
+
 def metadata_info(command, profile):
     from .jobs import report
     import time
@@ -157,6 +195,7 @@ def metadata_info(command, profile):
         report('extracting_source_metadata' if not attempt else 'retrying_source_metadata',
                progress={'attempt': attempt+1, 'max_attempts': 2})
         began = time.monotonic()
+        wall_began = time.time()
         try:
             value = json.loads(run(command, timeout=150))
             attempts.append({'attempt': attempt+1, 'status': 'success', 'seconds': round(time.monotonic()-began, 3)})
@@ -165,23 +204,20 @@ def metadata_info(command, profile):
             message = str(error)
             transient = ('Unable to download webpage' in message and any(value in message.lower()
                 for value in ('timed out', 'timeout', 'remote end closed', 'connection reset', 'connection aborted')))
-            restricted = any(value in message.lower() for value in ('platform_paused', 'budget_exhausted',
+            restricted = any(value in message.lower() for value in ('platform_paused', 'budget_exhausted', 'platform_request_cooldown',
                 'http error 401', 'http error 403', 'http error 412', 'http error 429', 'rate limit', 'login required'))
             attempts.append({'attempt': attempt+1, 'status': 'failed', 'seconds': round(time.monotonic()-began, 3),
                              'type': type(error).__name__, 'message': message, 'transient_webpage_error': transient})
-            spec = profile.get('_network_budget')
-            blocked = None
-            if spec:
-                state_path = Path(spec['directory']) / 'network.json'
-                state = read_json(state_path) if state_path.is_file() else {}
-                if state.get('paused'):
-                    blocked = 'platform_paused'
-                elif state.get('count', 0) >= spec['options']['daily_requests']:
-                    blocked = 'platform_daily_budget_exhausted'
+            blocked, network_guard = None, None
+            protection = network_protection(error, profile, wall_began)
+            if protection:
+                blocked = protection['code']
+                network_guard = protection['details']
             if not attempt and transient and not restricted and not blocked:
                 continue
             raise AcquisitionError(message, details={'stage': 'source_metadata', 'attempts': attempts,
-                'retry_count': attempt, 'recovery_blocked_by': blocked, 'transient_webpage_error': transient}) from error
+                'retry_count': attempt, 'recovery_blocked_by': blocked, 'transient_webpage_error': transient,
+                **({'network_guard': network_guard} if network_guard else {})}) from error
 
 
 def acquire(source, directory, profile):
@@ -234,9 +270,9 @@ def acquire(source, directory, profile):
     height = int(profile.get("height", 720))
     from .jobs import report
     report('downloading_media')
-    run([*base, "--load-info-json", str(info_path), "-f", f"bv*[height<={height}]+ba/b[height<={height}]/b",
+    network_run([*base, "--load-info-json", str(info_path), "-f", f"bv*[height<={height}]+ba/b[height<={height}]/b",
          "--merge-output-format", "mp4", "--no-write-subs", "--no-write-auto-subs", "--no-write-info-json",
-         "--print-to-file", "after_move:%(filepath)j", str(record).replace("%", "%%")], timeout=1800)
+         "--print-to-file", "after_move:%(filepath)j", str(record).replace("%", "%%")], profile, timeout=1800)
     lines = record.read_text(encoding="utf-8").splitlines()
     if len(lines) != 1:
         raise ReaderError("Downloader did not return exactly one media file")
@@ -262,19 +298,25 @@ def acquire(source, directory, profile):
                 track = caption['track']
                 subtitle_status = "ready"
         except (ReaderError, KeyError, ValueError) as exc:
+            from .acquisition_budget import cooldown_details
+            if cooldown_details(exc):
+                raise
             warnings.append(f"Bilibili subtitles unavailable: {type(exc).__name__}")
     if not subtitle:
         track = choose_caption(info, profile.get("subtitle_language", "auto"))
         if track:
             try:
-                run([*base, "--load-info-json", str(info_path), "--skip-download", "--no-write-info-json",
+                network_run([*base, "--load-info-json", str(info_path), "--skip-download", "--no-write-info-json",
                      "--write-subs" if track["kind"] == "manual" else "--write-auto-subs",
-                     "--sub-langs", "-all,^" + re.escape(track["key"]) + "$", "--sub-format", "vtt/best", "--convert-subs", "vtt"], timeout=150)
+                     "--sub-langs", "-all,^" + re.escape(track["key"]) + "$", "--sub-format", "vtt/best", "--convert-subs", "vtt"], profile, timeout=150)
                 path = directory / f"media.{track['key']}.vtt"
                 if not path.is_file():
                     raise ReaderError("Selected caption file was not produced")
                 subtitle = str(path)
             except ReaderError as exc:
+                from .acquisition_budget import cooldown_details
+                if cooldown_details(exc):
+                    raise
                 warnings.append(str(exc))
                 track = None
     return {"media_path": str(media), "subtitle_path": subtitle, "caption_track": track,

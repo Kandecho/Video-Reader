@@ -51,8 +51,15 @@ class TriageTests(AgentFixture):
     def test_evaluative_comment_does_not_become_an_execution_request(self):
         self.queue.update(self.item['id'],task='这个想法有意思，纯雨声可能更好')
         self.triage.prepare(self.item['id'])
-        result = self.triage.submit(self.item['id'],self.payload(content_type='creative_work',intent={'kind':'comment','reason':'这是评价，不是让组件执行'}))
+        def refresh_after_commit(queue):
+            self.assertIsNone(queue.show(self.item['id'], include_material=False)['task_description'])
+            return {'status': 'ready'}
+        with patch('reading_tasks.catalog.refresh', side_effect=refresh_after_commit) as refreshed:
+            result = self.triage.submit(self.item['id'],self.payload(content_type='creative_work',intent={'kind':'comment','reason':'这是评价，不是让组件执行'}))
         self.assertEqual(result['status'],'suggested')
+        self.assertFalse(result['stale'])
+        self.assertEqual(result['catalog_refresh']['status'], 'ready')
+        refreshed.assert_called_once_with(self.queue)
         self.assertIsNone(result['assessment']['intent']['request'])
         self.assertEqual(result['assessment']['intent']['comment'],'这个想法有意思，纯雨声可能更好')
 

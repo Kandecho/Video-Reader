@@ -734,28 +734,38 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>Video Reader：当前开发计划</h1><p class="am-sub">2026-11-06 · 后台试跑已启用 · 当前待办只列未完成内容</p><div class="am-intro am-md"><div class="am-md"><p>后台已按你确认的时段与上限启用。下一步关注真实视频运行与推荐收益；完成的 6A/6B 实施证据移至<a href="../validation/stage6-background-20261106/report-source.md">阶段 6 验证</a>，阶段 1–5 见<a href="roadmap-through-stage5-20261106.md">历史快照</a>。</p>
+<header class="am-head"><h1>Video Reader：当前开发计划</h1><p class="am-sub">2026-11-13 · 本地总目录已建，Reader与Inbox继续优先</p><div class="am-intro am-md"><div class="am-md"><p>2026-11-11 用户要求暂停每日推荐，先把私信积压入队处理并整理目录，后续重心为 <strong>Reader 能力与 Inbox 队列</strong>。首页首条日推的配置与 Windows 任务均已停用，规则和历史保留。推荐质量试验暂缓，重新启用需用户再次要求。</p>
+<p>11月12日用户要求区分正常积压与异常循环。已取消默认120次日硬截断，改为请求重复模式/连续瞬态故障的有期限退避。保留统计、节流和平台暂停。重载MCP后已实际接续，原下一批9项中8项完成、1项由用户确认平台下架后取消。新增两条分享后，合并目录25条中23条整理完成，日语整片仍暂缓。</p>
+<p>日语录播已获用户授权作54秒局部校对小试。14张独立字幕参考支持6段7处最小字词更正，保留3项疑点。工具耗时、缓存复用与一次短窗漏句分别记录；未核听音声，不估计通用准确率或整体提速。短窗质量摘要已补齐子段警告与可疑范围，15项相关检查通过。<a href="../validation/japanese-proofreading-20261112/README.md">小试记录</a>。</p>
+<p>此前已增加显式按块消费、宿主尝试观测及局部视觉短会话。局部问题可按目录选块，或让独立宿主取少量源图并只返回文字证据。完整笔记仍默认全量。见<a href="../validation/selected-reading-20261109/README.md">按块消费</a>与<a href="../validation/visual-short-session-20261109/README.md">视觉短会话</a>。整体提速与事实质量收益继续对照。</p>
+<p>Inbox内容已按用户确认的留存结果改为“简述索引、轻量记录、深度提取”。用途另记深入学习、核查、试用、翻译、案例收录与Reader试验。读取深度和交付格式分别判断；HTML为默认，纯文字足够时可选Markdown。正片、简介、评论、弹幕共同参与留存判断。<a href="../docs/decisions.md#2026-11-12%E5%86%85%E5%AE%B9%E6%8C%89%E7%95%99%E5%AD%98%E7%BB%93%E6%9E%9C%E5%88%86%E7%B1%BB%E7%94%A8%E9%80%94%E8%AF%BB%E5%8F%96%E6%B7%B1%E5%BA%A6%E4%B8%8E%E6%A0%BC%E5%BC%8F%E5%88%86%E5%88%AB%E5%88%A4%E6%96%AD">有效约定</a>。</p>
+<p>11月13日本地总目录已建，入口为 <code>data/tasks/catalog/index.html</code>：从任务库回填38个来源、42项任务、68次成果，保留同源多任务和各次结果。11月11–12日私信25项是总目录的任务ID筛选投影。</p>
+<p>0个登记文件缺失，5次旧结果对应文件已修改，最新成果全部哈希匹配；局部成果、工程验证、暂停及取消均如实保留。新成果登记和相关任务更新会自动刷新；旧MCP连接重载后可使用目录动作。<a href="../docs/decisions.md#2026-11-13%E5%BB%BA%E7%AB%8B%E6%9C%AC%E5%9C%B0%E6%80%BB%E7%9B%AE%E5%BD%95%E6%89%B9%E6%AC%A1%E5%8F%AA%E4%BD%9C%E7%AD%9B%E9%80%89%E6%8A%95%E5%BD%B1">用户决定</a>。</p>
+<p>同日按用户要求逐项重核原40个已完成任务，实际补交12份HTML与9条直接答复，共17项新成果。随后补交MotionHarness启动诊断、实际动效试用及Grokbot互动比较，当前共90次成果。视频是材料，三档是留存组织，实际工作及最终交付按<a href="../docs/workflow-contract.md">契约</a>分别验收。</p>
+<p>Summer仍缺作者配方，保留成果并暂停待继续。MotionHarness已按用户明确的动效工具用途实做7.2秒试片，标记修改、版本恢复、MP4导出通过，并接入本地技能；原任务done。首次取帧／导出曾失败后重试成功，Pro及音频仍未测。不再用通用笔记或格式标注冒充完成。重核记录（本地证据：<code>validation/task-reconciliation-20261113/README.md</code>）、启动诊断（本地证据：<code>validation/motionharness-startup-20261113/README.md</code>）、实际试用（本地证据：<code>validation/motionharness-trial-20261113/README.md</code>）。</p>
+<p>后台收件自 11 月 7 日按用户要求停用，队列保留原时段与上限。6A/6B 实施证据见<a href="../validation/stage6-background-20261106/report-source.md">阶段 6 验证</a>，阶段 1–5 见<a href="roadmap-through-stage5-20261106.md">历史快照</a>。</p>
+<p>Grokbot原要求曾被误作普通评论，仅完成运营导读；已按用户追问纠正并补实际互动对照。复用历史“哪些是真人”任务，审读本期39条顶层及7个完整回复线程；保留双方正反例，不作模型排行或频率推断。补答（本地证据：<code>data/grokbot-followup-20261113/answer-final.html</code>）。</p>
 </div></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 当前运行方式</a><a href="#panel-B">B · 执行约束</a><a href="#panel-C">C · 验证与基线</a><a href="#panel-D">D · 仍需处理的具体问题</a><a href="#panel-E">E · 冻结架构基线修复</a><a href="#panel-F">F · 下一阶段与验收</a><a href="#panel-G">G · 查阅与接续</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>当前运行方式</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>运行需电脑开机、当前 Windows 用户保持登录。时段为北京时间 09:00–23:00。入队检测每 60 分钟，队列执行/恢复独立每 5 分钟。</p>
+<div class="am-panel-body"><div class="am-md"><p>运行需电脑开机、当前 Windows 用户保持登录。时段为北京时间 09:00–23:00。后台入队检测已停用，60 分钟参数保留；队列执行/恢复独立每 5 分钟。手动给链接读取或明确要求单次同步仍可用。</p>
 <p>真正读片才调用现有模型。每天最多启动 3 条，同时 1 条。额度不足暂停；忙时保留待办，回来查进度和结果。</p>
 </div>
-<figure class="am-diagram am-flow"><svg viewBox="0 0 1420 134" width="1420" height="134" role="img" aria-label="流程图：转发视频、脚本收件、待办队列、条件允许?、宿主阅读、等待、笔记与进度、真实反馈" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M94,67 L122.1,67 Q150.1,67 178.2,67 L206.3,67" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="118" y="58" width="64.3" height="18" rx="3"/><text x="150.1" y="67" text-anchor="middle" dominant-baseline="central">每 60 分钟</text></g></g><g data-step="1"><path class="am-edge" d="M286.3,67 L297.8,67 Q309.3,67 320.8,67 L332.3,67" marker-end="url(#am1-arrow)"/></g><g data-step="2"><path class="am-edge" d="M412.3,67 L444.5,67 Q476.7,67 508.9,67 L541.1,67" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="436.3" y="58" width="80.8" height="18" rx="3"/><text x="476.7" y="67" text-anchor="middle" dominant-baseline="central">独立每 5 分钟</text></g></g><g data-step="3"><path class="am-edge" d="M651.7,75.7 L720.9,89.1 Q790.1,102.5 849.1,102.5 L908.1,102.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="696" y="93.5" width="188" height="18" rx="3"/><text x="790.1" y="102.5" text-anchor="middle" dominant-baseline="central">明确要求 / 资源 / 时段 / 本地上限</text></g></g><g data-step="4"><path class="am-edge am-edge--dashed" d="M651.7,58.3 L720.9,44.9 Q790.1,31.5 853.1,31.5 L916.1,31.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="762.1" y="22.5" width="56" height="18" rx="3"/><text x="790.1" y="31.5" text-anchor="middle" dominant-baseline="central">条件不足</text></g></g><g data-step="5"><path class="am-edge" d="M988.1,102.5 L999.6,102.5 Q1011.1,102.5 1022.6,102.5 L1034.1,102.5" marker-end="url(#am1-arrow)"/></g><g data-step="6"><path class="am-edge" d="M1127.1,102.5 L1138.6,102.5 Q1150.1,102.5 1161.6,102.5 L1173.1,102.5" marker-end="url(#am1-arrow)"/></g><g data-step="7"><path class="am-edge" d="M1253.1,102.5 L1264.6,102.5 Q1276.1,102.5 1287.6,102.5 L1299.1,102.5" marker-end="url(#am1-arrow)"/></g></g><g><g class="am-node am-node--rect" data-key="转发视频" data-step="0"><rect class="am-node-shape" x="14" y="49.5" width="80" height="35" rx="3"/><text x="54" y="67" text-anchor="middle" dominant-baseline="central">转发视频</text></g><g class="am-node am-node--rect" data-key="脚本收件" data-step="0"><rect class="am-node-shape" x="206.3" y="49.5" width="80" height="35" rx="3"/><text x="246.3" y="67" text-anchor="middle" dominant-baseline="central">脚本收件</text></g><g class="am-node am-node--rect" data-key="待办队列" data-step="1"><rect class="am-node-shape" x="332.3" y="49.5" width="80" height="35" rx="3"/><text x="372.3" y="67" text-anchor="middle" dominant-baseline="central">待办队列</text></g><g class="am-node am-node--diamond" data-key="条件允许?" data-step="2"><polygon class="am-node-shape" points="606.6,39 672,67 606.6,95 541.1,67"/><text x="606.6" y="67" text-anchor="middle" dominant-baseline="central">条件允许?</text></g><g class="am-node am-node--rect" data-key="宿主阅读" data-step="3"><rect class="am-node-shape" x="908.1" y="85" width="80" height="35" rx="3"/><text x="948.1" y="102.5" text-anchor="middle" dominant-baseline="central">宿主阅读</text></g><g class="am-node am-node--rect" data-key="等待" data-step="4"><rect class="am-node-shape" x="916.1" y="14" width="64" height="35" rx="3"/><text x="948.1" y="31.5" text-anchor="middle" dominant-baseline="central">等待</text></g><g class="am-node am-node--rect" data-key="笔记与进度" data-step="5"><rect class="am-node-shape" x="1034.1" y="85" width="93" height="35" rx="3"/><text x="1080.6" y="102.5" text-anchor="middle" dominant-baseline="central">笔记与进度</text></g><g class="am-node am-node--rect" data-key="真实反馈" data-step="6"><rect class="am-node-shape" x="1173.1" y="85" width="80" height="35" rx="3"/><text x="1213.1" y="102.5" text-anchor="middle" dominant-baseline="central">真实反馈</text></g><g class="am-node am-node--rect" data-key="推荐收益对照" data-step="7"><rect class="am-node-shape" x="1299.1" y="85" width="106" height="35" rx="3"/><text x="1352.1" y="102.5" text-anchor="middle" dominant-baseline="central">推荐收益对照</text></g></g></svg></figure>
+<figure class="am-diagram am-flow"><svg viewBox="0 0 1615 134" width="1615" height="134" role="img" aria-label="流程图：转发视频、脚本收件、待办队列、条件允许?、宿主阅读、等待、笔记与进度、内容目录与后续追问" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M94,67 L146.3,67 Q198.7,67 251,67 L303.3,67" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="118" y="58" width="161.3" height="18" rx="3"/><text x="198.7" y="67" text-anchor="middle" dominant-baseline="central">后台已停用 / 可显式单次同步</text></g></g><g data-step="1"><path class="am-edge" d="M383.3,67 L394.8,67 Q406.3,67 417.8,67 L429.3,67" marker-end="url(#am1-arrow)"/></g><g data-step="2"><path class="am-edge" d="M509.3,67 L541.6,67 Q573.8,67 606,67 L638.2,67" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="533.3" y="58" width="80.8" height="18" rx="3"/><text x="573.8" y="67" text-anchor="middle" dominant-baseline="central">独立每 5 分钟</text></g></g><g data-step="3"><path class="am-edge" d="M748.7,75.7 L817.9,89.1 Q887.1,102.5 946.1,102.5 L1005.1,102.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="793.1" y="93.5" width="188" height="18" rx="3"/><text x="887.1" y="102.5" text-anchor="middle" dominant-baseline="central">明确要求 / 资源 / 时段 / 本地上限</text></g></g><g data-step="4"><path class="am-edge am-edge--dashed" d="M748.7,58.3 L817.9,44.9 Q887.1,31.5 950.1,31.5 L1013.1,31.5" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="859.1" y="22.5" width="56" height="18" rx="3"/><text x="887.1" y="31.5" text-anchor="middle" dominant-baseline="central">条件不足</text></g></g><g data-step="5"><path class="am-edge" d="M1085.1,102.5 L1096.6,102.5 Q1108.1,102.5 1119.6,102.5 L1131.1,102.5" marker-end="url(#am1-arrow)"/></g><g data-step="6"><path class="am-edge" d="M1224.1,102.5 L1235.6,102.5 Q1247.1,102.5 1258.6,102.5 L1270.1,102.5" marker-end="url(#am1-arrow)"/></g><g data-step="7"><path class="am-edge" d="M1415.1,102.5 L1426.6,102.5 Q1438.1,102.5 1449.6,102.5 L1461.1,102.5" marker-end="url(#am1-arrow)"/></g></g><g><g class="am-node am-node--rect" data-key="转发视频" data-step="0"><rect class="am-node-shape" x="14" y="49.5" width="80" height="35" rx="3"/><text x="54" y="67" text-anchor="middle" dominant-baseline="central">转发视频</text></g><g class="am-node am-node--rect" data-key="脚本收件" data-step="0"><rect class="am-node-shape" x="303.3" y="49.5" width="80" height="35" rx="3"/><text x="343.3" y="67" text-anchor="middle" dominant-baseline="central">脚本收件</text></g><g class="am-node am-node--rect" data-key="待办队列" data-step="1"><rect class="am-node-shape" x="429.3" y="49.5" width="80" height="35" rx="3"/><text x="469.3" y="67" text-anchor="middle" dominant-baseline="central">待办队列</text></g><g class="am-node am-node--diamond" data-key="条件允许?" data-step="2"><polygon class="am-node-shape" points="703.6,39 769.1,67 703.6,95 638.2,67"/><text x="703.6" y="67" text-anchor="middle" dominant-baseline="central">条件允许?</text></g><g class="am-node am-node--rect" data-key="宿主阅读" data-step="3"><rect class="am-node-shape" x="1005.1" y="85" width="80" height="35" rx="3"/><text x="1045.1" y="102.5" text-anchor="middle" dominant-baseline="central">宿主阅读</text></g><g class="am-node am-node--rect" data-key="等待" data-step="4"><rect class="am-node-shape" x="1013.1" y="14" width="64" height="35" rx="3"/><text x="1045.1" y="31.5" text-anchor="middle" dominant-baseline="central">等待</text></g><g class="am-node am-node--rect" data-key="笔记与进度" data-step="5"><rect class="am-node-shape" x="1131.1" y="85" width="93" height="35" rx="3"/><text x="1177.6" y="102.5" text-anchor="middle" dominant-baseline="central">笔记与进度</text></g><g class="am-node am-node--rect" data-key="内容目录与后续追问" data-step="6"><rect class="am-node-shape" x="1270.1" y="85" width="145" height="35" rx="3"/><text x="1342.6" y="102.5" text-anchor="middle" dominant-baseline="central">内容目录与后续追问</text></g><g class="am-node am-node--rect" data-key="Reader 与队列改进" data-step="7"><rect class="am-node-shape" x="1461.1" y="85" width="139" height="35" rx="3"/><text x="1530.6" y="102.5" text-anchor="middle" dominant-baseline="central">Reader 与队列改进</text></g></g></svg></figure>
 <div class="am-md"><p>入队与队列已分开计时和调度，时段与间隔统一从配置生成。原三条任务已由当前会话补齐。后台代理继承遗漏已定位并修复，原模型真实读图与结构化返回通过。临时错误仍最多自动重试 2 次，不新增任务名额。实时情况查 background-status。<a href="../docs/background-consumption.md">控制方法</a>。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-B">
 <header class="am-panel-head"><span class="am-panel-id">B</span><h2>执行约束</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>复用 Reader、reading_tasks 与 Scroll；默认本地，不自动转云或换模型，不改既有 20:00 日推。原消息、附言、处理、观察、校对与完成分开记录。三条独立附言仅按本次明确确认关联，以后仍不自动配对。</p>
+<div class="am-panel-body"><div class="am-md"><p>复用 Reader、reading_tasks 与 Scroll；默认本地，不自动转云或换模型。原 20:00 日推已按 11 月 11 日要求暂停，后台收件仍停用。原消息、附言、处理、观察、校对与完成分开记录。独立附言按用户明确确认关联，不自动邻接配对。</p>
 <p>供应商余额未知，本地任务上限不能当成余额。脚本能查 CPU、内存与 Reader job，不能判断所有前台聊天；需要留余量用 hold/pause。外部核查不足时保存草稿并保持任务待办。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-C">
 <header class="am-panel-head"><span class="am-panel-id">C</span><h2>验证与基线</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>本地能力与工具范围见<a href="../docs/capabilities.md">能力说明</a>。阶段 6 的<a href="../validation/stage6-background-20261106/report-source.md">结论</a>和<a href="../validation/stage6-background-20261106/improvement-log-source.md">具体改进日志</a>分开保存。真实强杀恢复、重复触发和暂停晚包已有验证；连续运行与真实视频消费仍需观察。</p>
+<div class="am-panel-body"><div class="am-md"><p>本地能力与工具范围见<a href="../docs/capabilities.md">能力说明</a>。阶段 6 的<a href="../validation/stage6-background-20261106/report-source.md">结论</a>和具体改进日志（本地证据：<code>validation/stage6-background-20261106/improvement-log-source.md</code>）分开保存。真实强杀恢复、重复触发和暂停晚包已有验证；连续运行与真实视频消费仍需观察。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-D">
@@ -772,12 +782,32 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <td>代理继承已修、单次真实读图通过；后续新任务验证完整后台消费，不重跑已完成任务</td>
 </tr>
 <tr>
-<td>推荐收益证据不足</td>
-<td>现有 1 条正反馈、1 条探索偏好不足以评估推荐改善；按 6C 对照真实用途与阅读收益</td>
+<td>分享卡片与独立附言脱节</td>
+<td>11 月 11 日积压同步后 23 项 task 为空，后台列为 needs_request；独立附言保存在消息历史。当前由会话提供整理要求并询问关联。后续优化附言确认、处理意图及目录回查体验，保留不自动邻接配对边界</td>
 </tr>
 <tr>
-<td>ASR 整句遗漏与词级错误</td>
-<td>按疑点回原图、邻域与复听；不把处理完成当原文无遗漏</td>
+<td>历史成果登记与目录接续</td>
+<td>已登记成果的首次回填与自动刷新已完成。未登记的更早历史不凭缓存或done补成已读；后续发现实际产物时核对来源、覆盖及完成依据再补录，文件缺失或旧哈希变化继续保留待核</td>
+</tr>
+<tr>
+<td>批量获取的保护与等待可见性</td>
+<td>已取消默认日硬截断，正常积压按共享间隔持续；请求重复和瞬态失败触发有期限退避，原run等待并恢复，真实平台暂停仍保留。<a href="../docs/reader-reference.md#%E8%81%94%E7%BD%91%E4%BF%9D%E6%8A%A4%E4%B8%8E%E4%B8%B4%E6%97%B6%E9%80%80%E9%81%BF2026-11-12">规则与验证</a>。真实长期运行和误触发情况继续观察，不将参数当平台安全阈值</td>
+</tr>
+<tr>
+<td>长内容逐包宿主等待</td>
+<td>本次长课首包已接受，第二包独立宿主超时，后由当前会话接读完整已有字幕及必要图像并登记结果；保留原 run。比较宿主调用粒度与首次可用内容，不能把目录整理强制等同逐字校对，也不据单例作稳定提速结论</td>
+</tr>
+<tr>
+<td>推荐收益证据不足</td>
+<td>现有 1 条正反馈、1 条探索偏好不足以评估推荐改善；11 月 11 日起暂缓推荐试验，保留原证据</td>
+</tr>
+<tr>
+<td>ASR 整句遗漏、词级错误与慢段</td>
+<td>按疑点回原图、邻域与复听；不把处理完成当原文无遗漏。11 月 12 日 Matt 演讲样本中，本地全范围词级转写在4–6分钟段持续计算，短窗自动检测又输出威尔士语候选。保留原轨及错误候选后，本片临时指定英语的短窗粗转写已补齐并读完；未改全局配置或模型。此为操作样本，尚未认定全部根因或实现通用修复</td>
+</tr>
+<tr>
+<td>局部校对的准度与效率</td>
+<td>日语54秒小试已保存最小更正和原文，质量摘要补齐可疑时间范围。画面参考并非音声真值；短窗重转写实际漏句，不能自动覆盖原文。后续按真实疑点核听和扩样，不自动处理整片或新增校对模型</td>
 </tr>
 <tr>
 <td>模型冷启动和宿主等待</td>
@@ -839,16 +869,28 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </tr>
 </thead>
 <tbody><tr>
+<td>Inbox 队列与处理意图</td>
+<td>本批25项中23项内容整理完成、1项据用户下架信息取消、1项日语整片暂停。后续按明确要求接续；独立附言先确认，保存来源与未解决问题，不用归档代替完成</td>
+</tr>
+<tr>
+<td>本地总目录持续维护</td>
+<td>总目录及25项批次投影已建。后续每次登记新成果或变更任务时同步刷新，目录注记保留分类、用途、读取深度与格式；补录未登记历史须核对真实产物，不从缓存推定完整阅读</td>
+</tr>
+<tr>
+<td>Reader 能力与真实阅读收益</td>
+<td>继续围绕识别疑点、必要画面、按块消费、跨包证据及回答溯源优化；以真实积压任务核对准确性、首次可用内容与全任务耗时</td>
+</tr>
+<tr>
 <td>阶段 6 实际运行</td>
-<td>核对真实任务的进度、结果与等待原因；核论据/找原版未满足时明确待补查，不以视频笔记代替完成</td>
+<td>核对真实任务的进度、结果与等待原因；核论据/找原版未满足时明确待补查，不以视频笔记代替完成。后台收件保持停用</td>
 </tr>
 <tr>
 <td>6C 推荐与分流收益</td>
-<td>以明确反馈和实际阅读案例对照推荐理由与用途；区分用户偏好、单次要求和 Agent 观察，未回复不推成偏好</td>
+<td>每日推荐已暂停，推荐收益对照暂缓；初步分流继续服务 Inbox 任务处理。既有反馈和观察保留，未回复不推成偏好</td>
 </tr>
 </tbody></table></div>
-<p>6C 已核对现有反馈并修正推荐提示中的预设价值与单例泛化问题；尚无足够结果对照，暂不验收推荐质量提升。后台不增加自动偏好学习或新发送。新发现按所属问题穿插修正。</p>
-<p>2026-11-08 用户提出的后续方向已完成首轮<a href="../research/moondigest-context-20261108/report-source.md">源码对照与有限复现</a>。下列内容先登记，尚未启动实施，也不改变上述运行许可。</p>
+<p>6C 已核对现有反馈并修正推荐提示中的预设价值与单例泛化问题；尚无足够结果对照，暂不验收推荐质量提升。11 月 11 日后优先 Reader 与 Inbox 队列，不继续主动日推试验。后台不增加自动偏好学习或新发送。新发现按所属问题穿插修正；本轮方向调整不自动展开所有历史待办。</p>
+<p>2026-11-08 提出的后续方向已完成首轮<a href="../research/moondigest-context-20261108/report-source.md">源码对照与有限复现</a>。11 月 9 日用户授权按开发计划更新功能，首批状态如下；运行许可继续沿用。</p>
 <div class="am-table-wrap"><table>
 <thead>
 <tr>
@@ -858,18 +900,18 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </thead>
 <tbody><tr>
 <td>分层提速与全任务损耗</td>
-<td>参考 MoonDigest 的候选初筛、字幕阅读和按需取帧；复用现有轻预览与目录，比较按任务选块、包大小、宿主固定输入、参考全文、成文和失败重试；完整任务覆盖与准确性不能降级</td>
+<td>显式选块和尝试观测已完成。真实教程对照后又修复补证全文重发、跨包记录缺失及终稿拼接阶段局限；<a href="../validation/consumer-context-20261109/README.md">93 项检查与真实 MCP 验证</a>通过。同请求补证重放从 121 段缩至 4 段并只带相关记录。后续继续比较包大小、参考输入与全任务收益；单例且修订有差异，不作稳定提速或准确率归因</td>
 </tr>
 <tr>
 <td>视觉证据上下文生命周期</td>
-<td>组件新快照的重复图像交付已在本批修复，两帧只附带两次且保留完整元数据。独立宿主重试和主聊天历史重放仍分别看待；主聊天后续携带 N 次未知。请求级观测、视觉短会话和主上下文只用证据记录的收益继续作为后续验证方向</td>
+<td>局部视觉短会话已实现：独立宿主只附当前帧，主 MCP 返回文字证据及来源，旧观察只以文字接续；显式回看交付冻结原像素/裁剪。59 项相关检查和历史教程三轮真实 MCP 验证通过，常规结果 0 图像块、各轮各附 1 张新图，裁剪回看哈希一致。当前连接已重载。<a href="../validation/visual-short-session-20261109/README.md">本批记录</a>。主聊天旧图清除、请求内累计出现次数及长期收益仍未测得</td>
 </tr>
 <tr>
 <td>回答级溯源与按需补看</td>
 <td><a href="../research/zhenxun-comparison-20261108/report-source.md">帧寻视频及公开源码对照</a>：区分画面、语音、画面文字、外部资料和推断；引用绑定本次成功交付的证据、材料身份与修订，不把附近有材料当成宿主已看过或结论已证实。参考其浏览器小循环移除旧截图、向主模型只返回文字来源的分工，与视觉短会话一并验证，不照搬整套前端</td>
 </tr>
 </tbody></table></div>
-<p>上述顺序是调研建议。验收同时比较首次可用答案、全任务耗时、输入/缓存/输出、重试与事实质量；拿不到的宿主指标标未知，不将文件缓存或 <code>--ephemeral</code> 当作图片退出上下文。</p>
+<p>按块消费及局部视觉短会话已验收，整体收益尚未验收。后续推进回答级溯源，并对照首次可用答案、全任务耗时、输入/缓存/输出、重试与事实质量。当前记录本地尝试及 CLI 已报告用量。主聊天重放、模型请求内图像次数、准确的首次可用答案时间仍未知。不将文件缓存或 <code>--ephemeral</code> 当作图片退出上下文。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-G">
@@ -895,53 +937,78 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <div class="am-lightbox-canvas am-diagram"></div>
 </div>
 </div>
-<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-11-09 00:14</footer>
+<footer class="am-colophon">Generated by <a href="https://github.com/QingYunA/answer-me-with-html" target="_blank" rel="noopener">Answer me with HTML</a> 0.4.14 · 2026-11-16 18:35</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: Video Reader：当前开发计划
-subtitle: 2026-11-06 · 后台试跑已启用 · 当前待办只列未完成内容
+subtitle: 2026-11-13 · 本地总目录已建，Reader与Inbox继续优先
 template: doc
 theme: paper
 lang: zh
 ---
 
-后台已按你确认的时段与上限启用。下一步关注真实视频运行与推荐收益；完成的 6A/6B 实施证据移至[阶段 6 验证](../validation/stage6-background-20261106/report-source.md)，阶段 1–5 见[历史快照](roadmap-through-stage5-20261106.md)。
+2026-11-11 用户要求暂停每日推荐，先把私信积压入队处理并整理目录，后续重心为 **Reader 能力与 Inbox 队列**。首页首条日推的配置与 Windows 任务均已停用，规则和历史保留。推荐质量试验暂缓，重新启用需用户再次要求。
+
+11月12日用户要求区分正常积压与异常循环。已取消默认120次日硬截断，改为请求重复模式/连续瞬态故障的有期限退避。保留统计、节流和平台暂停。重载MCP后已实际接续，原下一批9项中8项完成、1项由用户确认平台下架后取消。新增两条分享后，合并目录25条中23条整理完成，日语整片仍暂缓。
+
+日语录播已获用户授权作54秒局部校对小试。14张独立字幕参考支持6段7处最小字词更正，保留3项疑点。工具耗时、缓存复用与一次短窗漏句分别记录；未核听音声，不估计通用准确率或整体提速。短窗质量摘要已补齐子段警告与可疑范围，15项相关检查通过。[小试记录](../validation/japanese-proofreading-20261112/README.md)。
+
+此前已增加显式按块消费、宿主尝试观测及局部视觉短会话。局部问题可按目录选块，或让独立宿主取少量源图并只返回文字证据。完整笔记仍默认全量。见[按块消费](../validation/selected-reading-20261109/README.md)与[视觉短会话](../validation/visual-short-session-20261109/README.md)。整体提速与事实质量收益继续对照。
+
+Inbox内容已按用户确认的留存结果改为“简述索引、轻量记录、深度提取”。用途另记深入学习、核查、试用、翻译、案例收录与Reader试验。读取深度和交付格式分别判断；HTML为默认，纯文字足够时可选Markdown。正片、简介、评论、弹幕共同参与留存判断。[有效约定](../docs/decisions.md#2026-11-12内容按留存结果分类用途读取深度与格式分别判断)。
+
+11月13日本地总目录已建，入口为 `data/tasks/catalog/index.html`：从任务库回填38个来源、42项任务、68次成果，保留同源多任务和各次结果。11月11–12日私信25项是总目录的任务ID筛选投影。
+
+0个登记文件缺失，5次旧结果对应文件已修改，最新成果全部哈希匹配；局部成果、工程验证、暂停及取消均如实保留。新成果登记和相关任务更新会自动刷新；旧MCP连接重载后可使用目录动作。[用户决定](../docs/decisions.md#2026-11-13建立本地总目录批次只作筛选投影)。
+
+同日按用户要求逐项重核原40个已完成任务，实际补交12份HTML与9条直接答复，共17项新成果。随后补交MotionHarness启动诊断、实际动效试用及Grokbot互动比较，当前共90次成果。视频是材料，三档是留存组织，实际工作及最终交付按[契约](../docs/workflow-contract.md)分别验收。
+
+Summer仍缺作者配方，保留成果并暂停待继续。MotionHarness已按用户明确的动效工具用途实做7.2秒试片，标记修改、版本恢复、MP4导出通过，并接入本地技能；原任务done。首次取帧／导出曾失败后重试成功，Pro及音频仍未测。不再用通用笔记或格式标注冒充完成。重核记录（本地证据：`validation/task-reconciliation-20261113/README.md`）、启动诊断（本地证据：`validation/motionharness-startup-20261113/README.md`）、实际试用（本地证据：`validation/motionharness-trial-20261113/README.md`）。
+
+后台收件自 11 月 7 日按用户要求停用，队列保留原时段与上限。6A/6B 实施证据见[阶段 6 验证](../validation/stage6-background-20261106/report-source.md)，阶段 1–5 见[历史快照](roadmap-through-stage5-20261106.md)。
+
+Grokbot原要求曾被误作普通评论，仅完成运营导读；已按用户追问纠正并补实际互动对照。复用历史“哪些是真人”任务，审读本期39条顶层及7个完整回复线程；保留双方正反例，不作模型排行或频率推断。补答（本地证据：`data/grokbot-followup-20261113/answer-final.html`）。
 
 ## A 当前运行方式
 
-运行需电脑开机、当前 Windows 用户保持登录。时段为北京时间 09:00–23:00。入队检测每 60 分钟，队列执行/恢复独立每 5 分钟。
+运行需电脑开机、当前 Windows 用户保持登录。时段为北京时间 09:00–23:00。后台入队检测已停用，60 分钟参数保留；队列执行/恢复独立每 5 分钟。手动给链接读取或明确要求单次同步仍可用。
 
 真正读片才调用现有模型。每天最多启动 3 条，同时 1 条。额度不足暂停；忙时保留待办，回来查进度和结果。
 
 ```flow LR
-转发视频 -&gt; 脚本收件: 每 60 分钟
+转发视频 -&gt; 脚本收件: 后台已停用 / 可显式单次同步
 脚本收件 -&gt; 待办队列
 待办队列 -&gt; {条件允许?}: 独立每 5 分钟
 {条件允许?} -&gt; 宿主阅读: 明确要求 / 资源 / 时段 / 本地上限
 {条件允许?} --&gt; 等待: 条件不足
 宿主阅读 -&gt; 笔记与进度
-笔记与进度 -&gt; 真实反馈
-真实反馈 -&gt; 推荐收益对照
+笔记与进度 -&gt; 内容目录与后续追问
+内容目录与后续追问 -&gt; Reader 与队列改进
 ```
 
 入队与队列已分开计时和调度，时段与间隔统一从配置生成。原三条任务已由当前会话补齐。后台代理继承遗漏已定位并修复，原模型真实读图与结构化返回通过。临时错误仍最多自动重试 2 次，不新增任务名额。实时情况查 background-status。[控制方法](../docs/background-consumption.md)。
 
 ## B 执行约束
 
-复用 Reader、reading_tasks 与 Scroll；默认本地，不自动转云或换模型，不改既有 20:00 日推。原消息、附言、处理、观察、校对与完成分开记录。三条独立附言仅按本次明确确认关联，以后仍不自动配对。
+复用 Reader、reading_tasks 与 Scroll；默认本地，不自动转云或换模型。原 20:00 日推已按 11 月 11 日要求暂停，后台收件仍停用。原消息、附言、处理、观察、校对与完成分开记录。独立附言按用户明确确认关联，不自动邻接配对。
 
 供应商余额未知，本地任务上限不能当成余额。脚本能查 CPU、内存与 Reader job，不能判断所有前台聊天；需要留余量用 hold/pause。外部核查不足时保存草稿并保持任务待办。
 
 ## C 验证与基线
 
-本地能力与工具范围见[能力说明](../docs/capabilities.md)。阶段 6 的[结论](../validation/stage6-background-20261106/report-source.md)和[具体改进日志](../validation/stage6-background-20261106/improvement-log-source.md)分开保存。真实强杀恢复、重复触发和暂停晚包已有验证；连续运行与真实视频消费仍需观察。
+本地能力与工具范围见[能力说明](../docs/capabilities.md)。阶段 6 的[结论](../validation/stage6-background-20261106/report-source.md)和具体改进日志（本地证据：`validation/stage6-background-20261106/improvement-log-source.md`）分开保存。真实强杀恢复、重复触发和暂停晚包已有验证；连续运行与真实视频消费仍需观察。
 
 ## D 仍需处理的具体问题
 
 | 问题 | 处理方式 |
 |---|---|
 | 后台完整消费的连续性 | 代理继承已修、单次真实读图通过；后续新任务验证完整后台消费，不重跑已完成任务 |
-| 推荐收益证据不足 | 现有 1 条正反馈、1 条探索偏好不足以评估推荐改善；按 6C 对照真实用途与阅读收益 |
-| ASR 整句遗漏与词级错误 | 按疑点回原图、邻域与复听；不把处理完成当原文无遗漏 |
+| 分享卡片与独立附言脱节 | 11 月 11 日积压同步后 23 项 task 为空，后台列为 needs_request；独立附言保存在消息历史。当前由会话提供整理要求并询问关联。后续优化附言确认、处理意图及目录回查体验，保留不自动邻接配对边界 |
+| 历史成果登记与目录接续 | 已登记成果的首次回填与自动刷新已完成。未登记的更早历史不凭缓存或done补成已读；后续发现实际产物时核对来源、覆盖及完成依据再补录，文件缺失或旧哈希变化继续保留待核 |
+| 批量获取的保护与等待可见性 | 已取消默认日硬截断，正常积压按共享间隔持续；请求重复和瞬态失败触发有期限退避，原run等待并恢复，真实平台暂停仍保留。[规则与验证](../docs/reader-reference.md#联网保护与临时退避2026-11-12)。真实长期运行和误触发情况继续观察，不将参数当平台安全阈值 |
+| 长内容逐包宿主等待 | 本次长课首包已接受，第二包独立宿主超时，后由当前会话接读完整已有字幕及必要图像并登记结果；保留原 run。比较宿主调用粒度与首次可用内容，不能把目录整理强制等同逐字校对，也不据单例作稳定提速结论 |
+| 推荐收益证据不足 | 现有 1 条正反馈、1 条探索偏好不足以评估推荐改善；11 月 11 日起暂缓推荐试验，保留原证据 |
+| ASR 整句遗漏、词级错误与慢段 | 按疑点回原图、邻域与复听；不把处理完成当原文无遗漏。11 月 12 日 Matt 演讲样本中，本地全范围词级转写在4–6分钟段持续计算，短窗自动检测又输出威尔士语候选。保留原轨及错误候选后，本片临时指定英语的短窗粗转写已补齐并读完；未改全局配置或模型。此为操作样本，尚未认定全部根因或实现通用修复 |
+| 局部校对的准度与效率 | 日语54秒小试已保存最小更正和原文，质量摘要补齐可疑时间范围。画面参考并非音声真值；短窗重转写实际漏句，不能自动覆盖原文。后续按真实疑点核听和扩样，不自动处理整片或新增校对模型 |
 | 模型冷启动和宿主等待 | 区分获取、处理、宿主通路与成文耗时，按影响体验的实际案例修正 |
 | 历史 Windows 原子替换拒绝访问 | WinError 5 外因未定；再次触发时保留现场，不以本批通过宣称已修复 |
 | 发布与接入 | 本地新能力未更新下载包；MCP 旧连接重启后加载新工具 |
@@ -966,20 +1033,23 @@ lang: zh
 
 | 待完成项 | 工作与验收 |
 |---|---|
-| 阶段 6 实际运行 | 核对真实任务的进度、结果与等待原因；核论据/找原版未满足时明确待补查，不以视频笔记代替完成 |
-| 6C 推荐与分流收益 | 以明确反馈和实际阅读案例对照推荐理由与用途；区分用户偏好、单次要求和 Agent 观察，未回复不推成偏好 |
+| Inbox 队列与处理意图 | 本批25项中23项内容整理完成、1项据用户下架信息取消、1项日语整片暂停。后续按明确要求接续；独立附言先确认，保存来源与未解决问题，不用归档代替完成 |
+| 本地总目录持续维护 | 总目录及25项批次投影已建。后续每次登记新成果或变更任务时同步刷新，目录注记保留分类、用途、读取深度与格式；补录未登记历史须核对真实产物，不从缓存推定完整阅读 |
+| Reader 能力与真实阅读收益 | 继续围绕识别疑点、必要画面、按块消费、跨包证据及回答溯源优化；以真实积压任务核对准确性、首次可用内容与全任务耗时 |
+| 阶段 6 实际运行 | 核对真实任务的进度、结果与等待原因；核论据/找原版未满足时明确待补查，不以视频笔记代替完成。后台收件保持停用 |
+| 6C 推荐与分流收益 | 每日推荐已暂停，推荐收益对照暂缓；初步分流继续服务 Inbox 任务处理。既有反馈和观察保留，未回复不推成偏好 |
 
-6C 已核对现有反馈并修正推荐提示中的预设价值与单例泛化问题；尚无足够结果对照，暂不验收推荐质量提升。后台不增加自动偏好学习或新发送。新发现按所属问题穿插修正。
+6C 已核对现有反馈并修正推荐提示中的预设价值与单例泛化问题；尚无足够结果对照，暂不验收推荐质量提升。11 月 11 日后优先 Reader 与 Inbox 队列，不继续主动日推试验。后台不增加自动偏好学习或新发送。新发现按所属问题穿插修正；本轮方向调整不自动展开所有历史待办。
 
-2026-11-08 用户提出的后续方向已完成首轮[源码对照与有限复现](../research/moondigest-context-20261108/report-source.md)。下列内容先登记，尚未启动实施，也不改变上述运行许可。
+2026-11-08 提出的后续方向已完成首轮[源码对照与有限复现](../research/moondigest-context-20261108/report-source.md)。11 月 9 日用户授权按开发计划更新功能，首批状态如下；运行许可继续沿用。
 
 | 后续方向 | 待验证内容 |
 |---|---|
-| 分层提速与全任务损耗 | 参考 MoonDigest 的候选初筛、字幕阅读和按需取帧；复用现有轻预览与目录，比较按任务选块、包大小、宿主固定输入、参考全文、成文和失败重试；完整任务覆盖与准确性不能降级 |
-| 视觉证据上下文生命周期 | 组件新快照的重复图像交付已在本批修复，两帧只附带两次且保留完整元数据。独立宿主重试和主聊天历史重放仍分别看待；主聊天后续携带 N 次未知。请求级观测、视觉短会话和主上下文只用证据记录的收益继续作为后续验证方向 |
+| 分层提速与全任务损耗 | 显式选块和尝试观测已完成。真实教程对照后又修复补证全文重发、跨包记录缺失及终稿拼接阶段局限；[93 项检查与真实 MCP 验证](../validation/consumer-context-20261109/README.md)通过。同请求补证重放从 121 段缩至 4 段并只带相关记录。后续继续比较包大小、参考输入与全任务收益；单例且修订有差异，不作稳定提速或准确率归因 |
+| 视觉证据上下文生命周期 | 局部视觉短会话已实现：独立宿主只附当前帧，主 MCP 返回文字证据及来源，旧观察只以文字接续；显式回看交付冻结原像素/裁剪。59 项相关检查和历史教程三轮真实 MCP 验证通过，常规结果 0 图像块、各轮各附 1 张新图，裁剪回看哈希一致。当前连接已重载。[本批记录](../validation/visual-short-session-20261109/README.md)。主聊天旧图清除、请求内累计出现次数及长期收益仍未测得 |
 | 回答级溯源与按需补看 | [帧寻视频及公开源码对照](../research/zhenxun-comparison-20261108/report-source.md)：区分画面、语音、画面文字、外部资料和推断；引用绑定本次成功交付的证据、材料身份与修订，不把附近有材料当成宿主已看过或结论已证实。参考其浏览器小循环移除旧截图、向主模型只返回文字来源的分工，与视觉短会话一并验证，不照搬整套前端 |
 
-上述顺序是调研建议。验收同时比较首次可用答案、全任务耗时、输入/缓存/输出、重试与事实质量；拿不到的宿主指标标未知，不将文件缓存或 `--ephemeral` 当作图片退出上下文。
+按块消费及局部视觉短会话已验收，整体收益尚未验收。后续推进回答级溯源，并对照首次可用答案、全任务耗时、输入/缓存/输出、重试与事实质量。当前记录本地尝试及 CLI 已报告用量。主聊天重放、模型请求内图像次数、准确的首次可用答案时间仍未知。不将文件缓存或 `--ephemeral` 当作图片退出上下文。
 
 ## G 查阅与接续
 

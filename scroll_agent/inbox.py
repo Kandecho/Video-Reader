@@ -293,6 +293,7 @@ class Inbox:
         bounded_int(max_pages, 'max_pages', 1, 10)
         bounded_int(page_size, 'page_size', 1, 100)
         totals = {'pages': 0, 'messages_added': 0, 'messages_updated': 0, 'duplicate_messages': 0, 'tasks_created': 0, 'tasks_reused': 0}
+        catalog_refresh = None
         try:
             # A query observer may briefly hold this lock, but never a network operation.
             with FileLock(str(self.lock_path), timeout=.2):
@@ -341,6 +342,11 @@ class Inbox:
                         totals['pages'] += 1
                         for key, count in counts.items():
                             totals[key] += count
+                        if counts['tasks_created']:
+                            from reading_tasks.catalog import refresh
+                            refreshed = refresh(self.queue)
+                            if refreshed is not None:
+                                catalog_refresh = refreshed
                     with self.memory.connect() as db:
                         feed = self._feed(db)
                         partial = feed['pending_before'] is not None or not feed['history_complete']
@@ -354,7 +360,10 @@ class Inbox:
                     raise
         except Timeout:
             raise ReaderError('Inbox sync is active; query the saved Inbox or queue while it finishes') from None
-        return {**self.status(), 'sync': totals}
+        result = {**self.status(), 'sync': totals}
+        if catalog_refresh is not None:
+            result['catalog_refresh'] = catalog_refresh
+        return result
 
     def history(self, *, message_id=None, query='', limit=20, cursor=None):
         bounded_int(limit, 'limit', 1, 100)
@@ -411,4 +420,10 @@ class Inbox:
             result = self.queue.enqueue_in_transaction(db, video['source'], video['task'] if task is None else task,
                                          video['title'], message_id=message_id)
             self.queue.link_origin(db,result['item_id'],self._origin(db,message_id))
-        return {**result, 'item': self.queue.show(result['item_id']), 'video_reading_started': False}
+        output = {**result, 'item': self.queue.show(result['item_id']), 'video_reading_started': False}
+        if result['created']:
+            from reading_tasks.catalog import refresh
+            refreshed = refresh(self.queue)
+            if refreshed is not None:
+                output['catalog_refresh'] = refreshed
+        return output

@@ -14,6 +14,7 @@ FILES = [
     'skill/SKILL.md', 'scroll-skill/SKILL.md',
     'docs/installation.md', 'docs/material-delivery.md', 'docs/material-reference.md', 'docs/reader-reference.md', 'docs/scroll-batch.md',
     'docs/tasks.md', 'docs/triage.md', 'docs/inbox-queue.md', 'docs/scroll-reference.md', 'docs/architecture.md',
+    'docs/workflow-contract.html', 'reading_tasks/catalog_view.html', 'tests/catalog_links.cjs',
     'CONTRIBUTING.md', 'examples/create_fixture.py',
     'tools/build_plugins.py', 'tools/build_candidate.py',
     'tools/install_scroll_task.ps1', 'tools/run_scroll_daily.ps1',
@@ -30,6 +31,7 @@ FILES = [
     'licenses/upstream/watch-MIT.txt',
     'validation/release-20261104/report-source.md', 'validation/release-20261104/summary.json',
     'validation/mcp-registry-20261104/report-source.md', 'validation/mcp-registry-20261104/summary.json',
+    'validation/prepush-20261116/README.md', 'validation/prepush-20261116/summary.json',
 ]
 
 
